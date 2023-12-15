@@ -391,12 +391,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   seed: 0
-  player: {fileID: 1370364697}
   spawnPosition: {x: 80, y: -10, z: 80}
   WorldChunkSize: 8
+  player: {fileID: 1370364697}
   material: {fileID: 2100000, guid: 82082689290290d429ef5be65ab79789, type: 2}
+  debugScreen: {fileID: 0}
   playerChunk: {x: 0, y: 0}
-  blocktypes:
+  BlockTypes:
   - blockName: Air
     isSolid: 0
     isTransparent: 1
@@ -407,7 +408,7 @@ MonoBehaviour:
     bottomFaceTexture: 0
     leftFaceTexture: 0
     rightFaceTexture: 0
-  - blockName: BedBlock
+  - blockName: BedStone
     isSolid: 1
     isTransparent: 0
     icon: {fileID: -1471574654, guid: 8ccace736c8423742aa10041de97657d, type: 3}
@@ -450,7 +451,7 @@ MonoBehaviour:
   - blockName: Wood
     isSolid: 1
     isTransparent: 0
-    icon: {fileID: -41508078, guid: 8ccace736c8423742aa10041de97657d, type: 3}
+    icon: {fileID: -68591331, guid: 8ccace736c8423742aa10041de97657d, type: 3}
     backFaceTexture: 5
     frontFaceTexture: 5
     topFaceTexture: 6
@@ -467,7 +468,6 @@ MonoBehaviour:
     bottomFaceTexture: 3
     leftFaceTexture: 3
     rightFaceTexture: 3
-  debugScreen: {fileID: 0}
 --- !u!1 &478452488
 GameObject:
   m_ObjectHideFlags: 0

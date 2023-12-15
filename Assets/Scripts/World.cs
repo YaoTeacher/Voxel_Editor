@@ -172,7 +172,7 @@ public class World : MonoBehaviour
             return false;
         else
         {
-            return BlockTypes[BlockTypeList[x+ VoxelData.ChunkWidth * WorldChunkSize, y,z+ VoxelData.ChunkWidth * WorldChunkSize]].isSolid;
+            return BlockTypes[BlockList[new Vector3Int(x, y, z)].GetBlockType()].isSolid;
         }
 
 

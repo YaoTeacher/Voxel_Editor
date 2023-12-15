@@ -40,6 +40,6 @@ public class Block
 
     public byte GetBlockType()
     {
-        return this.type;
+        return type;
     }
 }

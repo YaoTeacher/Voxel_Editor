@@ -193,8 +193,8 @@ public class Chunk
         int y_Check = Mathf.FloorToInt(pos.y);
         int z_Check = Mathf.FloorToInt(pos.z);
 
-       int xCheck = x_Check - Mathf.FloorToInt(chunkObject.transform.position.x);
-        int zCheck = z_Check - Mathf.FloorToInt(chunkObject.transform.position.z);
+        //int xCheck = x_Check - Mathf.FloorToInt(chunkObject.transform.position.x);
+        //int zCheck = z_Check - Mathf.FloorToInt(chunkObject.transform.position.z);
 
         Vector3Int index = new Vector3Int(x_Check, y_Check,z_Check);
 
@@ -204,11 +204,10 @@ public class Chunk
 
         }
         else
-        { 
+        {
+            Debug.Log(x_Check+"+" + y_Check+ "+" + z_Check);
             world.BlockList[index].SetBlockType(newID);
-
-            //UpdateCoordBlocks(index);
-
+            World.BlockTypeList[x_Check+VoxelData.ChunkWidth * world.WorldChunkSize, y_Check, z_Check+VoxelData.ChunkWidth * world.WorldChunkSize] = newID;
             UpdateChunk();
         }
 
@@ -223,12 +222,9 @@ public class Chunk
         {
              return true;
         }
-        else if (world.BlockTypes[World.BlockTypeList[BlockIndex.x,BlockIndex.y,BlockIndex.z]].isTransparent)
-        { return  true; }
         else
-        {
-        return false;
-        }
+        { return world.BlockTypes[World.BlockTypeList[BlockIndex.x, BlockIndex.y, BlockIndex.z]].isTransparent; }
+
 
    }
 
