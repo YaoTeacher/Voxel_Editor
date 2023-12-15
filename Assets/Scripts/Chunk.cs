@@ -47,8 +47,6 @@ public class Chunk
             ClearMeshData();
         }
 
-       
-
     }
 
 
@@ -142,8 +140,9 @@ public class Chunk
 
         for (int p = 0; p < 6; p++)
         {
-
-            if (IsCoordTransparent(block.GetIndex() + VoxelData.faceChecks[p]))
+            if (!world.BlockTypes[block.GetBlockType()].isTransparent)
+            {
+                if (IsCoordTransparent(block.GetIndex() + VoxelData.faceChecks[p]))
             {
 
 
@@ -163,6 +162,31 @@ public class Chunk
                 vertexIndex += 4;
 
             }
+            }
+            else 
+            {
+                if (!(IsCoordTransparent(block.GetIndex() + VoxelData.faceChecks[p])&& IsCoordSame(block.GetIndex(), block.GetIndex() + VoxelData.faceChecks[p])))
+                {
+
+
+                    vertices.Add(Pos + VoxelData.voxelVerts[VoxelData.voxelTris[p, 0]]);
+                    vertices.Add(Pos + VoxelData.voxelVerts[VoxelData.voxelTris[p, 1]]);
+                    vertices.Add(Pos + VoxelData.voxelVerts[VoxelData.voxelTris[p, 2]]);
+                    vertices.Add(Pos + VoxelData.voxelVerts[VoxelData.voxelTris[p, 3]]);
+
+                    AddTexture(world.BlockTypes[World.BlockTypeList[index.x + VoxelData.ChunkWidth * world.WorldChunkSize, index.y, index.z + VoxelData.ChunkWidth * world.WorldChunkSize]].GetTextureID(p));
+
+                    triangles.Add(vertexIndex);
+                    triangles.Add(vertexIndex + 1);
+                    triangles.Add(vertexIndex + 2);
+                    triangles.Add(vertexIndex + 2);
+                    triangles.Add(vertexIndex + 1);
+                    triangles.Add(vertexIndex + 3);
+                    vertexIndex += 4;
+
+                }
+            }
+            
         }
 
 
@@ -227,6 +251,25 @@ public class Chunk
 
 
    }
+
+    public bool IsCoordSame(Vector3Int index, Vector3Int Coordindex)
+    {
+        Vector3Int BlockIndex = index + new Vector3Int(VoxelData.ChunkWidth * world.WorldChunkSize, 0, VoxelData.ChunkWidth * world.WorldChunkSize);
+        Vector3Int BlockCoordIndex = Coordindex + new Vector3Int(VoxelData.ChunkWidth * world.WorldChunkSize, 0, VoxelData.ChunkWidth * world.WorldChunkSize);
+        if (BlockCoordIndex.x < 0 || BlockCoordIndex.y < 0 || BlockCoordIndex.z < 0 || BlockCoordIndex.x >= VoxelData.ChunkWidth * (2 * world.WorldChunkSize + 1) || BlockCoordIndex.z >= VoxelData.ChunkWidth * (2 * world.WorldChunkSize + 1) || BlockCoordIndex.y >= VoxelData.ChunkHeight)
+        {
+            return false;
+        }
+        else
+        {
+            if (world.BlockTypes[World.BlockTypeList[BlockIndex.x, BlockIndex.y, BlockIndex.z]] == world.BlockTypes[World.BlockTypeList[BlockCoordIndex.x, BlockCoordIndex.y, BlockCoordIndex.z]])
+                return true;
+            else
+                return false;
+        }
+
+
+    }
 
     public bool Equals(Vector2Int other)
     {

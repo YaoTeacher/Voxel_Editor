@@ -172,7 +172,7 @@ public class World : MonoBehaviour
             return false;
         else
         {
-            return BlockTypes[BlockList[new Vector3Int(x, y, z)].GetBlockType()].isSolid;
+            return BlockTypes[BlockTypeList[x+ VoxelData.ChunkWidth * WorldChunkSize, y,z+ VoxelData.ChunkWidth * WorldChunkSize]].isSolid;
         }
 
 
@@ -270,19 +270,6 @@ public class World : MonoBehaviour
         else
             return
                 false;
-
-    }
-
-    bool IsVoxelInWorld(Vector3 pos)
-    {
-        int x = Mathf.FloorToInt(pos.x);
-        int y = Mathf.FloorToInt(pos.y);
-        int z = Mathf.FloorToInt(pos.z);
-        Vector3Int index = new Vector3Int(x, y, z);
-        if (BlockList.ContainsKey(index))
-            return true;
-        else
-            return false;
 
     }
 
