@@ -111,7 +111,7 @@ public class Chunk
         meshFilter.mesh = mesh;
     }
 
-    void UpdateChunk()
+    public void UpdateChunk()
     {
 
         ClearMeshData();
@@ -143,7 +143,7 @@ public class Chunk
             if (!world.BlockTypes[block.GetBlockType()].isTransparent)
             {
                 if (IsCoordTransparent(block.GetIndex() + VoxelData.faceChecks[p]))
-            {
+                {
 
 
                 vertices.Add(Pos + VoxelData.voxelVerts[VoxelData.voxelTris[p, 0]]);
@@ -161,7 +161,7 @@ public class Chunk
                 triangles.Add(vertexIndex + 3);
                 vertexIndex += 4;
 
-            }
+                }
             }
             else 
             {
@@ -201,7 +201,7 @@ public class Chunk
         x *= VoxelData.NormalizedBlockTextureSize;
         y *= VoxelData.NormalizedBlockTextureSize;
 
-        y = 1f - y - VoxelData.NormalizedBlockTextureSize;
+        y = 1.0f - y - VoxelData.NormalizedBlockTextureSize;
 
         uvs.Add(new Vector2(x, y));
         uvs.Add(new Vector2(x, y + VoxelData.NormalizedBlockTextureSize));
@@ -210,33 +210,6 @@ public class Chunk
 
     }
 
-    public void EditVoxel(Vector3 pos, byte newID)
-    {
-
-        int x_Check = Mathf.FloorToInt(pos.x);
-        int y_Check = Mathf.FloorToInt(pos.y);
-        int z_Check = Mathf.FloorToInt(pos.z);
-
-        //int xCheck = x_Check - Mathf.FloorToInt(chunkObject.transform.position.x);
-        //int zCheck = z_Check - Mathf.FloorToInt(chunkObject.transform.position.z);
-
-        Vector3Int index = new Vector3Int(x_Check, y_Check,z_Check);
-
-        if (!world.BlockList.ContainsKey(index))
-        {
-            Debug.Log("Out Of Range !");
-
-        }
-        else
-        {
-            Debug.Log(x_Check+"+" + y_Check+ "+" + z_Check);
-            world.BlockList[index].SetBlockType(newID);
-            World.BlockTypeList[x_Check+VoxelData.ChunkWidth * world.WorldChunkSize, y_Check, z_Check+VoxelData.ChunkWidth * world.WorldChunkSize] = newID;
-            UpdateChunk();
-        }
-
-
-    }
 
    public bool IsCoordTransparent(Vector3Int index)
    {

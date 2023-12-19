@@ -13,6 +13,7 @@ public class World : MonoBehaviour
     public int seed;
     public Vector3 spawnPosition;
     public int WorldChunkSize;
+    public Texture2DArray[] block;
 
     public Transform player;
     public Material material;
@@ -100,7 +101,7 @@ public class World : MonoBehaviour
         }
 
     }
-    public int GetVoxel(Vector3 pos)
+    public int GetVoxel(Vector3Int pos)
     {
 
         int yPos = Mathf.FloorToInt(pos.y);
@@ -109,7 +110,7 @@ public class World : MonoBehaviour
         { return 1; }
 
         else if (yPos <= 20 && yPos > 0)
-        { return 3; }
+        { return 7; }
 
         else 
         { return 0; }
@@ -181,19 +182,57 @@ public class World : MonoBehaviour
     public bool CheckIfVoxelTransparent(Vector3 pos)
     {
 
-        Vector2Int Chunkindex = GetChunkIndexFromVector3(pos);
-        Vector3Int index = PositionInBlock(pos)+new Vector3Int(VoxelData.ChunkWidth * WorldChunkSize,0,VoxelData.ChunkWidth * WorldChunkSize);
+        Vector2Int chunkindex = GetChunkIndexFromVector3(pos);
+        Vector3Int blockindex = PositionInBlock(pos);
+        Vector3Int blocktypeindex = PositionInBlock(pos)+new Vector3Int(VoxelData.ChunkWidth * WorldChunkSize,0,VoxelData.ChunkWidth * WorldChunkSize);
 
-        if (!IsChunkInWorld(Chunkindex) || pos.y < 0 || pos.y > VoxelData.ChunkHeight)
+        if (!IsChunkInWorld(chunkindex) || pos.y < 0 || pos.y > VoxelData.ChunkHeight)
             return false;
 
-        if (Chunks[Chunkindex] != null && Chunks[Chunkindex].isVoxelMapPopulated)
+        if (Chunks[chunkindex] != null && Chunks[chunkindex].isVoxelMapPopulated)
             
-            return BlockTypes[BlockTypeList[index.x+ VoxelData.ChunkWidth * WorldChunkSize, index.y,index.z+ VoxelData.ChunkWidth * WorldChunkSize]].isTransparent;
+            return BlockTypes[BlockTypeList[blocktypeindex.x+ VoxelData.ChunkWidth * WorldChunkSize, blocktypeindex.y,blocktypeindex.z+ VoxelData.ChunkWidth * WorldChunkSize]].isTransparent;
 
-        return BlockTypes[GetVoxel(pos)].isTransparent;
+        return BlockTypes[GetVoxel(blockindex)].isTransparent;
 
     }
+    public void UpdateChunks(Vector3 pos, byte newID)
+    {
+        int x = Mathf.FloorToInt(pos.x);
+        int y = Mathf.FloorToInt(pos.y);
+        int z = Mathf.FloorToInt(pos.z);
+        Vector2Int ChunckIndex = GetChunkIndexFromVector3(pos);
+        Vector3Int index = new Vector3Int(x,y,z);
+        BlockList[index].SetBlockType(newID);
+        BlockTypeList[x + VoxelData.ChunkWidth * WorldChunkSize, y ,z + VoxelData.ChunkWidth * WorldChunkSize] = newID;
+        if (!BlockList.ContainsKey(index))
+        {
+            Debug.Log("Out Of Range !");
+
+        }
+        else
+        {
+            if ((x - (ChunckIndex.x  * VoxelData.ChunkWidth)) != 0 && (x - ((ChunckIndex.x) * VoxelData.ChunkWidth)) != (VoxelData.ChunkWidth - 1)&& (z - ((ChunckIndex.y) * VoxelData.ChunkWidth)) != 0 && (z - ((ChunckIndex.y) * VoxelData.ChunkWidth)) != (VoxelData.ChunkWidth - 1))
+            {
+                Chunks[ChunckIndex].UpdateChunk();
+            }
+            else
+            {
+                Chunks[ChunckIndex].UpdateChunk();
+
+                Chunks[new Vector2Int(ChunckIndex.x - 1, ChunckIndex.y)].UpdateChunk();
+
+                Chunks[new Vector2Int(ChunckIndex.x + 1, ChunckIndex.y)].UpdateChunk();
+
+                Chunks[new Vector2Int(ChunckIndex.x, ChunckIndex.y - 1)].UpdateChunk();
+
+                Chunks[new Vector2Int(ChunckIndex.x, ChunckIndex.y + 1)].UpdateChunk();
+            }
+        }
+
+
+    }
+
     public Chunk GetChunkFromVector3(Vector3 pos)
     {
 

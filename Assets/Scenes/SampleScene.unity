@@ -468,6 +468,16 @@ MonoBehaviour:
     bottomFaceTexture: 3
     leftFaceTexture: 3
     rightFaceTexture: 3
+  - blockName: Path
+    isSolid: 1
+    isTransparent: 1
+    icon: {fileID: -1418828333, guid: 8ccace736c8423742aa10041de97657d, type: 3}
+    backFaceTexture: 11
+    frontFaceTexture: 11
+    topFaceTexture: 11
+    bottomFaceTexture: 11
+    leftFaceTexture: 11
+    rightFaceTexture: 11
 --- !u!1 &478452488
 GameObject:
   m_ObjectHideFlags: 0
@@ -1150,7 +1160,7 @@ MonoBehaviour:
   m_VolumeTrigger: {fileID: 0}
   m_VolumeFrameworkUpdateModeOption: 2
   m_RenderPostProcessing: 0
-  m_Antialiasing: 0
+  m_Antialiasing: 1
   m_AntialiasingQuality: 2
   m_StopNaN: 0
   m_Dithering: 0

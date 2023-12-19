@@ -157,12 +157,12 @@ public class BuildView : MonoBehaviour
         if (isCtrlPressed && isMouseLeftClicked)
         {
             print("highlight:" + highlightBlock.position);
-            world.GetChunkFromVector3(highlightBlock.position).EditVoxel(highlightBlock.position, 0);
+            world.UpdateChunks(highlightBlock.position, 0);
         }
         else if (isMouseLeftClicked)
         {
             print("place:" + placeBlock.position);
-            world.GetChunkFromVector3(highlightBlock.position).EditVoxel(placeBlock.position, selectedBlockIndex);
+            world.UpdateChunks(placeBlock.position, selectedBlockIndex);
         }
     }
 
