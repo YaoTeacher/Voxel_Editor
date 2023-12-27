@@ -215,12 +215,12 @@ public class Chunk
         x *= VoxelData.NormalizedBlockTextureSize;
         y *= VoxelData.NormalizedBlockTextureSize;
 
-        y = 1.0f - y - VoxelData.NormalizedBlockTextureSize;
+        y = 1f - y - VoxelData.NormalizedBlockTextureSize;
 
         uvs.Add(new Vector2(x, y));
         uvs.Add(new Vector2(x, y + VoxelData.NormalizedBlockTextureSize));
-        uvs.Add(new Vector2(x + VoxelData.NormalizedBlockTextureSize-2/1024, y));
-        uvs.Add(new Vector2(x + VoxelData.NormalizedBlockTextureSize, y + VoxelData.NormalizedBlockTextureSize-2/1024));
+        uvs.Add(new Vector2(x + VoxelData.NormalizedBlockTextureSize, y));
+        uvs.Add(new Vector2(x + VoxelData.NormalizedBlockTextureSize, y + VoxelData.NormalizedBlockTextureSize));
 
     }
 
