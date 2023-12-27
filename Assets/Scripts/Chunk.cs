@@ -225,7 +225,7 @@ public class Chunk
     }
 
 
-   public bool IsCoordTransparent(Vector3Int index)
+    public bool IsCoordTransparent(Vector3Int index)
    {
         Vector3Int BlockIndex = index + new Vector3Int(VoxelData.ChunkWidth * world.WorldChunkSize,0, VoxelData.ChunkWidth * world.WorldChunkSize);
  
