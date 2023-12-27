@@ -24,12 +24,14 @@ public class World : MonoBehaviour
 
     public Dictionary<Vector3Int, Block> BlockList = new Dictionary<Vector3Int, Block>();
     public Dictionary<Vector2Int, Chunk> Chunks = new Dictionary<Vector2Int, Chunk>();
+
     List<Chunk> ActiveChunkList = new List<Chunk>();
 
     public static byte[,,] BlockTypeList ;
     public BlockType[] BlockTypes;
 
     public Queue<Chunk> chunksToDraw = new Queue<Chunk>();
+    List<Chunk> chunksToUpdate = new List<Chunk>();
 
     private void Start()
     {
@@ -57,6 +59,10 @@ public class World : MonoBehaviour
                 ActiveWorldChunk();
             }
         }
+
+
+
+
         if (chunksToDraw.Count > 0)
             lock (chunksToDraw)
             {
@@ -85,6 +91,8 @@ public class World : MonoBehaviour
             }
         }
     }
+
+
     public void GenerateWorldChunk()
     {
         for (int x = -WorldChunkSize; x <= WorldChunkSize; x++)
@@ -111,6 +119,23 @@ public class World : MonoBehaviour
         }
 
     }
+
+
+    //void UpdateChunks()
+    //{
+
+    //    if (chunksToUpdate.Count > 0)
+    //    foreach (var chunk in chunksToUpdate)
+    //    {
+
+    //            chunk._UpdateChunk();
+    //            chunksToUpdate.Remove(chunk);
+
+    //    }
+
+
+
+    //}
     public int GetVoxel(Vector3Int pos)
     {
 
@@ -215,29 +240,62 @@ public class World : MonoBehaviour
         Vector3Int index = new Vector3Int(x,y,z);
         BlockList[index].SetBlockType(newID);
         BlockTypeList[x + VoxelData.ChunkWidth * WorldChunkSize, y ,z + VoxelData.ChunkWidth * WorldChunkSize] = newID;
-        if (!BlockList.ContainsKey(index))
+        if (BlockList.ContainsKey(index))
         {
-            Debug.Log("Out Of Range !");
+            
+            //if ((x - (ChunckIndex.x * VoxelData.ChunkWidth)) != 0 && (x - ((ChunckIndex.x) * VoxelData.ChunkWidth)) != (VoxelData.ChunkWidth - 1) && (z - ((ChunckIndex.y) * VoxelData.ChunkWidth)) != 0 && (z - ((ChunckIndex.y) * VoxelData.ChunkWidth)) != (VoxelData.ChunkWidth - 1))
+            //{
+            //    chunksToUpdate.Add(Chunks[ChunckIndex]);
+            //}
+            if (x - (ChunckIndex.x * VoxelData.ChunkWidth) == 0)
+            {
+                Chunks[new Vector2Int(ChunckIndex.x - 1, ChunckIndex.y)]._UpdateChunk();
+            }
+            if ((x - (ChunckIndex.x * VoxelData.ChunkWidth)) == (VoxelData.ChunkWidth - 1))
+            {
+                Chunks[new Vector2Int(ChunckIndex.x + 1, ChunckIndex.y)]._UpdateChunk();
+            }
+            if ((z - (ChunckIndex.y * VoxelData.ChunkWidth)) == 0)
+            {
+                Chunks[new Vector2Int(ChunckIndex.x, ChunckIndex.y - 1)]._UpdateChunk();
+            }
+            if ((z - (ChunckIndex.y * VoxelData.ChunkWidth)) == (VoxelData.ChunkWidth - 1))
+            {
+                Chunks[new Vector2Int(ChunckIndex.x, ChunckIndex.y + 1)]._UpdateChunk();
+            }
+            Chunks[ChunckIndex]._UpdateChunk();
+            //else if (((x - (ChunckIndex.x * VoxelData.ChunkWidth)) == 0)&& ((z - (ChunckIndex.y * VoxelData.ChunkWidth)) == 0))
+            //{
+            //    chunksToUpdate.Add(Chunks[ChunckIndex]);
+            //    chunksToUpdate.Add(Chunks[new Vector2Int(ChunckIndex.x - 1, ChunckIndex.y)]);
+            //    chunksToUpdate.Add(Chunks[new Vector2Int(ChunckIndex.x, ChunckIndex.y - 1)]);
 
+            //}
+            //else if (((x - (ChunckIndex.x * VoxelData.ChunkWidth)) == 0) && ((z - (ChunckIndex.y * VoxelData.ChunkWidth)) == (VoxelData.ChunkWidth - 1)))
+            //{
+            //    chunksToUpdate.Add(Chunks[ChunckIndex]);
+            //    chunksToUpdate.Add(Chunks[new Vector2Int(ChunckIndex.x - 1, ChunckIndex.y)]);
+            //    chunksToUpdate.Add(Chunks[new Vector2Int(ChunckIndex.x, ChunckIndex.y + 1)]);
+
+            //}
+            //else if ((x - (ChunckIndex.x * VoxelData.ChunkWidth)) == (VoxelData.ChunkWidth - 1) && ((z - (ChunckIndex.y * VoxelData.ChunkWidth)) == 0))
+            //{
+            //    chunksToUpdate.Add(Chunks[ChunckIndex]);
+            //    chunksToUpdate.Add(Chunks[new Vector2Int(ChunckIndex.x + 1, ChunckIndex.y)]);
+            //    chunksToUpdate.Add(Chunks[new Vector2Int(ChunckIndex.x, ChunckIndex.y - 1)]);
+
+            //}
+            //else if ((x - (ChunckIndex.x * VoxelData.ChunkWidth)) == (VoxelData.ChunkWidth - 1) && ((z - (ChunckIndex.y * VoxelData.ChunkWidth)) == (VoxelData.ChunkWidth - 1)))
+            //{
+            //    chunksToUpdate.Add(Chunks[ChunckIndex]);
+            //    chunksToUpdate.Add(Chunks[new Vector2Int(ChunckIndex.x + 1, ChunckIndex.y)]);
+            //    chunksToUpdate.Add(Chunks[new Vector2Int(ChunckIndex.x, ChunckIndex.y + 1)]);
+
+            //}
         }
         else
         {
-            if ((x - (ChunckIndex.x  * VoxelData.ChunkWidth)) != 0 && (x - ((ChunckIndex.x) * VoxelData.ChunkWidth)) != (VoxelData.ChunkWidth - 1)&& (z - ((ChunckIndex.y) * VoxelData.ChunkWidth)) != 0 && (z - ((ChunckIndex.y) * VoxelData.ChunkWidth)) != (VoxelData.ChunkWidth - 1))
-            {
-                Chunks[ChunckIndex]._UpdateChunk();
-            }
-            else
-            {
-                Chunks[ChunckIndex]._UpdateChunk();
-
-                Chunks[new Vector2Int(ChunckIndex.x - 1, ChunckIndex.y)]._UpdateChunk();
-
-                Chunks[new Vector2Int(ChunckIndex.x + 1, ChunckIndex.y)]._UpdateChunk();
-
-                Chunks[new Vector2Int(ChunckIndex.x, ChunckIndex.y - 1)]._UpdateChunk();
-
-                Chunks[new Vector2Int(ChunckIndex.x, ChunckIndex.y + 1)]._UpdateChunk();
-            }
+            Debug.Log("Out Of Range !");
         }
 
 
