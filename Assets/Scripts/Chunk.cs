@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Reflection;
+using System.Threading;
 using TreeEditor;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -85,7 +86,7 @@ public class Chunk
         chunkObject.transform.position = new Vector3(X * VoxelData.ChunkWidth, 0f, Z * VoxelData.ChunkWidth);
         chunkObject.name = "Chunk " + X + ", " + Z;
         GenerateBlock();
-        UpdateChunk();
+        _UpdateChunk();
 
 
     }
@@ -110,10 +111,16 @@ public class Chunk
 
         meshFilter.mesh = mesh;
     }
-
     public void UpdateChunk()
     {
 
+        Thread myThread = new Thread(new ThreadStart(_UpdateChunk));
+        myThread.Start();
+
+    }
+    public void _UpdateChunk()
+    {
+        threadLocked = true;
         ClearMeshData();
 
         for (int y = 0; y < VoxelData.ChunkHeight; y++)
@@ -132,6 +139,13 @@ public class Chunk
         }
 
         CreateMesh();
+
+        lock (world.chunksToDraw)
+        {
+            world.chunksToDraw.Enqueue(this);
+        }
+
+        threadLocked = false;
 
     }
     public void UpdateBlockFace(Block block,Vector3 Pos)
@@ -205,8 +219,8 @@ public class Chunk
 
         uvs.Add(new Vector2(x, y));
         uvs.Add(new Vector2(x, y + VoxelData.NormalizedBlockTextureSize));
-        uvs.Add(new Vector2(x + VoxelData.NormalizedBlockTextureSize, y));
-        uvs.Add(new Vector2(x + VoxelData.NormalizedBlockTextureSize, y + VoxelData.NormalizedBlockTextureSize));
+        uvs.Add(new Vector2(x + VoxelData.NormalizedBlockTextureSize-2/1024, y));
+        uvs.Add(new Vector2(x + VoxelData.NormalizedBlockTextureSize, y + VoxelData.NormalizedBlockTextureSize-2/1024));
 
     }
 
@@ -243,7 +257,20 @@ public class Chunk
 
 
     }
+    public bool isEditable
+    {
 
+        get
+        {
+
+            if (!isVoxelMapPopulated || threadLocked)
+                return false;
+            else
+                return true;
+
+        }
+
+    }
     public bool Equals(Vector2Int other)
     {
 

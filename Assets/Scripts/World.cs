@@ -25,8 +25,11 @@ public class World : MonoBehaviour
     public Dictionary<Vector3Int, Block> BlockList = new Dictionary<Vector3Int, Block>();
     public Dictionary<Vector2Int, Chunk> Chunks = new Dictionary<Vector2Int, Chunk>();
     List<Chunk> ActiveChunkList = new List<Chunk>();
+
     public static byte[,,] BlockTypeList ;
     public BlockType[] BlockTypes;
+
+    public Queue<Chunk> chunksToDraw = new Queue<Chunk>();
 
     private void Start()
     {
@@ -54,7 +57,14 @@ public class World : MonoBehaviour
                 ActiveWorldChunk();
             }
         }
-       
+        if (chunksToDraw.Count > 0)
+            lock (chunksToDraw)
+            {
+
+                if (chunksToDraw.Peek().isEditable)
+                    chunksToDraw.Dequeue().CreateMesh();
+
+            }
 
 
 
@@ -214,19 +224,19 @@ public class World : MonoBehaviour
         {
             if ((x - (ChunckIndex.x  * VoxelData.ChunkWidth)) != 0 && (x - ((ChunckIndex.x) * VoxelData.ChunkWidth)) != (VoxelData.ChunkWidth - 1)&& (z - ((ChunckIndex.y) * VoxelData.ChunkWidth)) != 0 && (z - ((ChunckIndex.y) * VoxelData.ChunkWidth)) != (VoxelData.ChunkWidth - 1))
             {
-                Chunks[ChunckIndex].UpdateChunk();
+                Chunks[ChunckIndex]._UpdateChunk();
             }
             else
             {
-                Chunks[ChunckIndex].UpdateChunk();
+                Chunks[ChunckIndex]._UpdateChunk();
 
-                Chunks[new Vector2Int(ChunckIndex.x - 1, ChunckIndex.y)].UpdateChunk();
+                Chunks[new Vector2Int(ChunckIndex.x - 1, ChunckIndex.y)]._UpdateChunk();
 
-                Chunks[new Vector2Int(ChunckIndex.x + 1, ChunckIndex.y)].UpdateChunk();
+                Chunks[new Vector2Int(ChunckIndex.x + 1, ChunckIndex.y)]._UpdateChunk();
 
-                Chunks[new Vector2Int(ChunckIndex.x, ChunckIndex.y - 1)].UpdateChunk();
+                Chunks[new Vector2Int(ChunckIndex.x, ChunckIndex.y - 1)]._UpdateChunk();
 
-                Chunks[new Vector2Int(ChunckIndex.x, ChunckIndex.y + 1)].UpdateChunk();
+                Chunks[new Vector2Int(ChunckIndex.x, ChunckIndex.y + 1)]._UpdateChunk();
             }
         }
 

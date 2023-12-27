@@ -393,6 +393,7 @@ MonoBehaviour:
   seed: 0
   spawnPosition: {x: 80, y: -10, z: 80}
   WorldChunkSize: 8
+  block: []
   player: {fileID: 1370364697}
   material: {fileID: 2100000, guid: 82082689290290d429ef5be65ab79789, type: 2}
   debugScreen: {fileID: 0}
@@ -470,7 +471,7 @@ MonoBehaviour:
     rightFaceTexture: 3
   - blockName: Path
     isSolid: 1
-    isTransparent: 1
+    isTransparent: 0
     icon: {fileID: -1418828333, guid: 8ccace736c8423742aa10041de97657d, type: 3}
     backFaceTexture: 11
     frontFaceTexture: 11
@@ -1148,7 +1149,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a79441f348de89743a2939f4d699eac1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_RenderShadows: 1
+  m_RenderShadows: 0
   m_RequiresDepthTextureOption: 2
   m_RequiresOpaqueTextureOption: 2
   m_CameraType: 0
@@ -1160,7 +1161,7 @@ MonoBehaviour:
   m_VolumeTrigger: {fileID: 0}
   m_VolumeFrameworkUpdateModeOption: 2
   m_RenderPostProcessing: 0
-  m_Antialiasing: 1
+  m_Antialiasing: 0
   m_AntialiasingQuality: 2
   m_StopNaN: 0
   m_Dithering: 0
