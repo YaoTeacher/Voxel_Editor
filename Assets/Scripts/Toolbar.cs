@@ -8,18 +8,22 @@ public class Toolbar : MonoBehaviour
 {
     World world ;
     public BuildView player;
-
+    public UIItemSlot[] slots;
     public RectTransform highlight;
-    public ItemSlot[] Itemslots;
+    public BarList[] Itemslots;
 
     int slotIndex = 0;
     private void Start()
     {
-        world = GameObject.Find("World").GetComponent<World>();
-        foreach (var s in Itemslots)
+
+        byte index = 1;
+        foreach (UIItemSlot s in slots)
         {
-            s.icon.sprite = world.BlockTypes[s.itemID].icon;
-            s.icon.enabled = true;
+
+            ItemStack stack = new ItemStack(index, Random.Range(2, 65));
+            ItemSlot slot = new ItemSlot(s, stack);
+            index++;
+
         }
     }
     private void Update()
@@ -52,7 +56,7 @@ public class Toolbar : MonoBehaviour
 }
 
 [System.Serializable]
-public class ItemSlot
+public class BarList
 {
     public byte itemID;
     public Image icon;

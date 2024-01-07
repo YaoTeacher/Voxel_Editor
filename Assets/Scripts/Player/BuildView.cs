@@ -43,24 +43,30 @@ public class BuildView : MonoBehaviour
     }
     private void Update()
     {
-        GetPlayerInputs();
-        placeCursorBlocks();
+
+        if (!world._inUI)
+        {
+            GetPlayerInputs();
+            placeCursorBlocks();
+        }
+
     }
 
 
     private void placeCursorBlocks()
     {
-        float step = checkIncrement;
+        float step = checkIncrement* VoxelData.BlockSize;
         Vector3 lastPos = new Vector3();
+        
         while (step < reach)
         {
             Vector3 dir = cam.ScreenPointToRay(Input.mousePosition).direction;
             Vector3 pos = cam.transform.position + (dir * step);
+            Vector3 placepos = pos / VoxelData.BlockSize;
 
             if (world.CheckVoxelSolid(pos))
             {
-
-                highlightBlock.position = new Vector3(Mathf.FloorToInt(pos.x), Mathf.FloorToInt(pos.y), Mathf.FloorToInt(pos.z));
+                highlightBlock.position = new Vector3(Mathf.FloorToInt(placepos.x), Mathf.FloorToInt(placepos.y), Mathf.FloorToInt(placepos.z))*VoxelData.BlockSize;
                 placeBlock.position = lastPos;
 
                 highlightBlock.gameObject.SetActive(true);
@@ -70,7 +76,7 @@ public class BuildView : MonoBehaviour
 
             }
 
-            lastPos = new Vector3(Mathf.FloorToInt(pos.x), Mathf.FloorToInt(pos.y), Mathf.FloorToInt(pos.z));
+            lastPos = new Vector3(Mathf.FloorToInt(placepos.x), Mathf.FloorToInt(placepos.y), Mathf.FloorToInt(placepos.z)) * VoxelData.BlockSize;
 
             step += checkIncrement;
 
@@ -109,7 +115,7 @@ public class BuildView : MonoBehaviour
             if (scroll > 0)
             {
                 selectedBlockIndex++;
-                if (selectedBlockIndex > world.BlockTypes.Length - 1)
+                if (selectedBlockIndex > world.blocktype.BlockTypes.Length - 1)
                 {
                     selectedBlockIndex = 1;
                 }
@@ -119,7 +125,7 @@ public class BuildView : MonoBehaviour
                 selectedBlockIndex--;
                 if (selectedBlockIndex < 1)
                 {
-                    selectedBlockIndex = (byte)(world.BlockTypes.Length - 1);
+                    selectedBlockIndex = (byte)(world.blocktype.BlockTypes.Length - 1);
                 }
             }
         }
