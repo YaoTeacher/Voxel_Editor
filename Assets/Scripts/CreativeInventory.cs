@@ -9,7 +9,7 @@ public class CreativeInventory : MonoBehaviour {
     public BlockInfo ItemList;
 
     List<ItemSlot> slots = new List<ItemSlot>();
-    int FirstInList = 1;
+    int LastInList = 1;
 
 
 
@@ -28,10 +28,10 @@ public class CreativeInventory : MonoBehaviour {
         
         if (slots.Count <= 0)
         {
-            for (int i = FirstInList; i < world.blocktype.BlockTypes.Length; i++)
+            for (int i = LastInList; i < world.blocktype.BlockTypes.Length; i++)
             {
                 GameObject newSlot = Instantiate(slotPrefab, transform);
-                if (i < FirstInList + 9)
+                if (i < LastInList + 9)
                 {
 
                     ItemStack stack = new ItemStack((byte)i, 64);
@@ -41,61 +41,80 @@ public class CreativeInventory : MonoBehaviour {
                 }
                 else
                 {
-                    FirstInList = i;
+
+                    LastInList = LastInList + 8;
+                    print(LastInList);
                     return;
                 }
 
 
             }
+
 
         }
         else
         {
-            for (int i = 0; i < 8; i++)
+            for (int i = 0; i < 9; i++)
             {
-                if (i < 9)
-                {
-                    if (slots[i].stack.id >= (world.blocktype.BlockTypes.Length - 1))
-                    {
 
+                       LastInList = LastInList + 1;
+                       if (LastInList > (world.blocktype.BlockTypes.Length - 1))
+                       {
                         slots[i].stack.id = 0;
+                        slots[i].stack.amount = 64;
                         slots[i].UpdateList();
+                        
+                        print(LastInList);
                         print("Update1!");
-                    }
-                    else
-                    {
-                        slots[i].stack.id= (byte)(i +FirstInList);
+                       }
+                       else
+                       {
+                        slots[i].stack.id = (byte)(LastInList);
+                        slots[i].stack.amount = 64;
                         slots[i].UpdateList();
-                        print("Update2!");
-                    }
-                }
-                else
-                {
-                    FirstInList = i;
-                    return;
-                }
+                        print(LastInList);
+                        print("Update12!");
+                       }
 
 
             }
+
+
         }
 
     }
     public void CheckFrontPage()
     {
-        if (FirstInList - 9 <= 0)
+        print(LastInList);
+        if ((LastInList - 17) <1)
         {
-            FirstInList = Mathf.FloorToInt((float)(world.blocktype.BlockTypes.Length - 1) / 9)*9+1;
-            print("renew1!");
+            LastInList =(int)((Mathf.FloorToInt((float)(world.blocktype.BlockTypes.Length - 1) / 9)*9));
+            print(LastInList);
+
         }
+        else
+        {
+            LastInList = LastInList - 17;
+            print(LastInList);
+        }
+
+        print("renew1!");
         UpdateList();
     }
     public void CheckNextPage()
     {
-        if (FirstInList >= (world.blocktype.BlockTypes.Length-1))
+        if (LastInList > (world.blocktype.BlockTypes.Length-1))
         {
-            FirstInList = 1;
-            print("renew2!");
+            LastInList = 0;
+            print(LastInList);
+
         }
+        else
+        {
+            print(LastInList);
+        }
+        print("renew2!");
+        print(slots.Count);
         UpdateList();
     }
 
