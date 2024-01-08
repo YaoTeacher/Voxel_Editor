@@ -15,14 +15,14 @@ public class World : MonoBehaviour
     public int seed;
     public Vector3 spawnPosition;
     public int WorldChunkSize;
-    public Texture2DArray[] block;
+    //public Texture2DArray[] block;
 
     public Transform player;
     public Material material;
     public GameObject debugScreen;
     public BlockInfo blocktype;
 
-    public Vector2Int playerChunk;
+    Vector2Int playerChunk;
     Vector2Int playerLastChunk;
 
     public Dictionary<Vector3Int, Block> BlockList = new Dictionary<Vector3Int, Block>();
@@ -42,34 +42,48 @@ public class World : MonoBehaviour
 
     public bool _inUI = false;
 
+    private void Awake()
+    {
+        spawnPosition = new Vector3(((WorldChunkSize + 1) * VoxelData.ChunkWidth) *VoxelData.BlockSize/ 2f, (VoxelData.ChunkHeight - 50) * VoxelData.BlockSize, ((WorldChunkSize + 1) * VoxelData.ChunkWidth) * VoxelData.BlockSize / 2f);
+    }
     private void Start()
     {
-
+        
         BlockTypeList = new byte[VoxelData.ChunkWidth * (WorldChunkSize + 1), VoxelData.ChunkHeight, VoxelData.ChunkWidth * (WorldChunkSize + 1)];
         Chunks =new Chunk[WorldChunkSize + 1, WorldChunkSize + 1];
-    GenerateBlock();
-        spawnPosition = new Vector3(((WorldChunkSize+1) * VoxelData.ChunkWidth) / 4f, (VoxelData.ChunkHeight-50)*VoxelData.BlockSize , ((WorldChunkSize+1) * VoxelData.ChunkWidth) / 4f);
+        GenerateBlock();
+        print(spawnPosition);
         player.transform.position = spawnPosition;
+        print(player.position);
+        playerLastChunk = GetChunkIndexFromVector3(player.position);
         GenerateWorldChunk();
         GenerateActiveWorldChunk();
         ActiveWorldChunk();
-        playerLastChunk = GetChunkIndexFromVector3(player.position);
+        
 
     }
 
     private void Update()
     {
         playerChunk = GetChunkIndexFromVector3(player.position);
-
         // Only update the chunks if the player has moved from the chunk they were previously on.
-        if ((Chunks[playerChunk.x,playerChunk.y]!=null)&& Chunks[playerLastChunk.x, playerLastChunk.y]!=null)
+        if(playerChunk.x>WorldChunkSize|| playerChunk.y > WorldChunkSize||playerChunk.x <0 || playerChunk.y < 0)
         {
-            if (!Chunks[playerChunk.x,playerChunk.y].Equals(playerLastChunk))
+            return;
+        }
+        else
+        {
+            if (Chunks[playerChunk.x, playerChunk.y] != null)
             {
-                CheckViewDistance();
-                ActiveWorldChunk();
+
+                if (!Chunks[playerChunk.x, playerChunk.y].Equals(playerLastChunk))
+                {
+                    CheckViewDistance();
+                    ActiveWorldChunk();
+                }
             }
         }
+
 
         if (!applyingModifications)
             ApplyModifications();
@@ -118,14 +132,32 @@ public class World : MonoBehaviour
     }
     public void GenerateActiveWorldChunk()
     {
-        for (int x = VoxelData.ChunkWidth * (WorldChunkSize + 1) - VoxelData.ViewDistanceInChunks; x <= VoxelData.ChunkWidth * (WorldChunkSize + 1)/2+VoxelData.ViewDistanceInChunks; x++)
+        print("!");
+        print(playerLastChunk);
+        for (int x = playerLastChunk.x - VoxelData.ViewDistanceInChunks; x <= playerLastChunk.x + VoxelData.ViewDistanceInChunks; x++)
         {
-            for (int z = VoxelData.ChunkWidth * (WorldChunkSize + 1) - VoxelData.ViewDistanceInChunks; z <= VoxelData.ChunkWidth * (WorldChunkSize + 1)/2+ VoxelData.ViewDistanceInChunks; z++)
+            
+            if (x < 0 || x > WorldChunkSize)
             {
-
-                ActiveChunkList.Add(Chunks[x,z]);
-
+                print(x);
+                continue;
             }
+             for (int z = playerLastChunk.y - VoxelData.ViewDistanceInChunks; z <= playerLastChunk.y + VoxelData.ViewDistanceInChunks; z++)
+             {
+                if (z < 0 || z > WorldChunkSize)
+                {
+                    continue;
+                }
+
+
+                    ActiveChunkList.Add(Chunks[x, z]);
+                    print(Chunks[x, z].X + "+" + Chunks[x, z].Z);
+
+
+
+
+             }
+            
         }
 
     }
@@ -202,6 +234,7 @@ public class World : MonoBehaviour
         foreach (Chunk c in ActiveChunkList)
         {
             c.chunkObject.SetActive(true);
+            print(c.X + "+" + c.Z);
         }
     }
 
@@ -287,19 +320,19 @@ public class World : MonoBehaviour
             //{
             //    chunksToUpdate.Add(Chunks[ChunckIndex]);
             //}
-            if (index.x  == 0)
+            if (index.x - (ChunckIndex.x * VoxelData.ChunkWidth) == 0)
             {
                 Chunks[ChunckIndex.x - 1, ChunckIndex.y]._UpdateChunk();
             }
-            if ((index.x) == (VoxelData.ChunkWidth - 1))
+            if ((index.x - (ChunckIndex.x * VoxelData.ChunkWidth)) == (VoxelData.ChunkWidth - 1))
             {
                 Chunks[ChunckIndex.x + 1, ChunckIndex.y]._UpdateChunk();
             }
-            if ((index.z ) == 0)
+            if ((index.z-((ChunckIndex.y) * VoxelData.ChunkWidth)) == 0)
             {
                 Chunks[ChunckIndex.x, ChunckIndex.y - 1]._UpdateChunk();
             }
-            if ((index.z ) == (VoxelData.ChunkWidth - 1))
+            if ((index.z - ((ChunckIndex.y) * VoxelData.ChunkWidth)) == (VoxelData.ChunkWidth - 1))
             {
                 Chunks[ChunckIndex.x, ChunckIndex.y + 1]._UpdateChunk();
             }
@@ -333,6 +366,7 @@ public class World : MonoBehaviour
     {
 
         Vector2Int coord = GetChunkIndexFromVector3(player.position);
+        print(coord);
         playerLastChunk = playerChunk;
 
         List<Chunk> previouslyActiveChunks = new List<Chunk>(ActiveChunkList);
@@ -340,9 +374,16 @@ public class World : MonoBehaviour
         // Loop through all chunks currently within view distance of the player.
         for (int x = coord.x- VoxelData.ViewDistanceInChunks; x <= coord.x + VoxelData.ViewDistanceInChunks; x++)
         {
+            if (x < 0||x> WorldChunkSize)
+            {
+                continue;
+            }
             for (int z = coord.y - VoxelData.ViewDistanceInChunks; z <= coord.y + VoxelData.ViewDistanceInChunks; z++)
             {
-                
+                if (z < 0 || z > WorldChunkSize)
+                {
+                    continue;
+                }
                 // If the current chunk is in the world...
                 if (IsChunkInWorld(new Vector2Int(x,z)))
                 {
@@ -351,6 +392,7 @@ public class World : MonoBehaviour
                     {
                         Chunks[x, z].isActive = true;
                     }
+                    print(x +","+ z);
                     ActiveChunkList.Add(Chunks[x, z]);
 
                     // Check through previously active chunks to see if this chunk is there. If it is, remove it from the list.
@@ -369,6 +411,7 @@ public class World : MonoBehaviour
                 foreach (Chunk c in previouslyActiveChunks)
                 {
                     c.chunkObject.SetActive(false);
+                    print(c.X+"+"+c.Z);
                 }
                 
 

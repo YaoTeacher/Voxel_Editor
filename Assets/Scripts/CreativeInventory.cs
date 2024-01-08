@@ -28,7 +28,7 @@ public class CreativeInventory : MonoBehaviour {
         
         if (slots.Count <= 0)
         {
-            for (int i = LastInList; i < world.blocktype.BlockTypes.Length; i++)
+            for (int i = LastInList; i < world.blocktype.BlockTypes.Length-1; i++)
             {
                 GameObject newSlot = Instantiate(slotPrefab, transform);
                 if (i < LastInList + 9)
@@ -43,7 +43,6 @@ public class CreativeInventory : MonoBehaviour {
                 {
 
                     LastInList = LastInList + 8;
-                    print(LastInList);
                     return;
                 }
 
@@ -64,16 +63,12 @@ public class CreativeInventory : MonoBehaviour {
                         slots[i].stack.amount = 64;
                         slots[i].UpdateList();
                         
-                        print(LastInList);
-                        print("Update1!");
                        }
                        else
                        {
                         slots[i].stack.id = (byte)(LastInList);
                         slots[i].stack.amount = 64;
                         slots[i].UpdateList();
-                        print(LastInList);
-                        print("Update12!");
                        }
 
 
@@ -94,11 +89,10 @@ public class CreativeInventory : MonoBehaviour {
         }
         else
         {
-            LastInList = LastInList - 17;
+            LastInList = LastInList - 18;
             print(LastInList);
         }
 
-        print("renew1!");
         UpdateList();
     }
     public void CheckNextPage()
@@ -113,8 +107,7 @@ public class CreativeInventory : MonoBehaviour {
         {
             print(LastInList);
         }
-        print("renew2!");
-        print(slots.Count);
+
         UpdateList();
     }
 

@@ -2,13 +2,14 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using static UnityEditor.PlayerSettings;
 
 public class BuildView : MonoBehaviour
 {
-    private Transform camTrans;
     private Camera cam;
+
 
     private World world;
 
@@ -16,12 +17,6 @@ public class BuildView : MonoBehaviour
 
     public float boundsTolerance = 0.1f;
 
-    private float horizontal;
-    private float vertical;
-    private float Height;
-    private float mouseHorizontal;
-    private float mouseVertical;
-    private Vector3 velocity;
 
     public Transform highlightBlock;
     public Transform placeBlock;
@@ -35,7 +30,6 @@ public class BuildView : MonoBehaviour
     private void Start()
     {
         cam = GameObject.Find("Build Mode Camera").GetComponent<Camera>();
-        camTrans = cam.transform;
         world = GameObject.Find("World").GetComponent<World>();
 
         Cursor.lockState = CursorLockMode.Confined;
@@ -44,10 +38,17 @@ public class BuildView : MonoBehaviour
     private void Update()
     {
 
-        if (!world._inUI)
+        if (!EventSystem.current.IsPointerOverGameObject())
         {
             GetPlayerInputs();
             placeCursorBlocks();
+            
+
+        }
+        else
+        {
+            highlightBlock.gameObject.SetActive(false);
+            placeBlock.gameObject.SetActive(false);
         }
 
     }
@@ -89,24 +90,7 @@ public class BuildView : MonoBehaviour
 
     private void GetPlayerInputs()
     {
-        horizontal = Input.GetAxis("Horizontal");
-        vertical = Input.GetAxis("Vertical");
-        mouseHorizontal = Input.GetAxis("Mouse X");
-        mouseVertical = Input.GetAxis("Mouse Y");
 
-
-        velocity = ((transform.forward * vertical) + (transform.right * horizontal)) * Time.fixedDeltaTime * 3f;
-
-        if (Input.GetMouseButton(1))
-        {
-            transform.Rotate(Vector3.up * mouseHorizontal);
-            camTrans.Rotate(Vector3.right * -mouseVertical);
-
-        }
-        transform.Translate(velocity, Space.World);
-
-
-        Trans_Screen_Y();
 
         float scroll = Input.GetAxis("Mouse ScrollWheel");
 
@@ -169,22 +153,6 @@ public class BuildView : MonoBehaviour
         {
             print("place:" + placeBlock.position);
             world.UpdateChunks(placeBlock.position, selectedBlockIndex);
-        }
-    }
-
-    void Trans_Screen_Y()
-    {
-        if (Input.GetKeyDown(KeyCode.Z))//  && transform.position.y <= 30
-        {
-            Debug.Log("rise");
-            transform.Translate(new Vector3(0, 5, 0));
-
-        }
-
-        if (Input.GetKeyDown(KeyCode.X))//&& transform.position.y >= -30
-        {
-            Debug.Log("decline");
-            transform.Translate(new Vector3(0, -5, 0));
         }
     }
 

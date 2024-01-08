@@ -17,7 +17,7 @@ public static class VoxelData
 
     }
 
-    public static readonly int ViewDistanceInChunks = 6;
+    public static readonly int ViewDistanceInChunks = 1;
 
     public static readonly int TextureAtlasSizeInBlocks = 4;
     public static float NormalizedBlockTextureSize
