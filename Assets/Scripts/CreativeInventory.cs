@@ -13,8 +13,7 @@ public class CreativeInventory : MonoBehaviour {
 
 
 
-    private void Start() {
-
+    private void Awake() { 
         world = GameObject.Find("World").GetComponent<World>();
         UpdateList();
 
@@ -41,14 +40,12 @@ public class CreativeInventory : MonoBehaviour {
                 }
                 else
                 {
-
-                    LastInList = LastInList + 8;
                     return;
                 }
 
 
             }
-
+            LastInList = LastInList + 8;
 
         }
         else

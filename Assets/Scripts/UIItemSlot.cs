@@ -6,7 +6,9 @@ using UnityEngine.UI;
 public class UIItemSlot : MonoBehaviour {
 
     public bool isLinked = false;
+    public BuildView player;
     public ItemSlot itemSlot;
+    public Image HighLightitemslotImage;
     public Image slotImage;
     public Image slotIcon;
     public Text slotAmount;
@@ -80,6 +82,15 @@ public class UIItemSlot : MonoBehaviour {
 
     }
 
+    public byte GetitemID()
+    {
+        return itemSlot.stack.id;
+    }
+
+    public void ChangeSelectedBlockID()
+    {
+        player.selectedBlockIndex = GetitemID();
+    }
 }
 
 public class ItemSlot {
