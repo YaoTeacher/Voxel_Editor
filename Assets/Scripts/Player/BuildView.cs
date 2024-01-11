@@ -92,28 +92,6 @@ public class BuildView : MonoBehaviour
     {
 
 
-        //float scroll = Input.GetAxis("Mouse ScrollWheel");
-
-        //if (scroll != 0)
-        //{
-        //    if (scroll > 0)
-        //    {
-        //        selectedBlockIndex++;
-        //        if (selectedBlockIndex > world.blocktype.BlockTypes.Length - 1)
-        //        {
-        //            selectedBlockIndex = 1;
-        //        }
-        //    }
-        //    else
-        //    {
-        //        selectedBlockIndex--;
-        //        if (selectedBlockIndex < 1)
-        //        {
-        //            selectedBlockIndex = (byte)(world.blocktype.BlockTypes.Length - 1);
-        //        }
-        //    }
-        //}
-
         if (highlightBlock.gameObject.activeSelf)
         {
             BuildBlock(); 

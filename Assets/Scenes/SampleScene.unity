@@ -930,12 +930,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   seed: 0
   spawnPosition: {x: 80, y: -10, z: 80}
-  WorldChunkSize: 2
+  WorldChunkSize: 4
   player: {fileID: 805852533}
   material: {fileID: 2100000, guid: 82082689290290d429ef5be65ab79789, type: 2}
   debugScreen: {fileID: 0}
   blocktype: {fileID: 11400000, guid: ab2e98d0c38e4c949a7dba1ca1987c08, type: 2}
   _inUI: 0
+  worldData:
+    worldName: test
+    seed: 0
+  appPath: Assets/Scripts/Data
 --- !u!1 &383394820
 GameObject:
   m_ObjectHideFlags: 0

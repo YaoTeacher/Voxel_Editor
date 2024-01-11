@@ -66,7 +66,7 @@ public class Chunk
 
                     ChunkIndex[x, y, z]=index;
                     Vector3 pos= new Vector3(x *VoxelData.BlockSize, y * VoxelData.BlockSize, z  * VoxelData.BlockSize);
-                    world.BlockList[index]= new Block(pos, index, World.BlockTypeList[index.x, y, index.z]);
+                    world.BlockList[index]= new Block(index, World.BlockTypeList[index.x, y, index.z]);
                 }
             }
         }

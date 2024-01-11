@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using Unity.VisualScripting;
 using UnityEditor.VersionControl;
 using UnityEngine;
@@ -42,6 +43,17 @@ public class World : MonoBehaviour
 
     public bool _inUI = false;
 
+    Thread ChunkUpdateThread;
+    public object ChunkUpdateThreadLock = new object();
+
+    public object ChunkListThreadLock = new object();
+
+    private static World _instance;
+    public static World Instance { get { return _instance; } }
+
+    public WorldData worldData;
+
+    public string appPath;
     private void Awake()
     {
         spawnPosition = new Vector3(((WorldChunkSize + 1) * VoxelData.ChunkWidth) *VoxelData.BlockSize/ 2f, (VoxelData.ChunkHeight - 50) * VoxelData.BlockSize, ((WorldChunkSize + 1) * VoxelData.ChunkWidth) * VoxelData.BlockSize / 2f);
@@ -52,9 +64,7 @@ public class World : MonoBehaviour
         BlockTypeList = new byte[VoxelData.ChunkWidth * (WorldChunkSize + 1), VoxelData.ChunkHeight, VoxelData.ChunkWidth * (WorldChunkSize + 1)];
         Chunks =new Chunk[WorldChunkSize + 1, WorldChunkSize + 1];
         GenerateBlock();
-        print(spawnPosition);
         player.transform.position = spawnPosition;
-        print(player.position);
         playerLastChunk = GetChunkIndexFromVector3(player.position);
         GenerateWorldChunk();
         GenerateActiveWorldChunk();
