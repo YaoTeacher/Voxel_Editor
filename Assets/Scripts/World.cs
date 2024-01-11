@@ -15,7 +15,7 @@ public class World : MonoBehaviour
 {
     public int seed;
     public Vector3 spawnPosition;
-    public int WorldChunkSize;
+
     //public Texture2DArray[] block;
 
     public Transform player;
@@ -56,18 +56,29 @@ public class World : MonoBehaviour
     public string appPath;
     private void Awake()
     {
-        spawnPosition = new Vector3(((WorldChunkSize + 1) * VoxelData.ChunkWidth) *VoxelData.BlockSize/ 2f, (VoxelData.ChunkHeight - 50) * VoxelData.BlockSize, ((WorldChunkSize + 1) * VoxelData.ChunkWidth) * VoxelData.BlockSize / 2f);
+
+        // If the instance value is not null and not *this*, we've somehow ended up with more than one World component.
+        // Since another one has already been assigned, delete this one.
+        if (_instance != null && _instance != this)
+            Destroy(this.gameObject);
+        // Else set instance to this.
+        else
+            _instance = this;
+
+        appPath = Application.persistentDataPath;
+
+        spawnPosition = new Vector3(((VoxelData.WorldChunksSize + 1) * VoxelData.ChunkWidth) *VoxelData.BlockSize/ 2f, (VoxelData.ChunkHeight - 50) * VoxelData.BlockSize, ((VoxelData.WorldChunksSize + 1) * VoxelData.ChunkWidth) * VoxelData.BlockSize / 2f);
     }
     private void Start()
     {
         
-        BlockTypeList = new byte[VoxelData.ChunkWidth * (WorldChunkSize + 1), VoxelData.ChunkHeight, VoxelData.ChunkWidth * (WorldChunkSize + 1)];
-        Chunks =new Chunk[WorldChunkSize + 1, WorldChunkSize + 1];
+        BlockTypeList = new byte[VoxelData.ChunkWidth * (VoxelData.WorldChunksSize + 1), VoxelData.ChunkHeight, VoxelData.ChunkWidth * (VoxelData.WorldChunksSize + 1)];
+        Chunks =new Chunk[VoxelData.WorldChunksSize + 1, VoxelData.WorldChunksSize + 1];
         GenerateBlock();
         player.transform.position = spawnPosition;
         playerLastChunk = GetChunkIndexFromVector3(player.position);
         GenerateWorldChunk();
-        GenerateActiveWorldChunk();
+        CheckViewDistance();
         ActiveWorldChunk();
         
 
@@ -77,7 +88,7 @@ public class World : MonoBehaviour
     {
         playerChunk = GetChunkIndexFromVector3(player.position);
         // Only update the chunks if the player has moved from the chunk they were previously on.
-        if(playerChunk.x>WorldChunkSize|| playerChunk.y > WorldChunkSize||playerChunk.x <0 || playerChunk.y < 0)
+        if(playerChunk.x>VoxelData.WorldChunksSize|| playerChunk.y > VoxelData.WorldChunksSize||playerChunk.x <0 || playerChunk.y < 0)
         {
             return;
         }
@@ -114,9 +125,9 @@ public class World : MonoBehaviour
     {
         for (int y = 0; y < VoxelData.ChunkHeight; y++)
         {
-            for (int x = 0; x < VoxelData.ChunkWidth * ( WorldChunkSize + 1) ; x++)
+            for (int x = 0; x < VoxelData.ChunkWidth * ( VoxelData.WorldChunksSize + 1) ; x++)
             {
-                for (int z = 0; z < VoxelData.ChunkWidth * (WorldChunkSize + 1) ; z++)
+                for (int z = 0; z < VoxelData.ChunkWidth * (VoxelData.WorldChunksSize + 1) ; z++)
                 {
                     Vector3Int index = new Vector3Int(x , y, z );
                     //Vector3 pos = new Vector3(x , y, z);
@@ -130,9 +141,9 @@ public class World : MonoBehaviour
 
     public void GenerateWorldChunk()
     {
-        for (int x = 0; x <= WorldChunkSize; x++)
+        for (int x = 0; x <= VoxelData.WorldChunksSize; x++)
         {
-            for (int z = 0; z <= WorldChunkSize; z++)
+            for (int z = 0; z <= VoxelData.WorldChunksSize; z++)
             {
                 Vector2Int ChunkIndex = new Vector2Int(x, z);
                 Chunks[x,z]=new Chunk(x, z, this, true);
@@ -140,37 +151,8 @@ public class World : MonoBehaviour
             }
         }
     }
-    public void GenerateActiveWorldChunk()
-    {
-        print("!");
-        print(playerLastChunk);
-        for (int x = playerLastChunk.x - VoxelData.ViewDistanceInChunks; x <= playerLastChunk.x + VoxelData.ViewDistanceInChunks; x++)
-        {
-            
-            if (x < 0 || x > WorldChunkSize)
-            {
-                print(x);
-                continue;
-            }
-             for (int z = playerLastChunk.y - VoxelData.ViewDistanceInChunks; z <= playerLastChunk.y + VoxelData.ViewDistanceInChunks; z++)
-             {
-                if (z < 0 || z > WorldChunkSize)
-                {
-                    continue;
-                }
+   
 
-
-                    ActiveChunkList.Add(Chunks[x, z]);
-                    print(Chunks[x, z].X + "+" + Chunks[x, z].Z);
-
-
-
-
-             }
-            
-        }
-
-    }
     void ApplyModifications()
     {
 
@@ -255,20 +237,20 @@ public class World : MonoBehaviour
         int Chunk_z;
         if (pos.x >= 0)
         {
-            Chunk_x = Mathf.FloorToInt(pos.x / (WorldChunkSize * VoxelData.ChunkWidth) / VoxelData.BlockSize);
+            Chunk_x = Mathf.FloorToInt(pos.x / (VoxelData.WorldChunksSize * VoxelData.ChunkWidth) / VoxelData.BlockSize);
         }
         else
         {
-            Chunk_x = Mathf.FloorToInt(pos.x / (WorldChunkSize * VoxelData.ChunkWidth) / VoxelData.BlockSize) - 1;
+            Chunk_x = Mathf.FloorToInt(pos.x / (VoxelData.WorldChunksSize * VoxelData.ChunkWidth) / VoxelData.BlockSize) - 1;
         }
 
         if (pos.z >= 0)
         {
-            Chunk_z = Mathf.FloorToInt(pos.z / (WorldChunkSize * VoxelData.ChunkWidth) / VoxelData.BlockSize);
+            Chunk_z = Mathf.FloorToInt(pos.z / (VoxelData.WorldChunksSize * VoxelData.ChunkWidth) / VoxelData.BlockSize);
         }
         else
         {
-            Chunk_z = Mathf.FloorToInt(pos.z / (WorldChunkSize * VoxelData.ChunkWidth) / VoxelData.BlockSize) - 1;
+            Chunk_z = Mathf.FloorToInt(pos.z / (VoxelData.WorldChunksSize * VoxelData.ChunkWidth) / VoxelData.BlockSize) - 1;
         }
 
         return new Vector2Int(Chunk_x, Chunk_z);
@@ -384,13 +366,13 @@ public class World : MonoBehaviour
         // Loop through all chunks currently within view distance of the player.
         for (int x = coord.x- VoxelData.ViewDistanceInChunks; x <= coord.x + VoxelData.ViewDistanceInChunks; x++)
         {
-            if (x < 0||x> WorldChunkSize)
+            if (x < 0||x> VoxelData.WorldChunksSize)
             {
                 continue;
             }
             for (int z = coord.y - VoxelData.ViewDistanceInChunks; z <= coord.y + VoxelData.ViewDistanceInChunks; z++)
             {
-                if (z < 0 || z > WorldChunkSize)
+                if (z < 0 || z > VoxelData.WorldChunksSize)
                 {
                     continue;
                 }

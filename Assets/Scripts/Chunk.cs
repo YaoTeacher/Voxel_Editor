@@ -239,7 +239,7 @@ public class Chunk
     public bool IsCoordTransparent(Vector3Int index)
    {
  
-        if (index.x<0|| index.y < 0|| index.z < 0|| index.x >=VoxelData.ChunkWidth* ( world.WorldChunkSize+1)|| index.z >= VoxelData.ChunkWidth * ( world.WorldChunkSize + 1) || index.y >= VoxelData.ChunkHeight)
+        if (index.x<0|| index.y < 0|| index.z < 0|| index.x >=VoxelData.ChunkWidth* (VoxelData.WorldChunksSize + 1)|| index.z >= VoxelData.ChunkWidth * (VoxelData.WorldChunksSize + 1) || index.y >= VoxelData.ChunkHeight)
         {
              return true;
         }
@@ -251,7 +251,7 @@ public class Chunk
 
     public bool IsCoordSame(Vector3Int index, Vector3Int Coordindex)
     {
-        if (Coordindex.x < 0 || Coordindex.y < 0 || Coordindex.z < 0 || Coordindex.x >= VoxelData.ChunkWidth * (world.WorldChunkSize + 1) || Coordindex.z >= VoxelData.ChunkWidth * ( world.WorldChunkSize + 1) || Coordindex.y >= VoxelData.ChunkHeight)
+        if (Coordindex.x < 0 || Coordindex.y < 0 || Coordindex.z < 0 || Coordindex.x >= VoxelData.ChunkWidth * (VoxelData.WorldChunksSize + 1) || Coordindex.z >= VoxelData.ChunkWidth * (VoxelData.WorldChunksSize + 1) || Coordindex.y >= VoxelData.ChunkHeight)
         {
             return false;
         }

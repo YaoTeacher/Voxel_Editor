@@ -3,7 +3,7 @@ using UnityEngine;
 
 [HideInInspector]
 [System.Serializable]
-public class WorldData
+public class WorldData: UnityEngine.Object
 {
 
     public string worldName = "Prototype"; // Will be set by player eventually.
