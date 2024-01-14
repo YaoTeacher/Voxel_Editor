@@ -303,7 +303,9 @@ public class World : MonoBehaviour
         blockindex = blockindex- new Vector3Int(chunkindex.x*VoxelData.ChunkWidth,0, chunkindex.y * VoxelData.ChunkWidth);
         int blockID = Chunk.GetBlockIntID(blockindex);
         
+
         print("1:" + blockindex);
+        print("1:" + blockID);
 
         if (worldData.Chunks[chunkID].BlockList.ContainsKey(blockID))
         {

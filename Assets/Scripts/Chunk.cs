@@ -316,6 +316,7 @@ public class Chunk
         }
         else
         {
+
             if (chunkData.BlockList[index].GetBlockType() == chunkData.BlockList[Coordindex].GetBlockType())
                 return true;
             else

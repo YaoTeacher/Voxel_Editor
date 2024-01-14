@@ -10,7 +10,7 @@ public class Block
 {
     byte type;
     byte levelOfDamege;
-    readonly int blockID;
+    public readonly int blockID;
 
 
     public Block(  byte type,int x,int y, int z)
