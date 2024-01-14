@@ -3,14 +3,16 @@ using UnityEngine;
 
 [HideInInspector]
 [System.Serializable]
-public class WorldData: UnityEngine.Object
+public class WorldData
 {
 
     public string worldName = "Prototype"; // Will be set by player eventually.
     public int seed;
+
     [System.NonSerialized]
-    public Dictionary<Vector2Int, ChunkData> chunks = new Dictionary<Vector2Int, ChunkData>();
-    public Dictionary<Vector3Int, Block> BlockList = new Dictionary<Vector3Int, Block>();
+    public Dictionary<int, ChunkData> Chunks = new Dictionary<int, ChunkData>();
+
+    
 
     [System.NonSerialized]
     public List<ChunkData> modifiedChunks = new List<ChunkData>();
@@ -33,47 +35,55 @@ public class WorldData: UnityEngine.Object
 
     public ChunkData RequestChunk(Vector2Int coord, bool create)
     {
-
+        int coordID =Chunk.GetChunkIntID(coord);
+        Debug.Log("RequestChunk");
         ChunkData c;
 
 
 
-            if (chunks.ContainsKey(coord)) // If chunk is there, return it.
-                c = chunks[coord];
+        if (Chunks.ContainsKey(coordID)) // If chunk is there, return it.
+        { c = Chunks[coordID];
+            Debug.Log("LoadChunk");
 
-            else if (!create) // If it's not and we haven't asked it to be created, return null.
-                c = null;
+        }
 
-            else
-            { // If it's not and we asked it to be created, create the chunk then return it.
-                LoadChunk(coord);
-                c = chunks[coord];
-            }
+        else if (!create) // If it's not and we haven't asked it to be created, return null.
+        { c = null; 
+        
+        }
+
+        else
+        { // If it's not and we asked it to be created, create the chunk then return it.
+            Debug.Log("LoadChunk");
+            LoadChunk(coordID);
+            c = Chunks[coordID];
+
+            Debug.Log(Chunks[coordID].ChunkID);
+        }
 
 
 
         return c;
     }
 
-    public void LoadChunk(Vector2Int coord)
+    public void LoadChunk(int coord)
     {
 
         // If the chunk is already loaded we don't need to do anything.
-        if (chunks.ContainsKey(coord))
+        if (Chunks.ContainsKey(coord))
             return;
 
         // If not, we check if it is saved and if yes, get the data from there.
         ChunkData chunk = SaveSystem.LoadChunk(worldName, coord);
         if (chunk != null)
         {
-            chunks.Add(coord, chunk);
+            Chunks.Add(coord, chunk);
             return;
         }
 
         // If not, add it to the list and populate it's voxels.
-        chunks.Add(coord, new ChunkData(coord));
-        chunks[coord].Populate(this);
-
+        Chunks.Add(coord, new ChunkData(coord));
+        Chunks[coord].Populate();
     }
 
     public bool IsVoxelInWorld(Vector3 pos)
@@ -111,6 +121,7 @@ public class WorldData: UnityEngine.Object
         z *= VoxelData.ChunkWidth;
 
         // Check if the chunk exists. If not, create it.
+        int ID = x + (z * VoxelData.WorldChunksSize);
         ChunkData chunk = RequestChunk(new Vector2Int(x, z), true);
 
         // Then create a Vector3Int with the position of our voxel *within* the chunk.
@@ -118,35 +129,26 @@ public class WorldData: UnityEngine.Object
         //Debug.Log(string.Format("{0}, {1}, {2}", voxel.x, voxel.y, voxel.z));
         // Then set the voxel in our chunk.
 
-        BlockList[voxel].SetBlockType(value);
+        Chunks[ID].BlockList[Chunk.GetBlockIntID(voxel)].SetBlockType(value);
 
         AddToModifiedChunkList(chunk);
 
     }
 
-    public byte GetVoxel(Vector3 pos)
+    public byte GetVoxel(Vector3Int pos)
     {
 
-        // If the voxel is outside of the world we don't need to do anything with it.
-        if (!IsVoxelInWorld(pos))
-            return 0;
+        int yPos = Mathf.FloorToInt(pos.y);
 
-        // Find out the ChunkCoord value of our voxel's chunk.
-        int x = Mathf.FloorToInt(pos.x / VoxelData.ChunkWidth);
-        int z = Mathf.FloorToInt(pos.z / VoxelData.ChunkWidth);
+        if (yPos == 0)
+        { return 1; }
 
-        // Then reverse that to get the position of the chunk.
-        x *= VoxelData.ChunkWidth;
-        z *= VoxelData.ChunkWidth;
+        else if (yPos <= 70 && yPos > 0)
+        { return 6; }
 
-        // Check if the chunk exists. If not, create it.
-        ChunkData chunk = RequestChunk(new Vector2Int(x, z), true);
+        else
+        { return 0; }
 
-        // Then create a Vector3Int with the position of our voxel *within* the chunk.
-        Vector3Int voxel = new Vector3Int((int)(pos.x - x), (int)pos.y, (int)(pos.z - z));
-
-        // Then set the voxel in our chunk.
-        return BlockList[voxel].GetBlockType();
 
     }
 

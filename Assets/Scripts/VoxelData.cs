@@ -7,7 +7,7 @@ public static class VoxelData
 
     public static readonly int ChunkWidth = 16;
     public static readonly int ChunkHeight = 128;
-    public static readonly int WorldChunksSize = 5;
+    public static readonly int WorldChunksSize = 2;
     public static readonly float BlockSize= 0.5f;
 
     public static int WorldSizeInVoxels
@@ -40,14 +40,14 @@ public static class VoxelData
 
     };
 
-    public static readonly Vector3Int[] faceChecks = new Vector3Int[6] {
+    public static readonly int[] faceChecks = new int[6] {
 
-        new Vector3Int(0, 0, -1),
-        new Vector3Int(0, 0, 1),
-        new Vector3Int(0, 1, 0),
-        new Vector3Int(0, -1, 0),
-        new Vector3Int(-1, 0, 0),
-        new Vector3Int(1, 0, 0)
+        -1, //down
+        1,  //up
+        -ChunkWidth*ChunkHeight, //front
+        ChunkWidth*ChunkHeight,  //back
+        -ChunkHeight, //left
+        ChunkHeight  //right
 
     };
 
@@ -56,10 +56,10 @@ public static class VoxelData
         // Back, Front, Top, Bottom, Left, Right
 
 		// 0 1 2 2 1 3
+        {1, 5, 0, 4}, // Bottom Face
+        {3, 7, 2, 6}, // Top Face
+        {5, 6, 4, 7}, // Front Face
 		{0, 3, 1, 2}, // Back Face
-		{5, 6, 4, 7}, // Front Face
-		{3, 7, 2, 6}, // Top Face
-		{1, 5, 0, 4}, // Bottom Face
 		{4, 7, 0, 3}, // Left Face
 		{1, 2, 5, 6} // Right Face
 

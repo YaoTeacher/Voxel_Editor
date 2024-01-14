@@ -18,7 +18,7 @@ public class MainMapEditor : EditorWindow
 
     void OnGUI()
     {
-        worldData = EditorGUILayout.ObjectField(worldData, typeof(WorldData), false) as WorldData;
+        
         GUILayout.Button("读取地图");
         GUILayout.Button("保存地图");
         

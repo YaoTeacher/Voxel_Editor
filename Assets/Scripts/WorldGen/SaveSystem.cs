@@ -12,7 +12,7 @@ public static class SaveSystem
     {
 
         // Set our save location and make sure we have a saves folder ready to go.
-        string savePath = World.Instance.appPath + "/saves/" + world.worldName + "/";
+        string savePath = "D:/unity Project/Voxel_Editor/Assets/Scripts/Data/saves/" + world.worldName + "/";
 
         // If not, create it.
         if (!Directory.Exists(savePath))
@@ -49,7 +49,7 @@ public static class SaveSystem
 
         }
 
-        Debug.Log(count + " chunks saved.");
+        Debug.Log(count + " Chunks saved.");
 
     }
 
@@ -57,13 +57,14 @@ public static class SaveSystem
     {
 
         // Get the path to our world saves.
-        string loadPath = World.Instance.appPath + "/saves/" + worldName + "/";
+        string loadPath = "D:/unity Project/Voxel_Editor/Assets/Scripts/Data/saves/" + worldName + "/";
 
         // Check if a save exists for the name we were passed.
         if (File.Exists(loadPath + "world.world"))
         {
 
             Debug.Log(worldName + " found. Loading from save.");
+            Debug.Log(loadPath + "world.world");
 
             // If it does, load that file, deserialize it, and put it in a WorldData class for return.
             BinaryFormatter formatter = new BinaryFormatter();
@@ -93,11 +94,12 @@ public static class SaveSystem
 
     public static void SaveChunk(ChunkData chunk, string worldName)
     {
+        Vector2Int position = Chunk.GetChunkVector2ID(chunk.ChunkID);
 
-        string chunkName = chunk.position.x + "-" + chunk.position.y;
+        string chunkName = position.x+ "_" + position.y;
 
         // Set our save location and make sure we have a saves folder ready to go.
-        string savePath = World.Instance.appPath + "/saves/" + worldName + "/chunks/";
+        string savePath = "D:/unity Project/Voxel_Editor/Assets/Scripts/Data/saves/" + worldName + "/Chunks/";
 
         // If not, create it.
         if (!Directory.Exists(savePath))
@@ -111,13 +113,14 @@ public static class SaveSystem
 
     }
 
-    public static ChunkData LoadChunk(string worldName, Vector2Int position)
+    public static ChunkData LoadChunk(string worldName, int ID)
     {
+        Vector2Int position = Chunk.GetChunkVector2ID(ID);
 
-        string chunkName = position.x + "-" + position.y;
+        string chunkName = position.x + "_" + position.y;
 
         // Get the path to our world saves.
-        string loadPath = World.Instance.appPath + "/saves/" + worldName + "/chunks/" + chunkName + ".chunk";
+        string loadPath = "D:/unity Project/Voxel_Editor/Assets/Scripts/Data/saves/" + worldName + "/Chunks/" + chunkName + ".chunk";
 
         // Check if a save exists for the name we were passed.
         if (File.Exists(loadPath))

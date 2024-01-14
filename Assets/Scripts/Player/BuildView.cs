@@ -42,6 +42,7 @@ public class BuildView : MonoBehaviour
         {
             GetPlayerInputs();
             placeCursorBlocks();
+
             
 
         }
@@ -95,6 +96,12 @@ public class BuildView : MonoBehaviour
         if (highlightBlock.gameObject.activeSelf)
         {
             BuildBlock(); 
+        }
+
+
+        if (Input.GetKeyDown(KeyCode.B))
+        {
+            SaveSystem.SaveWorld(world.worldData);
         }
     }
 
