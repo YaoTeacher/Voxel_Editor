@@ -49,6 +49,8 @@ public static class VoxelData
         -ChunkHeight, //left
         ChunkHeight  //right
 
+
+
     };
 
     public static readonly int[,] voxelTris = new int[6, 4] {
@@ -58,9 +60,8 @@ public static class VoxelData
 		// 0 1 2 2 1 3
         {1, 5, 0, 4}, // Bottom Face
         {3, 7, 2, 6}, // Top Face
-        {0, 3, 1, 2},
-        {5, 6, 4, 7}, // Front Face
-		// Back Face
+        {0, 3, 1, 2},// Front Face
+        {5, 6, 4, 7}, // Back Face
 		{4, 7, 0, 3}, // Left Face
 		{1, 2, 5, 6} // Right Face
 

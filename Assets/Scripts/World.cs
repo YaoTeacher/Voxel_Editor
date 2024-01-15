@@ -7,6 +7,7 @@ using Unity.VisualScripting;
 using UnityEditor.VersionControl;
 using UnityEngine;
 using System.IO;
+using static UnityEngine.Rendering.VolumeComponent;
 
 //[ExecuteInEditMode]
 public class World : MonoBehaviour
@@ -71,7 +72,7 @@ public class World : MonoBehaviour
     {
         worldData = SaveSystem.LoadWorld("Testing");
 
-        string jsonImport = File.ReadAllText("D:/unity Project/Voxel_Editor/Assets/settings.cfg");
+        string jsonImport = File.ReadAllText(Application.dataPath +"/settings.cfg");
         settings = JsonUtility.FromJson<Settings>(jsonImport);
         LoadWorld();
         player.transform.position = spawnPosition;
@@ -307,6 +308,12 @@ public class World : MonoBehaviour
         print("1:" + blockindex);
         print("1:" + blockID);
 
+        Debug.Log(blockID + (VoxelData.ChunkWidth * (VoxelData.ChunkWidth-1 ) * VoxelData.ChunkHeight));
+        Debug.Log(blockID   - (VoxelData.ChunkWidth * (VoxelData.ChunkWidth+1 ) * VoxelData.ChunkHeight));
+        Debug.Log(blockID  + ((VoxelData.ChunkWidth-1) * VoxelData.ChunkHeight));
+        Debug.Log(blockID  - ((VoxelData.ChunkWidth +1) * VoxelData.ChunkHeight));
+
+
         if (worldData.Chunks[chunkID].BlockList.ContainsKey(blockID))
         {
             print("update");
@@ -318,21 +325,25 @@ public class World : MonoBehaviour
             if (blockindex.x == 0)
             {
                 print("update nei");
+                if (Chunks[chunkindex.x + 1, chunkindex.y] == null) { return; }
                 Chunks[chunkindex.x - 1, chunkindex.y]._UpdateChunk();
             }
             if (blockindex.x == (VoxelData.ChunkWidth - 1))
             {
                 print("update nei");
+                if (Chunks[chunkindex.x + 1, chunkindex.y] == null) { return; }
                 Chunks[chunkindex.x + 1, chunkindex.y]._UpdateChunk();
             }
             if (blockindex.z == 0)
             {
                 print("update nei");
+                if (Chunks[chunkindex.x, chunkindex.y - 1] == null) { return; }
                 Chunks[chunkindex.x, chunkindex.y - 1]._UpdateChunk();
             }
             if (blockindex.z == (VoxelData.ChunkWidth - 1))
             {
                 print("update nei");
+                if (Chunks[chunkindex.x, chunkindex.y + 1] == null) { return; }
                 Chunks[chunkindex.x, chunkindex.y + 1]._UpdateChunk();
             }
             Chunks[chunkindex.x, chunkindex.y]._UpdateChunk();

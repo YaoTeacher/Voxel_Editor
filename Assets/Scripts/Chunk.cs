@@ -210,70 +210,254 @@ public class Chunk
 
 
     }
+    //public bool IsCoordTransparent(Vector3Int index)
+    //{
 
+    //    int BlockID = GetBlockIntID(index);
+    //    if (index.y < 0 || index.y > 127 )
+    //    { 
+    //        return false;
+        
+    //    }
+    //    else if (index.x < 0)
+    //    {
+    //        if (!world.worldData.Chunks.ContainsKey(chunkData.ChunkID - 1) )
+    //        {
+    //            return false;
+    //        }
+
+    //        return world.blocktype.BlockTypes[world.worldData.Chunks[chunkData.ChunkID - 1].BlockList[BlockID + (VoxelData.ChunkWidth * VoxelData.ChunkHeight)].GetBlockType()].isTransparent;
+    //    }
+    //    else if (index.x > 15)
+    //    {
+    //        if (!world.worldData.Chunks.ContainsKey(chunkData.ChunkID + 1))
+    //        {
+    //            return false;
+    //        }
+
+    //        return world.blocktype.BlockTypes[world.worldData.Chunks[chunkData.ChunkID + 1].BlockList[BlockID - (VoxelData.ChunkWidth * VoxelData.ChunkHeight)].GetBlockType()].isTransparent;
+    //    }
+    //    else if (index.z < 0)
+    //    {
+    //        if (!world.worldData.Chunks.ContainsKey(chunkData.ChunkID - VoxelData.WorldChunksSize))
+    //        {
+    //            return false;
+    //        }
+
+    //        return world.blocktype.BlockTypes[world.worldData.Chunks[chunkData.ChunkID - VoxelData.WorldChunksSize].BlockList[BlockID + (VoxelData.ChunkWidth * (VoxelData.ChunkWidth) * VoxelData.ChunkHeight)].GetBlockType()].isTransparent;
+    //    }
+
+    //    else if (index.z > 15)
+    //    {
+    //        if (!world.worldData.Chunks.ContainsKey(chunkData.ChunkID + VoxelData.WorldChunksSize))
+    //        {
+    //            return false;
+    //        }
+
+    //        return world.blocktype.BlockTypes[world.worldData.Chunks[chunkData.ChunkID + VoxelData.WorldChunksSize].BlockList[BlockID -(VoxelData.ChunkWidth * (VoxelData.ChunkWidth) * VoxelData.ChunkHeight)].GetBlockType()].isTransparent;
+    //    }
+    //    else
+    //    {
+            
+    //        return world.blocktype.BlockTypes[chunkData.BlockList[BlockID].GetBlockType()].isTransparent; }
+
+
+    //}
+
+    //public bool IsCoordSame(Vector3Int index, Vector3Int Coordindex)
+    //{
+    //    int BlockID = GetBlockIntID(index);
+    //    int CoordBlockID = GetBlockIntID(Coordindex);
+    //    if (index.y < 0 || index.y > 127)
+    //    {
+    //        return false;
+
+    //    }
+    //    else if (index.x < 0)
+    //    {
+    //        if (!world.worldData.Chunks.ContainsKey(chunkData.ChunkID - 1))
+    //        {
+    //            return false;
+    //        }
+
+    //        return chunkData.BlockList[BlockID].GetBlockType() == world.worldData.Chunks[chunkData.ChunkID - 1].BlockList[BlockID + ((VoxelData.ChunkWidth) * VoxelData.ChunkHeight)].GetBlockType();
+    //    }
+    //    else if (index.x > 15)
+    //    {
+    //        if (!world.worldData.Chunks.ContainsKey(chunkData.ChunkID + 1))
+    //        {
+    //            return false;
+    //        }
+
+    //        return chunkData.BlockList[BlockID].GetBlockType() == world.worldData.Chunks[chunkData.ChunkID + 1].BlockList[BlockID - ((VoxelData.ChunkWidth) * VoxelData.ChunkHeight)].GetBlockType();
+    //    }
+    //    else if (index.z < 0)
+    //    {
+    //        if (world.worldData.Chunks[chunkData.ChunkID - VoxelData.WorldChunksSize] == null)
+    //        {
+    //            return false;
+    //        }
+
+    //        return chunkData.BlockList[BlockID].GetBlockType() == world.worldData.Chunks[chunkData.ChunkID - VoxelData.WorldChunksSize].BlockList[BlockID + (VoxelData.ChunkWidth * VoxelData.ChunkWidth * VoxelData.ChunkHeight)].GetBlockType();
+    //    }
+
+    //    else if (index.z > 15)
+    //    {
+    //        if (!world.worldData.Chunks.ContainsKey(chunkData.ChunkID + VoxelData.WorldChunksSize))
+    //        {
+    //            return false;
+    //        }
+
+    //        return chunkData.BlockList[BlockID].GetBlockType() == world.worldData.Chunks[chunkData.ChunkID + VoxelData.WorldChunksSize].BlockList[BlockID - (VoxelData.ChunkWidth * VoxelData.ChunkWidth * VoxelData.ChunkHeight)].GetBlockType();
+    //    }
+    //    else
+    //    {
+
+    //        if (chunkData.BlockList[BlockID].GetBlockType() == chunkData.BlockList[CoordBlockID].GetBlockType())
+    //            return true;
+    //        else
+    //            return false;
+    //    }
+
+
+    //}
 
     public bool IsCoordTransparent(int index, int p)
     {
 
-        if (index < 0 || index > VoxelData.ChunkWidth * VoxelData.ChunkWidth * VoxelData.ChunkHeight-1)
+
+        if(index < 0||index> VoxelData.ChunkWidth * VoxelData.ChunkWidth * VoxelData.ChunkHeight-1)
         {
 
-
-            if (p == 0 || p == 1)
+            if (p == 0)
             {
-                return true;
-            }
 
+                    return true;
+
+            }
+            else if (p == 1)
+            {
+
+                    return true;
+
+            }
             else if (p == 2)
             {
-                    if (chunkData.ChunkID - VoxelData.WorldChunksSize < 0)
-                    {
-                        return false;
-                    }
+                if (!world.worldData.Chunks.ContainsKey(chunkData.ChunkID - VoxelData.WorldChunksSize))
+                {
+                    return false;
+                }
 
-                    return world.blocktype.BlockTypes[world.worldData.Chunks[chunkData.ChunkID - VoxelData.WorldChunksSize].BlockList[index + (VoxelData.ChunkWidth * (VoxelData.ChunkWidth - 1) * VoxelData.ChunkHeight)].GetBlockType()].isTransparent;
+                return world.blocktype.BlockTypes[world.worldData.Chunks[chunkData.ChunkID - VoxelData.WorldChunksSize].BlockList[index + (VoxelData.ChunkWidth * VoxelData.ChunkWidth * VoxelData.ChunkHeight)].GetBlockType()].isTransparent;
 
 
             }
             else if (p == 3)
             {
-                if (chunkData.ChunkID + VoxelData.WorldChunksSize > VoxelData.WorldChunksSize * VoxelData.WorldChunksSize)
+                if (!world.worldData.Chunks.ContainsKey(chunkData.ChunkID + VoxelData.WorldChunksSize))
                 {
                     return false;
                 }
 
-                return world.blocktype.BlockTypes[world.worldData.Chunks[chunkData.ChunkID + VoxelData.WorldChunksSize].BlockList[index - (VoxelData.ChunkWidth * (VoxelData.ChunkWidth - 1) * VoxelData.ChunkHeight)].GetBlockType()].isTransparent;
+                return world.blocktype.BlockTypes[world.worldData.Chunks[chunkData.ChunkID + VoxelData.WorldChunksSize].BlockList[index - (VoxelData.ChunkWidth * VoxelData.ChunkWidth * VoxelData.ChunkHeight)].GetBlockType()].isTransparent;
 
             }
             else if (p == 4)
             {
-                if (chunkData.ChunkID - 1 < 0)
+                if (!world.worldData.Chunks.ContainsKey(chunkData.ChunkID - 1))
                 {
                     return false;
                 }
-                return world.blocktype.BlockTypes[world.worldData.Chunks[chunkData.ChunkID - 1].BlockList[index + ((VoxelData.ChunkWidth - 1) * VoxelData.ChunkHeight)].GetBlockType()].isTransparent;
+
+                return world.blocktype.BlockTypes[world.worldData.Chunks[chunkData.ChunkID - 1].BlockList[index + (VoxelData.ChunkWidth * VoxelData.ChunkHeight)].GetBlockType()].isTransparent;
 
             }
             else
             {
-                if (chunkData.ChunkID + 1 > VoxelData.WorldChunksSize * VoxelData.WorldChunksSize)
+                if (!world.worldData.Chunks.ContainsKey(chunkData.ChunkID + 1))
                 {
                     return false;
                 }
-                return world.blocktype.BlockTypes[world.worldData.Chunks[chunkData.ChunkID + 1].BlockList[index - ((VoxelData.ChunkWidth - 1) * VoxelData.ChunkHeight)].GetBlockType()].isTransparent;
+
+                return world.blocktype.BlockTypes[world.worldData.Chunks[chunkData.ChunkID + 1].BlockList[index - (VoxelData.ChunkWidth * VoxelData.ChunkHeight)].GetBlockType()].isTransparent;
 
             };
 
         }
-        else
-        { return world.blocktype.BlockTypes[chunkData.BlockList[index].GetBlockType()].isTransparent; }
+        else 
+        {
+            if (p == 0)
+            {
+                if ((index + 1) % VoxelData.ChunkHeight == 0)
+                {
+                    return true;
+                }
+                else
+                {
+                    return world.blocktype.BlockTypes[chunkData.BlockList[index].GetBlockType()].isTransparent;
+                }
+            }
+            else if (p == 1)
+            {
+                if (index % VoxelData.ChunkHeight == 0)
+                {
+                    return true;
+                }
+                else
+                {
+                    return world.blocktype.BlockTypes[chunkData.BlockList[index].GetBlockType()].isTransparent;
+                }
+            }
+            else if (p == 2)
+            {
+                return world.blocktype.BlockTypes[chunkData.BlockList[index].GetBlockType()].isTransparent;
+
+
+            }
+            else if (p == 3)
+            {
+                return world.blocktype.BlockTypes[chunkData.BlockList[index].GetBlockType()].isTransparent;
+
+            }
+            else if (p == 4)
+            {
+                if ((((Mathf.CeilToInt((index +1)/ VoxelData.ChunkHeight)-1) % VoxelData.ChunkWidth)== 15)|| (Mathf.CeilToInt((index + 1) / VoxelData.ChunkHeight) - 1)==0)//&&( (Mathf.CeilToInt((index + 1) / VoxelData.ChunkHeight) - 1) !=240)
+                {
+                    if (!world.worldData.Chunks.ContainsKey(chunkData.ChunkID - 1))
+                    {
+                        return false;
+                    }
+
+                    return world.blocktype.BlockTypes[world.worldData.Chunks[chunkData.ChunkID - 1].BlockList[index + ((VoxelData.ChunkWidth-1) * VoxelData.ChunkHeight)].GetBlockType()].isTransparent;
+                }
+
+                return world.blocktype.BlockTypes[chunkData.BlockList[index].GetBlockType()].isTransparent;
+
+            }
+            else
+            {
+                if (((Mathf.CeilToInt((index+1)/VoxelData.ChunkHeight) - 1 ) %VoxelData.ChunkWidth)==0&& (Mathf.CeilToInt((index + 1) / VoxelData.ChunkHeight) - 1)!=0)
+                {
+                    if (!world.worldData.Chunks.ContainsKey(chunkData.ChunkID + 1))
+                    {
+                        return false;
+                    }
+
+                    return world.blocktype.BlockTypes[world.worldData.Chunks[chunkData.ChunkID + 1].BlockList[index - ((VoxelData.ChunkWidth-1) * VoxelData.ChunkHeight)].GetBlockType()].isTransparent;
+                }
+
+                return world.blocktype.BlockTypes[chunkData.BlockList[index].GetBlockType()].isTransparent;
+
+            };
+        }
+
 
 
     }
 
-    public bool IsCoordSame(int index, int Coordindex,int p)
+    public bool IsCoordSame(int index, int Coordindex, int p)
     {
-        if (Coordindex < 0 ||Coordindex>VoxelData.ChunkWidth*VoxelData.ChunkWidth*VoxelData.ChunkHeight - 1)
+        if (Coordindex < 0 || Coordindex > VoxelData.ChunkWidth * VoxelData.ChunkWidth * VoxelData.ChunkHeight - 1 || ((Mathf.FloorToInt(index / VoxelData.ChunkHeight)) % VoxelData.ChunkWidth) == 0 || ((Mathf.CeilToInt(index / VoxelData.ChunkHeight)) % VoxelData.ChunkWidth) == 0)
         {
             if (p == 0 || p == 1)
             {
@@ -282,14 +466,14 @@ public class Chunk
 
             else if (p == 2)
             {
-                if (chunkData.BlockList[index].GetBlockType() == world.worldData.Chunks[chunkData.ChunkID - VoxelData.WorldChunksSize].BlockList[index + (VoxelData.ChunkWidth * (VoxelData.ChunkWidth - 1) * VoxelData.ChunkHeight)].GetBlockType())
+                if (chunkData.BlockList[index].GetBlockType() == world.worldData.Chunks[chunkData.ChunkID - VoxelData.WorldChunksSize].BlockList[index + (VoxelData.ChunkWidth * VoxelData.ChunkWidth * VoxelData.ChunkHeight)].GetBlockType())
                     return true;
                 else
                     return false;
             }
             else if (p == 3)
             {
-                if (chunkData.BlockList[index].GetBlockType() == world.worldData.Chunks[chunkData.ChunkID + VoxelData.WorldChunksSize].BlockList[index - (VoxelData.ChunkWidth * (VoxelData.ChunkWidth - 1) * VoxelData.ChunkHeight)].GetBlockType())
+                if (chunkData.BlockList[index].GetBlockType() == world.worldData.Chunks[chunkData.ChunkID + VoxelData.WorldChunksSize].BlockList[index - (VoxelData.ChunkWidth * VoxelData.ChunkWidth * VoxelData.ChunkHeight)].GetBlockType())
                     return true;
                 else
                     return false;
@@ -297,14 +481,14 @@ public class Chunk
             else if (p == 4)
             {
 
-                if (chunkData.BlockList[index].GetBlockType() == world.worldData.Chunks[chunkData.ChunkID - 1].BlockList[index + ((VoxelData.ChunkWidth - 1) * VoxelData.ChunkHeight)].GetBlockType())
+                if (chunkData.BlockList[index].GetBlockType() == world.worldData.Chunks[chunkData.ChunkID - 1].BlockList[index + ((VoxelData.ChunkWidth) * VoxelData.ChunkHeight)].GetBlockType())
                     return true;
                 else
                     return false;
             }
-            else 
+            else
             {
-                if (chunkData.BlockList[index].GetBlockType() == world.worldData.Chunks[chunkData.ChunkID + 1].BlockList[index - ((VoxelData.ChunkWidth - 1) * VoxelData.ChunkHeight)].GetBlockType())
+                if (chunkData.BlockList[index].GetBlockType() == world.worldData.Chunks[chunkData.ChunkID + 1].BlockList[index - ((VoxelData.ChunkWidth) * VoxelData.ChunkHeight)].GetBlockType())
                     return true;
                 else
                     return false;
@@ -331,7 +515,7 @@ public class Chunk
         Vector3Int ID = new Vector3Int();
         ID.z = (int)MathF.Floor(blockID / (VoxelData.ChunkHeight * VoxelData.ChunkWidth));
         ID.x = (int)MathF.Floor((blockID - (ID.z * VoxelData.ChunkHeight * VoxelData.ChunkWidth)) / VoxelData.ChunkHeight);
-        ID.y = blockID - (ID.x * VoxelData.ChunkHeight * VoxelData.ChunkWidth) - (ID.x * VoxelData.ChunkHeight);
+        ID.y = blockID - (ID.z * VoxelData.ChunkHeight * VoxelData.ChunkWidth) - (ID.x * VoxelData.ChunkHeight);
         return ID;
     }
     public static int GetBlockIntID(Vector3Int index)
