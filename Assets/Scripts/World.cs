@@ -166,8 +166,8 @@ public class World : MonoBehaviour
             for (int z = 0; z < VoxelData.WorldChunksSize; z++)
             {
                 Chunks[x,z]=new Chunk(x, z, this, true);
-                Instance.chunksToCreate.Add(Chunks[x, z]);
-                Debug.Log(Instance.chunksToCreate.Count);
+                chunksToCreate.Add(Chunks[x, z]);
+                Debug.Log(chunksToCreate.Count);
             }
         }
 
@@ -178,8 +178,8 @@ public class World : MonoBehaviour
     void CreateChunk()
     {
 
-        Chunk c = Instance.chunksToCreate[0];
-        Instance.chunksToCreate.RemoveAt(0);
+        Chunk c = chunksToCreate[0];
+        chunksToCreate.RemoveAt(0);
         Chunks[c.X, c.Z].Init();
 
     }
@@ -271,32 +271,6 @@ public class World : MonoBehaviour
     }
 
 
-    public Vector2Int PositionInChunks(Vector3 pos)
-    {
-        int Chunk_x;
-        int Chunk_z;
-        if (pos.x >= 0)
-        {
-            Chunk_x = Mathf.FloorToInt(pos.x / (VoxelData.WorldChunksSize * VoxelData.ChunkWidth) / VoxelData.BlockSize);
-        }
-        else
-        {
-            Chunk_x = Mathf.FloorToInt(pos.x / (VoxelData.WorldChunksSize * VoxelData.ChunkWidth) / VoxelData.BlockSize) - 1;
-        }
-
-        if (pos.z >= 0)
-        {
-            Chunk_z = Mathf.FloorToInt(pos.z / (VoxelData.WorldChunksSize * VoxelData.ChunkWidth) / VoxelData.BlockSize);
-        }
-        else
-        {
-            Chunk_z = Mathf.FloorToInt(pos.z / (VoxelData.WorldChunksSize * VoxelData.ChunkWidth) / VoxelData.BlockSize) - 1;
-        }
-
-        return new Vector2Int(Chunk_x, Chunk_z);
-    }
-
-
 
     public bool CheckVoxelSolid(Vector3 pos)
     {
@@ -342,9 +316,9 @@ public class World : MonoBehaviour
     public static Vector3Int GetWorldIndexFromPos(Vector3 pos)
     {
         pos = pos / VoxelData.BlockSize;
-        int Chunk_x = Mathf.FloorToInt(pos.x);
-        int Chunk_y = Mathf.FloorToInt(pos.y);
-        int Chunk_z = Mathf.FloorToInt(pos.z);
+        int Chunk_x = Mathf.RoundToInt(pos.x);
+        int Chunk_y = Mathf.RoundToInt(pos.y);
+        int Chunk_z = Mathf.RoundToInt(pos.z);
 
 
         return new Vector3Int(Chunk_x, Chunk_y, Chunk_z);
@@ -369,8 +343,8 @@ public class World : MonoBehaviour
 
     public static Vector2Int GetChunkIndexFromPos(Vector3 pos)
     {
-        int x = Mathf.FloorToInt(pos.x / VoxelData.ChunkWidth/VoxelData.BlockSize);
-        int z = Mathf.FloorToInt(pos.z / VoxelData.ChunkWidth/VoxelData.BlockSize);
+        int x = Mathf.RoundToInt(pos.x / VoxelData.ChunkWidth/VoxelData.BlockSize);
+        int z = Mathf.RoundToInt(pos.z / VoxelData.ChunkWidth/VoxelData.BlockSize);
 
         return new Vector2Int(x, z);
     }
