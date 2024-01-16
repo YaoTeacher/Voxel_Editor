@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using UnityEngine;
+using static UnityEditor.PlayerSettings;
 
 [System.Serializable]
 public class ChunkData
@@ -23,7 +24,7 @@ public class ChunkData
     public ChunkData(int x, int z) { ChunkID = Chunk.GetChunkIntID(new Vector2Int(x, z)); }
 
     public ChunkData(int ID) { ChunkID = ID;
-        Vector2Int index = Chunk.GetChunkVector2ID(ChunkID);
+        Vector2Int index = Chunk.GetChunkVector2Index(ChunkID);
         X = index.x;
         Z = index.y;
     }
@@ -40,13 +41,27 @@ public class ChunkData
                 {
                     Vector3Int index = new Vector3Int(x + X * VoxelData.ChunkWidth, y, z + Z * VoxelData.ChunkWidth);
                     int ChunkIdx = z * VoxelData.ChunkHeight * VoxelData.ChunkWidth + x * VoxelData.ChunkHeight + y;
-                    Block block = new Block(World.GetVoxel(index),index);
+                    Block block = new Block(World.GetVoxel(index));
                     BlockList[ChunkIdx] = block;
 
                 }
             }
         }
         World.Instance.worldData.AddToModifiedChunkList(this);
+    }
+
+    public Block GetVoxel(int ID)
+    {
+
+        // If the voxel is outside of the world we don't need to do anything with it.
+        if (ID<0||ID> VoxelData.ChunkWidth* VoxelData.ChunkWidth* VoxelData.ChunkHeight-1)
+            return null;
+        // Check if the chunk exists. If not, create it.
+
+        return BlockList[ID];
+        // Then set the voxel in our chunk.
+
+
     }
 
 }

@@ -94,7 +94,7 @@ public static class SaveSystem
 
     public static void SaveChunk(ChunkData chunk, string worldName)
     {
-        Vector2Int position = Chunk.GetChunkVector2ID(chunk.ChunkID);
+        Vector2Int position = Chunk.GetChunkVector2Index(chunk.ChunkID);
 
         string chunkName = position.x+ "_" + position.y;
 
@@ -115,7 +115,7 @@ public static class SaveSystem
 
     public static ChunkData LoadChunk(string worldName, int ID)
     {
-        Vector2Int position = Chunk.GetChunkVector2ID(ID);
+        Vector2Int position = Chunk.GetChunkVector2Index(ID);
 
         string chunkName = position.x + "_" + position.y;
 

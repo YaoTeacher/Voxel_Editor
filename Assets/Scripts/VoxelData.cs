@@ -7,7 +7,7 @@ public static class VoxelData
 
     public static readonly int ChunkWidth = 16;
     public static readonly int ChunkHeight = 128;
-    public static readonly int WorldChunksSize = 2;
+    public static readonly int WorldChunksSize = 3;
     public static readonly float BlockSize= 0.5f;
 
     public static int WorldSizeInVoxels
@@ -44,8 +44,8 @@ public static class VoxelData
 
         -1, //down
         1,  //up
-        -ChunkWidth*ChunkHeight, //front
-        ChunkWidth*ChunkHeight,  //back
+        -ChunkWidth*ChunkHeight, //back
+        ChunkWidth*ChunkHeight,  //front
         -ChunkHeight, //left
         ChunkHeight  //right
 
@@ -60,8 +60,8 @@ public static class VoxelData
 		// 0 1 2 2 1 3
         {1, 5, 0, 4}, // Bottom Face
         {3, 7, 2, 6}, // Top Face
-        {0, 3, 1, 2},// Front Face
-        {5, 6, 4, 7}, // Back Face
+        {0, 3, 1, 2},// Back Face
+        {5, 6, 4, 7},// Front Face
 		{4, 7, 0, 3}, // Left Face
 		{1, 2, 5, 6} // Right Face
 

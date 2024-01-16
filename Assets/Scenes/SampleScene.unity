@@ -930,7 +930,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   seed: 0
   spawnPosition: {x: 80, y: -10, z: 80}
-  WorldChunkSize: 4
+  settings:
+    version: 0.0.0.01
+    viewDistance: 3
+    loadDistance: 3
+    enableThreading: 1
+    enableAnimatedChunks: 0
+    mouseSensitivity: 2
   player: {fileID: 805852533}
   material: {fileID: 2100000, guid: 82082689290290d429ef5be65ab79789, type: 2}
   debugScreen: {fileID: 0}
