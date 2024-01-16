@@ -69,7 +69,7 @@ public class ThirdView : MonoBehaviour
             Vector3 pos = cam.transform.position + (dir * step);
             Vector3 placepos = pos / VoxelData.BlockSize;
 
-            if (world.CheckVoxelSolid(pos))
+            if (world.CheckForVoxel(pos))
             {
                 highlightBlock.position = new Vector3(Mathf.FloorToInt(placepos.x), Mathf.FloorToInt(placepos.y), Mathf.FloorToInt(placepos.z)) * VoxelData.BlockSize;
                 placeBlock.position = lastPos;

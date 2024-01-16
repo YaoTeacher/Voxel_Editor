@@ -32,9 +32,6 @@ public class World : MonoBehaviour
 
     bool applyingModifications = false;
 
-    //public byte[,,] BlockTypeList = new byte[VoxelData.ChunkWidth * (VoxelData.WorldChunksSize + 1), VoxelData.ChunkHeight, VoxelData.ChunkWidth * (VoxelData.WorldChunksSize + 1)];
-
-    List<Chunk> chunksToCreate = new List<Chunk>();
     public Queue<Chunk> chunksToDraw = new Queue<Chunk>();
     public List<Chunk> chunksToUpdate = new List<Chunk>();
 
@@ -66,22 +63,24 @@ public class World : MonoBehaviour
 
         appPath = Application.persistentDataPath;
 
-        spawnPosition = new Vector3(((VoxelData.WorldChunksSize + 1) * VoxelData.ChunkWidth) *VoxelData.BlockSize/ 2f, (VoxelData.ChunkHeight - 50) * VoxelData.BlockSize, ((VoxelData.WorldChunksSize + 1) * VoxelData.ChunkWidth) * VoxelData.BlockSize / 2f);
     }
     private void Start()
     {
         worldData = SaveSystem.LoadWorld("Testing");
 
-        string jsonImport = File.ReadAllText("D:\\Unity Project\\Voxel_Editor\\Voxel_Editor\\Assets\\settings.cfg");
+        string jsonImport = File.ReadAllText("D:\\Unity Project\\Voxel_Editor\\Assets\\settings.cfg");
         settings = JsonUtility.FromJson<Settings>(jsonImport);
         LoadWorld();
+        GenerateWorld();
+        spawnPosition = new Vector3(VoxelData.WorldCentre, VoxelData.ChunkHeight - 50f, VoxelData.WorldCentre);
         player.transform.position = spawnPosition;
-        GenerateWorldChunk();
+        CheckViewDistance();
         playerLastChunk = GetChunkIndexFromPos(player.position);
 
 
         if (settings.enableThreading)
         {
+            Debug.Log("!!"+chunksToUpdate.Count);
             ChunkUpdateThread = new Thread(new ThreadStart(ThreadedUpdate));
             ChunkUpdateThread.Start();
         }
@@ -94,10 +93,9 @@ public class World : MonoBehaviour
 
         // Only update the chunks if the player has moved from the chunk they were previously on.
         if (!playerChunk.Equals(playerLastChunk))
-            CheckViewDistance();
+        { CheckViewDistance(); }
+            
 
-        if (Instance.chunksToCreate.Count > 0)
-            CreateChunk();
 
         if (Instance.chunksToDraw.Count > 0)
         {
@@ -131,17 +129,17 @@ public class World : MonoBehaviour
 
     }
 
-    void UpdateChunks()
+    void GenerateWorld()
     {
 
-        lock (ChunkUpdateThreadLock)
+        for (int x = 0; x < VoxelData.WorldChunksSize ; x++)
         {
+            for (int z = 0; z < VoxelData.WorldChunksSize; z++)
+            {
 
-            Instance.chunksToUpdate[0].UpdateChunk();
-            if (!ActiveChunks.Contains(chunksToUpdate[0]))
-                ActiveChunks.Add(chunksToUpdate[0]);
-            Instance. chunksToUpdate.RemoveAt(0);
+                Chunks[x, z] = new Chunk(x,z);
 
+            }
         }
     }
     void LoadWorld()
@@ -154,35 +152,11 @@ public class World : MonoBehaviour
                 int ChunkID = Chunk.GetChunkIntID(new Vector2Int(x, z));
                 worldData.LoadChunk(ChunkID);
 
+
             }
         }
     }
 
-
-    public void GenerateWorldChunk()
-    {
-        for (int x = 0; x < VoxelData.WorldChunksSize; x++)
-        {
-            for (int z = 0; z < VoxelData.WorldChunksSize; z++)
-            {
-                Chunks[x,z]=new Chunk(x, z, this, true);
-                chunksToCreate.Add(Chunks[x, z]);
-                Debug.Log(chunksToCreate.Count);
-            }
-        }
-
-        player.position = spawnPosition;
-        CheckViewDistance();
-    }
-
-    void CreateChunk()
-    {
-
-        Chunk c = chunksToCreate[0];
-        chunksToCreate.RemoveAt(0);
-        Chunks[c.X, c.Z].Init();
-
-    }
     void ApplyModifications()
     {
 
@@ -198,18 +172,7 @@ public class World : MonoBehaviour
 
                 VoxelMod v = queue.Dequeue();
 
-                Chunk c = GetChunkFromPos(v.index);
-
-                if (Chunks[c.X,c.Z] == null)
-                {
-                    Chunks[c.X, c.Z] = c;
-                    ActiveChunks.Add(c);
-                }
-
-                Chunks[c.X, c.Z].modifications.Enqueue(v);
-
-                if (!chunksToUpdate.Contains(Chunks[c.X, c.Z]))
-                    chunksToUpdate.Add(Chunks[c.X, c.Z]);
+                worldData.SetVoxel(v.index, v.id);
 
             }
         }
@@ -217,7 +180,46 @@ public class World : MonoBehaviour
         applyingModifications = false;
 
     }
+    public void AddChunkToUpdate(Chunk chunk)
+    {
 
+        AddChunkToUpdate(chunk, false);
+
+    }
+
+    public void AddChunkToUpdate(Chunk chunk, bool insert)
+    {
+
+        // Lock list to ensure only one thing is using the list at a time.
+        lock (ChunkUpdateThreadLock)
+        {
+
+            // Make sure update list doesn't already contain chunk.
+            if (!chunksToUpdate.Contains(chunk))
+            {
+                // If insert is true, chunk gets inserted at the top of the list.
+                if (insert)
+                    chunksToUpdate.Insert(0, chunk);
+                else
+                    chunksToUpdate.Add(chunk);
+
+            }
+        }
+    }
+
+    void UpdateChunks()
+    {
+
+        lock (ChunkUpdateThreadLock)
+        {
+
+            Instance.chunksToUpdate[0].UpdateChunk();
+            if (!ActiveChunks.Contains(chunksToUpdate[0]))
+                ActiveChunks.Add(chunksToUpdate[0]);
+            Instance.chunksToUpdate.RemoveAt(0);
+
+        }
+    }
     void ThreadedUpdate()
     {
 
@@ -262,63 +264,56 @@ public class World : MonoBehaviour
     }
 
 
-    public void ActiveWorldChunk()
+    public bool CheckForVoxel(Vector3 pos)
     {
-        foreach (Chunk c in ActiveChunks)
+
+        Block block = worldData.GetVoxel(pos);
+
+        if (block != null)
         {
-            c.chunkObject.SetActive(true);
+            if (blocktype.BlockTypes[block.GetBlockType()].isSolid)
+                return true;
+            else
+                return false;
         }
-    }
-
-
-
-    public bool CheckVoxelSolid(Vector3 pos)
-    {
-        Vector2Int ChunkIndex = GetChunkIndexFromPos(pos);
-        int ChunkID = Chunk.GetChunkIntID(ChunkIndex);
-        Vector3Int index = GetWorldIndexFromPos(pos);
-        index = index - new Vector3Int(ChunkIndex.x*VoxelData.ChunkWidth,0, ChunkIndex.y * VoxelData.ChunkWidth);
-        int BlockIDinChunk = Chunk.GetBlockIntID(index);
-
-        if (ChunkID<0||ChunkID>VoxelData.WorldChunksSize* VoxelData.WorldChunksSize)
-        {
-            return false;
-        }
-
-        if (!worldData.Chunks[ChunkID].BlockList.ContainsKey(BlockIDinChunk))
-            return false;
         else
         {
-            return blocktype.BlockTypes[worldData.Chunks[ChunkID].BlockList[BlockIDinChunk].GetBlockType()].isSolid;
+            return false;
         }
 
 
+
     }
 
-    public bool CheckIfVoxelTransparent(Vector3 pos)
-    {
+    //public bool CheckVoxelSolid(Vector3 pos)
+    //{
+    //    Vector2Int ChunkIndex = GetChunkIndexFromPos(pos);
+    //    int ChunkID = Chunk.GetChunkIntID(ChunkIndex);
+    //    Vector3Int index = GetWorldIndexFromPos(pos);
+    //    index = index - new Vector3Int(ChunkIndex.x*VoxelData.ChunkWidth,0, ChunkIndex.y * VoxelData.ChunkWidth);
+    //    int BlockIDinChunk = Chunk.GetBlockIntID(index);
 
-        Vector2Int chunkindex = GetChunkIndexFromPos(pos);
-        Vector3Int blockindex = GetWorldIndexFromPos(pos);
-        int chunkID = Chunk.GetChunkIntID(chunkindex);
-        blockindex = new Vector3Int(blockindex.x - (chunkindex.x * VoxelData.ChunkWidth), 0, blockindex.z - (chunkindex.y * VoxelData.ChunkWidth));
-        int blockID = Chunk.GetBlockIntID(blockindex);
+    //    if (ChunkID<0||ChunkID>VoxelData.WorldChunksSize* VoxelData.WorldChunksSize)
+    //    {
+    //        return false;
+    //    }
 
-        if (!IsChunkInWorld(chunkID) || pos.y < 0 || pos.y > VoxelData.ChunkHeight)
-            return false;
+    //    if (!worldData.Chunks[ChunkID].BlockList.ContainsKey(BlockIDinChunk))
+    //        return false;
+    //    else
+    //    {
+    //        return blocktype.BlockTypes[worldData.Chunks[ChunkID].BlockList[BlockIDinChunk].GetBlockType()].isSolid;
+    //    }
 
-        else if (Chunks[chunkindex.x,chunkindex.y] != null && Chunks[chunkindex.x, chunkindex.y].isVoxelMapPopulated)
-            
-            return blocktype.BlockTypes[worldData.Chunks[chunkID].BlockList[blockID].GetBlockType()].isTransparent;
-        else { return false; }
-    }
+
+    //}
 
     public static Vector3Int GetWorldIndexFromPos(Vector3 pos)
     {
         pos = pos / VoxelData.BlockSize;
-        int Chunk_x = Mathf.RoundToInt(pos.x);
-        int Chunk_y = Mathf.RoundToInt(pos.y);
-        int Chunk_z = Mathf.RoundToInt(pos.z);
+        int Chunk_x = Mathf.FloorToInt(pos.x);
+        int Chunk_y = Mathf.FloorToInt(pos.y);
+        int Chunk_z = Mathf.FloorToInt(pos.z);
 
 
         return new Vector3Int(Chunk_x, Chunk_y, Chunk_z);
@@ -343,12 +338,19 @@ public class World : MonoBehaviour
 
     public static Vector2Int GetChunkIndexFromPos(Vector3 pos)
     {
-        int x = Mathf.RoundToInt(pos.x / VoxelData.ChunkWidth/VoxelData.BlockSize);
-        int z = Mathf.RoundToInt(pos.z / VoxelData.ChunkWidth/VoxelData.BlockSize);
+        int x = Mathf.FloorToInt(pos.x / VoxelData.ChunkWidth/VoxelData.BlockSize);
+        int z = Mathf.FloorToInt(pos.z / VoxelData.ChunkWidth/VoxelData.BlockSize);
 
         return new Vector2Int(x, z);
     }
 
+    public static Vector2Int GetChunkIndexFromWorldIndex(Vector3Int index)
+    {
+        int x = Mathf.FloorToInt(index.x / VoxelData.ChunkWidth);
+        int z = Mathf.FloorToInt(index.z / VoxelData.ChunkWidth);
+
+        return new Vector2Int(x, z);
+    }
     void CheckViewDistance()
     {
 
@@ -376,33 +378,31 @@ public class World : MonoBehaviour
                 if (IsChunkInWorld(chunkID))
                 {
 
-                    if (!Chunks[x,z].isActive)
-                    {
-                        Chunks[x, z].isActive = true;
-                    }
+                    Chunks[x, z].isActive = true;
+
                     ActiveChunks.Add(Chunks[x, z]);
 
-                    // Check through previously active chunks to see if this chunk is there. If it is, remove it from the list.
-                    for (int i = 0; i < previouslyActiveChunks.Count; i++)
-                    {
-
-                        if (previouslyActiveChunks[i].Equals(Chunks[x, z]))
-                        {
-                            previouslyActiveChunks.RemoveAt(i);
-                        }
-                            
-
-                    }
                 }
-
-                foreach (Chunk c in previouslyActiveChunks)
+                for (int i = 0; i < previouslyActiveChunks.Count; i++)
                 {
-                    Chunks[c.X, c.Z].isActive = false;
+
+                    if (previouslyActiveChunks[i].Equals(Chunks[x, z]))
+                    {
+                        previouslyActiveChunks.RemoveAt(i);
+                    }
+
                 }
+
                 
 
             }
         }
+
+        foreach (Chunk c in previouslyActiveChunks)
+        {
+            Chunks[c.X, c.Z].isActive = false;
+        }
+        Debug.Log(ActiveChunks.Count);
 
     }
 
@@ -432,7 +432,6 @@ public class VoxelMod
 
     public Vector3Int index;
     public byte id;
-
     public VoxelMod()
     {
 

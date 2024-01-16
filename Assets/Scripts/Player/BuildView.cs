@@ -27,6 +27,9 @@ public class BuildView : MonoBehaviour
     public Text selectedBlockText;
     public byte selectedBlockIndex = 1;
 
+    Vector3 placepos;
+    Vector3 LastPlacePos;
+
     private void Start()
     {
         cam = GameObject.Find("Build Mode Camera").GetComponent<Camera>();
@@ -64,11 +67,11 @@ public class BuildView : MonoBehaviour
         {
             Vector3 dir = cam.ScreenPointToRay(Input.mousePosition).direction;
             Vector3 pos = cam.transform.position + (dir * step);
-            Vector3 placepos = pos / VoxelData.BlockSize;
+            placepos = World.GetWorldIndexFromPos(pos);
 
-            if (world.CheckVoxelSolid(pos))
+            if (World.Instance.CheckForVoxel(pos))
             {
-                highlightBlock.position = new Vector3(Mathf.FloorToInt(placepos.x), Mathf.FloorToInt(placepos.y), Mathf.FloorToInt(placepos.z))*VoxelData.BlockSize;
+                highlightBlock.position = placepos*VoxelData.BlockSize;
                 placeBlock.position = lastPos;
 
                 highlightBlock.gameObject.SetActive(true);
@@ -78,7 +81,7 @@ public class BuildView : MonoBehaviour
 
             }
 
-            lastPos = new Vector3(Mathf.FloorToInt(placepos.x), Mathf.FloorToInt(placepos.y), Mathf.FloorToInt(placepos.z)) * VoxelData.BlockSize;
+            lastPos = placepos * VoxelData.BlockSize;
 
             step += checkIncrement;
 

@@ -42,29 +42,32 @@ public class WorldData
         Debug.Log("RequestChunk"+coord);
         ChunkData c;
 
+        lock (World.Instance.ChunkListThreadLock)
+        {
 
+            if (Chunks.ContainsKey(coordID)) // If chunk is there, return it.
+            {
+                c = Chunks[coordID];
+                Debug.Log("LoadChunk" + coordID);
 
-        if (Chunks.ContainsKey(coordID)) // If chunk is there, return it.
-        { c = Chunks[coordID];
-            Debug.Log("LoadChunk"+coordID);
+            }
+
+            else if (!create) // If it's not and we haven't asked it to be created, return null.
+            {
+                c = null;
+
+            }
+
+            else
+            { // If it's not and we asked it to be created, create the chunk then return it.
+                Debug.Log("LoadChunk");
+                LoadChunk(coordID);
+                c = Chunks[coordID];
+
+                Debug.Log(Chunks[coordID].ChunkID);
+            }
 
         }
-
-        else if (!create) // If it's not and we haven't asked it to be created, return null.
-        { c = null; 
-        
-        }
-
-        else
-        { // If it's not and we asked it to be created, create the chunk then return it.
-            Debug.Log("LoadChunk");
-            LoadChunk(coordID);
-            c = Chunks[coordID];
-
-            Debug.Log(Chunks[coordID].ChunkID);
-        }
-
-
 
         return c;
     }
@@ -89,21 +92,14 @@ public class WorldData
         Chunks[coord].Populate();
     }
 
-    public static bool IsVoxelInWorld(Vector3 pos)
+    public static bool IsVoxelInWorld(Vector3Int worldindex)
     {
-        if (pos.x >= 0 && pos.x < VoxelData.WorldSizeInVoxels && pos.y >= 0 && pos.y < VoxelData.ChunkHeight && pos.z >= 0 && pos.z < VoxelData.WorldSizeInVoxels)
+        if (worldindex.x >= 0 && worldindex.x < VoxelData.WorldSizeInVoxels && worldindex.y >= 0 && worldindex.y < VoxelData.ChunkHeight && worldindex.z >= 0 && worldindex.z < VoxelData.WorldSizeInVoxels)
             return true;
         else
             return false;
     }
 
-    public static bool IsVoxelInChunk(int ID)
-    {
-        if (ID<0||ID> VoxelData.ChunkHeight*VoxelData.ChunkWidth * VoxelData.ChunkWidth-1)
-            return true;
-        else
-            return false;
-    }
     public void AddToModifiedChunkList(ChunkData chunk)
     {
 
@@ -118,7 +114,27 @@ public class WorldData
         Vector2Int chunkindex = World.GetChunkIndexFromPos(pos);
         Vector3Int index = new Vector3Int(worldindex.x - (chunkindex.x * VoxelData.ChunkWidth), worldindex.y, worldindex.z - (chunkindex.y * VoxelData.ChunkWidth));
         // If the voxel is outside of the world we don't need to do anything with it.
-        if (!IsVoxelInWorld(pos))
+
+        if (!IsVoxelInWorld(worldindex))
+            return;
+
+        // Check if the chunk exists. If not, create it.
+        ChunkData chunk = RequestChunk(chunkindex, true);
+
+        int ID = Chunk.GetBlockIntID(index);
+
+        chunk.BlockList[ID].SetBlockType(value);
+
+        AddToModifiedChunkList(chunk);
+
+    }
+    public void SetVoxel(Vector3Int worldindex, byte value)
+    {
+
+        Vector2Int chunkindex = World.GetChunkIndexFromWorldIndex(worldindex);
+        Vector3Int index = new Vector3Int(worldindex.x - (chunkindex.x * VoxelData.ChunkWidth), worldindex.y, worldindex.z - (chunkindex.y * VoxelData.ChunkWidth));
+        // If the voxel is outside of the world we don't need to do anything with it.
+        if (!IsVoxelInWorld(worldindex))
             return;
 
         // Check if the chunk exists. If not, create it.
@@ -134,12 +150,11 @@ public class WorldData
 
     public Block GetVoxel(Vector3 pos)
     {
-
         Vector3Int worldindex = World.GetWorldIndexFromPos(pos);
         Vector2Int chunkindex = World.GetChunkIndexFromPos(pos);
         Vector3Int index = new Vector3Int(worldindex.x - (chunkindex.x * VoxelData.ChunkWidth), worldindex.y, worldindex.z - (chunkindex.y * VoxelData.ChunkWidth));
         // If the voxel is outside of the world we don't need to do anything with it.
-        if (!IsVoxelInWorld(pos))
+        if (!IsVoxelInWorld(worldindex))
             return null;
 
         // Check if the chunk exists. If not, create it.
