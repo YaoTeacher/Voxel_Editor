@@ -68,7 +68,7 @@ public class World : MonoBehaviour
     {
         worldData = SaveSystem.LoadWorld("Testing");
 
-        string jsonImport = File.ReadAllText("D:\\Unity Project\\Voxel_Editor\\Assets\\settings.cfg");
+        string jsonImport = File.ReadAllText("D:\\Unity Project\\Voxel_Editor\\Voxel_Editor\\Assets\\settings.cfg");
         settings = JsonUtility.FromJson<Settings>(jsonImport);
         LoadWorld();
         GenerateWorld();

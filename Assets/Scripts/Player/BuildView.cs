@@ -71,7 +71,17 @@ public class BuildView : MonoBehaviour
 
             if (World.Instance.CheckForVoxel(pos))
             {
-                highlightBlock.position = placepos*VoxelData.BlockSize;
+                print("highlight:" + placepos.y);
+                print("highlight:" + placepos.y * VoxelData.BlockSize);
+                if (placepos.y > 0 || placepos.y < 21){
+                    highlightBlock.position = placepos * VoxelData.BlockSize+new Vector3 (0.000001f, 0.000001f, 0.000001f);
+                }
+                else
+                {
+                    highlightBlock.position = placepos * VoxelData.BlockSize;
+                }
+
+                print("highlight:" + highlightBlock.position.y);
                 placeBlock.position = lastPos;
 
                 highlightBlock.gameObject.SetActive(true);
@@ -81,7 +91,14 @@ public class BuildView : MonoBehaviour
 
             }
 
-            lastPos = placepos * VoxelData.BlockSize;
+            if (placepos.y > 0 || placepos.y < 21)
+            {
+                lastPos = placepos * VoxelData.BlockSize + new Vector3(0.000001f, 0.000001f, 0.000001f); ;
+            }
+            else
+            {
+                lastPos = placepos * VoxelData.BlockSize;
+            }
 
             step += checkIncrement;
 
@@ -134,7 +151,7 @@ public class BuildView : MonoBehaviour
         // 判断是否同时满足长按 Ctrl 键和点击鼠标左键的条件
         if (isCtrlPressed && isMouseLeftClicked)
         {
-            print("highlight:" + highlightBlock.position);
+            print("highlight:" + highlightBlock.position.y);
             world.GetChunkFromPos(highlightBlock.position).EditVoxel(highlightBlock.position, 0);
         }
         else if (isMouseLeftClicked)

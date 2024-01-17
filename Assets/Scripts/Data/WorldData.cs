@@ -39,7 +39,7 @@ public class WorldData
     public ChunkData RequestChunk(Vector2Int coord, bool create)
     {
         int coordID =Chunk.GetChunkIntID(coord);
-        Debug.Log("RequestChunk"+coord);
+        //Debug.Log("RequestChunk"+coord);
         ChunkData c;
 
         lock (World.Instance.ChunkListThreadLock)
@@ -48,7 +48,7 @@ public class WorldData
             if (Chunks.ContainsKey(coordID)) // If chunk is there, return it.
             {
                 c = Chunks[coordID];
-                Debug.Log("LoadChunk" + coordID);
+                //Debug.Log("LoadChunk" + coordID);
 
             }
 
@@ -60,7 +60,7 @@ public class WorldData
 
             else
             { // If it's not and we asked it to be created, create the chunk then return it.
-                Debug.Log("LoadChunk");
+                //Debug.Log("LoadChunk");
                 LoadChunk(coordID);
                 c = Chunks[coordID];
 

@@ -116,8 +116,8 @@ public class Chunk
 
     public void EditVoxel(Vector3 pos, byte newType)
     {
-        Debug.Log("hi" + pos/VoxelData.BlockSize);
-        Debug.Log("hi" + Mathf.FloorToInt(pos.z/VoxelData.BlockSize));
+        Debug.Log("hi" + (pos/VoxelData.BlockSize).y);
+        Debug.Log("hi" + (int)(pos.y/VoxelData.BlockSize));
         Vector3Int worldindex = World.GetWorldIndexFromPos(pos);
         Debug.Log("hi" + worldindex);
         Vector2Int chunkindex = World.GetChunkIndexFromPos(pos);
