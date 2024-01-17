@@ -12,7 +12,7 @@ public static class SaveSystem
     {
 
         // Set our save location and make sure we have a saves folder ready to go.
-        string savePath = "D:/unity Project/Voxel_Editor/Assets/Scripts/Data/saves/" + world.worldName + "/";
+        string savePath = Application.dataPath + "/Scripts/Data/saves/" + world.worldName + "/";
 
         // If not, create it.
         if (!Directory.Exists(savePath))
@@ -57,7 +57,7 @@ public static class SaveSystem
     {
 
         // Get the path to our world saves.
-        string loadPath = "D:/unity Project/Voxel_Editor/Assets/Scripts/Data/saves/" + worldName + "/";
+        string loadPath = Application.dataPath+"/Scripts/Data/saves/" + worldName + "/";
 
         // Check if a save exists for the name we were passed.
         if (File.Exists(loadPath + "world.world"))
@@ -99,7 +99,7 @@ public static class SaveSystem
         string chunkName = position.x+ "_" + position.y;
 
         // Set our save location and make sure we have a saves folder ready to go.
-        string savePath = "D:/unity Project/Voxel_Editor/Assets/Scripts/Data/saves/" + worldName + "/Chunks/";
+        string savePath = Application.dataPath + "/Scripts/Data/saves/" + worldName + "/Chunks/";
 
         // If not, create it.
         if (!Directory.Exists(savePath))
@@ -120,7 +120,7 @@ public static class SaveSystem
         string chunkName = position.x + "_" + position.y;
 
         // Get the path to our world saves.
-        string loadPath = "D:/unity Project/Voxel_Editor/Assets/Scripts/Data/saves/" + worldName + "/Chunks/" + chunkName + ".chunk";
+        string loadPath = Application.dataPath + "/Scripts/Data/saves/" + worldName + "/Chunks/" + chunkName + ".chunk";
 
         // Check if a save exists for the name we were passed.
         if (File.Exists(loadPath))
