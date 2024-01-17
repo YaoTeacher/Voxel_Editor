@@ -53,44 +53,44 @@ public class ThirdView : MonoBehaviour
         if (!world.inUI)
         {
             GetPlayerInputs();
-            placeCursorBlocks();
+            //placeCursorBlocks();
         }
 
 
     }
 
-    private void placeCursorBlocks()
-    {
-        float step = checkIncrement;
-        Vector3 lastPos = new Vector3();
-        while (step < reach)
-        {
-            Vector3 dir = cam.ScreenPointToRay(Input.mousePosition).direction;
-            Vector3 pos = cam.transform.position + (dir * step);
-            Vector3 placepos = pos / VoxelData.BlockSize;
+    //private void placeCursorBlocks()
+    //{
+    //    float step = checkIncrement;
+    //    Vector3 lastPos = new Vector3();
+    //    while (step < reach)
+    //    {
+    //        Vector3 dir = cam.ScreenPointToRay(Input.mousePosition).direction;
+    //        Vector3 pos = cam.transform.position + (dir * step);
+    //        Vector3 placepos = pos / VoxelData.BlockSize;
 
-            if (world.CheckForVoxel(pos))
-            {
-                highlightBlock.position = new Vector3(Mathf.FloorToInt(placepos.x), Mathf.FloorToInt(placepos.y), Mathf.FloorToInt(placepos.z)) * VoxelData.BlockSize;
-                placeBlock.position = lastPos;
+    //        if (world.CheckForVoxel(pos))
+    //        {
+    //            highlightBlock.position = new Vector3(Mathf.FloorToInt(placepos.x), Mathf.FloorToInt(placepos.y), Mathf.FloorToInt(placepos.z)) * VoxelData.BlockSize;
+    //            placeBlock.position = lastPos;
 
-                highlightBlock.gameObject.SetActive(true);
-                placeBlock.gameObject.SetActive(true);
+    //            highlightBlock.gameObject.SetActive(true);
+    //            placeBlock.gameObject.SetActive(true);
 
-                return;
+    //            return;
 
-            }
+    //        }
 
-            lastPos = new Vector3(Mathf.FloorToInt(placepos.x), Mathf.FloorToInt(placepos.y), Mathf.FloorToInt(placepos.z)) * VoxelData.BlockSize;
+    //        lastPos = new Vector3(Mathf.FloorToInt(placepos.x), Mathf.FloorToInt(placepos.y), Mathf.FloorToInt(placepos.z)) * VoxelData.BlockSize;
 
-            step += checkIncrement;
+    //        step += checkIncrement;
 
-        }
+    //    }
 
-        highlightBlock.gameObject.SetActive(false);
-        placeBlock.gameObject.SetActive(false);
+    //    highlightBlock.gameObject.SetActive(false);
+    //    placeBlock.gameObject.SetActive(false);
 
-    }
+    //}
 
     private void GetPlayerInputs()
     {

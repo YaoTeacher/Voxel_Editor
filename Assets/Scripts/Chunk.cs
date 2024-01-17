@@ -116,12 +116,11 @@ public class Chunk
 
     public void EditVoxel(Vector3 pos, byte newType)
     {
-        Debug.Log("hi" + (pos/VoxelData.BlockSize).y);
-        Debug.Log("hi" + (int)(pos.y/VoxelData.BlockSize));
+
         Vector3Int worldindex = World.GetWorldIndexFromPos(pos);
         Debug.Log("hi" + worldindex);
-        Vector2Int chunkindex = World.GetChunkIndexFromPos(pos);
-        Vector3Int index = new Vector3Int(worldindex.x - (chunkindex.x * VoxelData.ChunkWidth), worldindex.y, worldindex.z - (chunkindex.y * VoxelData.ChunkWidth));
+        //Vector2Int chunkindex = World.GetChunkIndexFromPos(pos);
+        Vector3Int index = new Vector3Int(worldindex.x - (X * VoxelData.ChunkWidth), worldindex.y, worldindex.z - (Z* VoxelData.ChunkWidth));
         Debug.Log("hi" + index);
         int ID =GetBlockIntID(index);
         Debug.Log("hi"+ID);
@@ -133,6 +132,29 @@ public class Chunk
         {
 
             World.Instance.AddChunkToUpdate(this,true);
+            UpdateSurroundingChunk(ID);
+        }
+
+    }
+
+    public void EditVoxel(Vector3Int worldindex, byte newType)
+    {
+
+        Debug.Log("hi" + worldindex);
+        //Vector2Int chunkindex = World.GetChunkIndexFromPos(pos);
+        Debug.Log("hi" + X);
+        Vector3Int index = new Vector3Int(worldindex.x - (X * VoxelData.ChunkWidth), worldindex.y, worldindex.z - (Z * VoxelData.ChunkWidth));
+        Debug.Log("hi" + index);
+        int ID = GetBlockIntID(index);
+        Debug.Log("hi" + ID);
+        chunkData.GetVoxel(ID).SetBlockType(newType);
+
+        World.Instance.worldData.AddToModifiedChunkList(chunkData);
+
+        lock (World.Instance.ChunkUpdateThreadLock)
+        {
+
+            World.Instance.AddChunkToUpdate(this, true);
             UpdateSurroundingChunk(ID);
         }
 
@@ -154,6 +176,7 @@ public class Chunk
                         {
                             if (!((chunkData.Z - 1) < 0))
                             {
+
                                 Debug.Log(X + " " + Z);
                                 World.Instance.AddChunkToUpdate(World.Instance.Chunks[chunkData.X, chunkData.Z - 1], true);
                             }
@@ -208,7 +231,7 @@ public class Chunk
         {
             int neighID = blockID + VoxelData.faceChecks[p];
 
-            if (!World.Instance.blocktype.BlockTypes[block.GetBlockType()].isTransparent&& block.GetBlockType()!=0)
+            if ((!World.Instance.blocktype.BlockTypes[block.GetBlockType()].isTransparent)&& block.GetBlockType()!=0)
             {
                 if (IsCoordTransparent(neighID, p))
                 {
@@ -233,7 +256,7 @@ public class Chunk
             }
             else 
             {
-                if (!(IsCoordTransparent(neighID, p)&& IsCoordSame(blockID, neighID, p)))
+                if ((!IsCoordTransparent(neighID, p))|| (!IsCoordSame(blockID, neighID, p)))
                 {
 
 
@@ -429,10 +452,11 @@ public class Chunk
     public bool IsCoordSame(int ID, int neighID, int p)
     {
         byte type = chunkData.GetVoxel(ID).GetBlockType();
-        byte neightype = chunkData.GetVoxel(neighID).GetBlockType();
-        if (!IsNeighborInChunk(ID, p))
+        byte neightype = new byte();
+        if (!IsNeighborInChunk(neighID, p))
         {
-
+            
+            
             switch (p)
             {
                 case 0:
@@ -486,6 +510,10 @@ public class Chunk
 
             };
 
+        }
+        else
+        {
+            neightype = chunkData.GetVoxel(neighID).GetBlockType();
         }
 
         return type == neightype;

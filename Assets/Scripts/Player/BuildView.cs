@@ -27,8 +27,8 @@ public class BuildView : MonoBehaviour
     public Text selectedBlockText;
     public byte selectedBlockIndex = 1;
 
-    Vector3 placepos;
-    Vector3 LastPlacePos;
+    Vector3Int DestroyIndex =new Vector3Int();
+    Vector3Int BuildIndex=new Vector3Int();
 
     private void Start()
     {
@@ -67,21 +67,23 @@ public class BuildView : MonoBehaviour
         {
             Vector3 dir = cam.ScreenPointToRay(Input.mousePosition).direction;
             Vector3 pos = cam.transform.position + (dir * step);
-            placepos = World.GetWorldIndexFromPos(pos);
+            Vector3Int PlaceIndex = World.GetWorldIndexFromPos(pos);
 
-            if (World.Instance.CheckForVoxel(pos))
+            if (World.Instance.CheckForVoxel(PlaceIndex))
             {
-                print("highlight:" + placepos.y);
-                print("highlight:" + placepos.y * VoxelData.BlockSize);
-                if (placepos.y > 0 || placepos.y < 21){
-                    highlightBlock.position = placepos * VoxelData.BlockSize+new Vector3 (0.000001f, 0.000001f, 0.000001f);
-                }
-                else
-                {
-                    highlightBlock.position = placepos * VoxelData.BlockSize;
-                }
-
-                print("highlight:" + highlightBlock.position.y);
+                //print("highlight:" + PlaceIndex.y);
+                //print("highlight:" + PlaceIndex.y * VoxelData.BlockSize);
+                highlightBlock.position = new Vector3(PlaceIndex.x * VoxelData.BlockSize, PlaceIndex.y * VoxelData.BlockSize, PlaceIndex.z * VoxelData.BlockSize);
+                //if (PlaceIndex.y > 0 || PlaceIndex.y < 21)
+                //{
+                //    highlightBlock.position = new Vector3(PlaceIndex.x * VoxelData.BlockSize, PlaceIndex.y * VoxelData.BlockSize, PlaceIndex.z * VoxelData.BlockSize) + new Vector3(0.000001f, 0.000001f, 0.000001f);
+                //}
+                //else
+                //{
+                //    highlightBlock.position = new Vector3(PlaceIndex.x * VoxelData.BlockSize, PlaceIndex.y * VoxelData.BlockSize, PlaceIndex.z * VoxelData.BlockSize);
+                //}
+                DestroyIndex = PlaceIndex;
+                //print("highlight:" + highlightBlock.position.y);
                 placeBlock.position = lastPos;
 
                 highlightBlock.gameObject.SetActive(true);
@@ -91,14 +93,17 @@ public class BuildView : MonoBehaviour
 
             }
 
-            if (placepos.y > 0 || placepos.y < 21)
-            {
-                lastPos = placepos * VoxelData.BlockSize + new Vector3(0.000001f, 0.000001f, 0.000001f); ;
-            }
-            else
-            {
-                lastPos = placepos * VoxelData.BlockSize;
-            }
+
+            lastPos = new Vector3(PlaceIndex.x * VoxelData.BlockSize, PlaceIndex.y * VoxelData.BlockSize, PlaceIndex.z * VoxelData.BlockSize);
+            BuildIndex = PlaceIndex;
+            //if (PlaceIndex.y > 0 || PlaceIndex.y < 21)
+            //{
+            //    lastPos = new Vector3(PlaceIndex.x * VoxelData.BlockSize, PlaceIndex.y * VoxelData.BlockSize, PlaceIndex.z * VoxelData.BlockSize) + new Vector3(0.000001f, 0.000001f, 0.000001f);
+            //}
+            //else
+            //{
+            //    lastPos = new Vector3(PlaceIndex.x * VoxelData.BlockSize, PlaceIndex.y * VoxelData.BlockSize, PlaceIndex.z * VoxelData.BlockSize);
+            //}
 
             step += checkIncrement;
 
@@ -152,12 +157,12 @@ public class BuildView : MonoBehaviour
         if (isCtrlPressed && isMouseLeftClicked)
         {
             print("highlight:" + highlightBlock.position.y);
-            world.GetChunkFromPos(highlightBlock.position).EditVoxel(highlightBlock.position, 0);
+            world.GetChunkFromPos(highlightBlock.position).EditVoxel(DestroyIndex, 0);
         }
         else if (isMouseLeftClicked)
         {
             print("place:" + placeBlock.position);
-            world.GetChunkFromPos(placeBlock.position).EditVoxel(placeBlock.position, selectedBlockIndex);
+            world.GetChunkFromPos(placeBlock.position).EditVoxel(BuildIndex, selectedBlockIndex);
         }
     }
 

@@ -264,10 +264,10 @@ public class World : MonoBehaviour
     }
 
 
-    public bool CheckForVoxel(Vector3 pos)
+    public bool CheckForVoxel(Vector3Int worldindex)
     {
 
-        Block block = worldData.GetVoxel(pos);
+        Block block = worldData.GetVoxel(worldindex);
 
         if (block != null)
         {
@@ -332,7 +332,11 @@ public class World : MonoBehaviour
     {
         Vector2Int index = GetChunkIndexFromPos(pos);
 
-        return Chunks[index.x,index.y];
+        if(index.x>=0&&index.x<VoxelData.WorldChunksSize&& index.y >= 0 && index.y < VoxelData.WorldChunksSize)
+        {
+            return Chunks[index.x, index.y];
+        }
+        return null;
 
     }
 

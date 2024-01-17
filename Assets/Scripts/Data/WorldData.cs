@@ -148,10 +148,9 @@ public class WorldData
 
     }
 
-    public Block GetVoxel(Vector3 pos)
+    public Block GetVoxel(Vector3Int worldindex)
     {
-        Vector3Int worldindex = World.GetWorldIndexFromPos(pos);
-        Vector2Int chunkindex = World.GetChunkIndexFromPos(pos);
+        Vector2Int chunkindex = World.GetChunkIndexFromWorldIndex(worldindex);
         Vector3Int index = new Vector3Int(worldindex.x - (chunkindex.x * VoxelData.ChunkWidth), worldindex.y, worldindex.z - (chunkindex.y * VoxelData.ChunkWidth));
         // If the voxel is outside of the world we don't need to do anything with it.
         if (!IsVoxelInWorld(worldindex))
