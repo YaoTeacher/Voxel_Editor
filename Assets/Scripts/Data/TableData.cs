@@ -22,7 +22,8 @@ public class sceneData
        new sceneData{Id=0,Name="test",Type=0,Seed=0,IsActive=true,SceneWidth=4},
        new sceneData{Id=1,Name="mainMap",Type=1,Seed=0,IsActive=true,SceneWidth=8}
 };
-
+    [NonSerialized]
+    public static sceneData[] GenerateScenes = new sceneData[] { };
 }
 
 public class chunkData

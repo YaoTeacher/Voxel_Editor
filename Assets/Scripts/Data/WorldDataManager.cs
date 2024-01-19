@@ -3,46 +3,144 @@ using System.Collections.Generic;
 using UnityEngine;
 using SQLite4Unity3d;
 using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Threading;
 
-public class WorldDataManager : MonoBehaviour
+public class WorldDataManager 
 {
-    private string worldDBConnectionString = Application.streamingAssetsPath;
-    public SQLiteConnection Connection;
-    // Start is called before the first frame update
-    void Start()
+    private static  SQLiteHelper worldDB;
+    private static string WorldDBPath = Application.persistentDataPath + "/World/";
+    public static void GenerateWorldDataDB()
     {
-        CreateSceneTable();
+        worldDB = new SQLiteHelper("data source="+WorldDBPath+"World_Data.db");
+        worldDB.CreateTable("worldlist", new string[] { "ID", "Name", "Type","Seed", "IsActive", "SceneWidth" }, new string[] { "INTEGER PRIMARY KEY AUTOINCREMENT", "TEXT", "INTEGER", "INTEGER", "INTEGER", "INTEGER" });
+    }
+    public static void SaveWorld(WorldData world)
+    {
+
+        // Set our save location and make sure we have a saves folder ready to go.
+        string savePath = WorldDBPath + world.worldName + "/";
+
+        // If not, create it.
+        if (!Directory.Exists(savePath))
+            Directory.CreateDirectory(savePath);
+
+        Debug.Log("Saving " + world.worldName);
+
+        BinaryFormatter formatter = new BinaryFormatter();
+        FileStream stream = new FileStream(savePath + "world.world", FileMode.Create);
+
+        formatter.Serialize(stream, world);
+        stream.Close();
+
+        Thread thread = new Thread(() => SaveChunks(world));
+        thread.Start();
+
     }
 
-    // Update is called once per frame
-    void Update()
+    public static void SaveChunks(WorldData world)
     {
 
-    }
+        // Copy modified chunks into a new list and clear the old one to prevent
+        // chunks being added to list while it is saving.
+        List<ChunkData> chunks = new List<ChunkData>(world.modifiedChunks);
+        world.modifiedChunks.Clear();
 
-    public void CreateSceneTable()
-    {
-        //if (File.Exists(worldDBConnectionString))
-        //{
-            Connection = new SQLiteConnection(Application.streamingAssetsPath + "/WorldDataBase.db", SQLiteOpenFlags.ReadWrite | SQLiteOpenFlags.Create);
-            Connection.CreateTable<sceneData>();
-        //}
-        //else
-        //{
-        //    File.Create(worldDBConnectionString);
-        //    Connection = new SQLiteConnection(worldDBConnectionString + "/WorldDataBase.db", SQLiteOpenFlags.ReadWrite | SQLiteOpenFlags.Create);
-        //    Connection.CreateTable<sceneData>("World");
-        //}
-        
-        foreach (var a in sceneData.BasicScenes)
+        // Loop through each chunk and save it.
+        int count = 0;
+        foreach (ChunkData chunk in chunks)
         {
-            Connection.Insert(a);
+
+            SaveSystem.SaveChunk(chunk, world.worldName);
+            count++;
+
         }
+
+        Debug.Log(count + " Chunks saved.");
+
     }
 
-    public void CreateChunkTable()
+    //public static WorldData LoadScene(string SceneName, int seed = 0)
+    //{
+
+    //    // Get the path to our world saves.
+    //    string loadPath = WorldDBPath+ SceneName + "/"+ SceneName+".db";
+
+    //    // Check if a save exists for the name we were passed.
+    //    if (File.Exists(loadPath))
+    //    {
+
+    //        Debug.Log( "DB found. Loading from save.");
+    //        Debug.Log(loadPath + "world.world");
+
+
+
+    //        return new WorldData(SceneName);
+
+    //        // Else, if it doesn't exist, we need to create it and save it.
+    //    }
+    //    else
+    //    {
+
+    //        Debug.Log(SceneName + " not found. Creating new world.");
+
+    //        WorldData world = new WorldData(SceneName, seed);
+    //        SaveWorld(world);
+
+    //        return world;
+
+    //    }
+
+    //}
+
+    public static void SaveChunk(ChunkData chunk, string worldName)
     {
-        SQLiteConnection chunkConnection; 
+        Vector2Int position = Chunk.GetChunkVector2Index(chunk.ChunkID);
+
+        string chunkName = position.x + "_" + position.y;
+
+        // Set our save location and make sure we have a saves folder ready to go.
+        string savePath = Application.dataPath + "/Scripts/Data/saves/" + worldName + "/Chunks/";
+
+        // If not, create it.
+        if (!Directory.Exists(savePath))
+            Directory.CreateDirectory(savePath);
+
+        BinaryFormatter formatter = new BinaryFormatter();
+        FileStream stream = new FileStream(savePath + chunkName + ".chunk", FileMode.Create);
+
+        formatter.Serialize(stream, chunk);
+        stream.Close();
+
+    }
+
+    public static ChunkData LoadChunk(string worldName, int ID)
+    {
+        Vector2Int position = Chunk.GetChunkVector2Index(ID);
+
+        string chunkName = position.x + "_" + position.y;
+
+        // Get the path to our world saves.
+        string loadPath = Application.dataPath + "/Scripts/Data/saves/" + worldName + "/Chunks/" + chunkName + ".chunk";
+
+        // Check if a save exists for the name we were passed.
+        if (File.Exists(loadPath))
+        {
+
+            BinaryFormatter formatter = new BinaryFormatter();
+            FileStream stream = new FileStream(loadPath, FileMode.Open);
+
+            ChunkData chunkData = formatter.Deserialize(stream) as ChunkData;
+            stream.Close();
+
+            return chunkData;
+
+        }
+
+        // If we didn't find the chunk in our folder, return null and our WorldData script
+        // will make a new one.
+        return null;
+
     }
 }
 
