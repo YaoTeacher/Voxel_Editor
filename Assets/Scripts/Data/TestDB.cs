@@ -107,12 +107,12 @@ public class TestDB : MonoBehaviour
 
         // Copy modified chunks into a new list and clear the old one to prevent
         // chunks being added to list while it is saving.
-        List<ChunkData> chunks = new List<ChunkData>(world.modifiedChunks);
+        List<chunkData> chunks = new List<chunkData>(world.modifiedChunks);
         world.modifiedChunks.Clear();
 
         // Loop through each chunk and save it.
         int count = 0;
-        foreach (ChunkData chunk in chunks)
+        foreach (chunkData chunk in chunks)
         {
 
             SaveSystem.SaveChunk(chunk, world.worldName);

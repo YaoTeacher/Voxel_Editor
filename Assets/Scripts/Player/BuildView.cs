@@ -126,7 +126,7 @@ public class BuildView : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.B))
         {
-            SaveSystem.SaveWorld(world.worldData);
+            WorldDataManager.SaveWorld();
         }
     }
 

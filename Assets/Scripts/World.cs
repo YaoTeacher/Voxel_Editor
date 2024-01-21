@@ -47,7 +47,7 @@ public class World : MonoBehaviour
     private static World _instance;
     public static World Instance { get { return _instance; } }
 
-    public WorldData worldData;
+    public sceneData senceData;
 
     public string appPath;
     private void Awake()
@@ -66,7 +66,7 @@ public class World : MonoBehaviour
     }
     private void Start()
     {
-        worldData = SaveSystem.LoadWorld("Testing");
+        senceData = WorldDataManager.LoadScene("test");
 
         string jsonImport = File.ReadAllText(Application.dataPath + "/settings.cfg");
         settings = JsonUtility.FromJson<Settings>(jsonImport);
@@ -123,7 +123,7 @@ public class World : MonoBehaviour
             debugScreen.SetActive(!debugScreen.activeSelf);
 
         if (Input.GetKeyDown(KeyCode.B))
-            SaveSystem.SaveWorld(worldData);
+            WorldDataManager.SaveWorld();
 
 
 
@@ -150,7 +150,7 @@ public class World : MonoBehaviour
             for (int z = 0; z < VoxelData.WorldChunksSize; z++)
             {
                 int ChunkID = Chunk.GetChunkIntID(new Vector2Int(x, z));
-                worldData.LoadChunk(ChunkID);
+                senceData.LoadChunk(ChunkID);
 
 
             }
@@ -172,7 +172,7 @@ public class World : MonoBehaviour
 
                 VoxelMod v = queue.Dequeue();
 
-                worldData.SetVoxel(v.index, v.id);
+                senceData.SetVoxel(v.index, v.id);
 
             }
         }
@@ -267,7 +267,7 @@ public class World : MonoBehaviour
     public bool CheckForVoxel(Vector3Int worldindex)
     {
 
-        Block block = worldData.GetVoxel(worldindex);
+        blockData block = senceData.GetVoxel(worldindex);
 
         if (block != null)
         {
@@ -284,29 +284,6 @@ public class World : MonoBehaviour
 
 
     }
-
-    //public bool CheckVoxelSolid(Vector3 pos)
-    //{
-    //    Vector2Int ChunkIndex = GetChunkIndexFromPos(pos);
-    //    int ChunkID = Chunk.GetChunkIntID(ChunkIndex);
-    //    Vector3Int index = GetWorldIndexFromPos(pos);
-    //    index = index - new Vector3Int(ChunkIndex.x*VoxelData.ChunkWidth,0, ChunkIndex.y * VoxelData.ChunkWidth);
-    //    int BlockIDinChunk = Chunk.GetBlockIntID(index);
-
-    //    if (ChunkID<0||ChunkID>VoxelData.WorldChunksSize* VoxelData.WorldChunksSize)
-    //    {
-    //        return false;
-    //    }
-
-    //    if (!worldData.Chunks[ChunkID].BlockList.ContainsKey(BlockIDinChunk))
-    //        return false;
-    //    else
-    //    {
-    //        return blocktype.BlockTypes[worldData.Chunks[ChunkID].BlockList[BlockIDinChunk].GetBlockType()].isSolid;
-    //    }
-
-
-    //}
 
     public static Vector3Int GetWorldIndexFromPos(Vector3 pos)
     {
@@ -422,7 +399,7 @@ public class World : MonoBehaviour
     bool IsChunkInWorld(int ID)
     {
 
-        return worldData.Chunks.ContainsKey(ID);
+        return senceData.Chunks.ContainsKey(ID);
 
     }
 

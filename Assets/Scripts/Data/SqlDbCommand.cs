@@ -287,7 +287,7 @@ public class SqlDbCommand : SqlDbConnect
     }
     public List<T> SelectBySql<T>(string tableName,string sqlWhere="") where T : BaseData
     {
-        var ret = new List<T>();
+        
         string sql;
         var type = typeof(T);
         if (string.IsNullOrEmpty(sqlWhere)) 
@@ -301,11 +301,41 @@ public class SqlDbCommand : SqlDbConnect
         
         _sqlComm.CommandText = sql;
         var dr = _sqlComm.ExecuteReader();
+        var ret = new List<T>();
         if (dr != null)
         {
             while (dr.Read())
             {
                 ret.Add(DataReaderToData<T>(dr));
+            }
+
+        }
+        return ret;
+
+    }
+    public T[] SelectBySqlToArray<T>(string tableName, string sqlWhere = "") where T : BaseData
+    {
+
+        string sql;
+        var type = typeof(T);
+        if (string.IsNullOrEmpty(sqlWhere))
+        {
+            sql = $"SELECT * FROM {tableName}";
+        }
+        else
+        {
+            sql = $"SELECT * FROM {tableName} where {sqlWhere}";
+        }
+
+        _sqlComm.CommandText = sql;
+        var dr = _sqlComm.ExecuteReader();
+        var ret = new T[dr.FieldCount];
+        if (dr != null)
+        {
+            while (dr.Read())
+            {
+                T data = DataReaderToData<T>(dr);
+                ret[data.Id]=data;
             }
 
         }

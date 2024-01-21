@@ -13,12 +13,12 @@ public class WorldData
     public int seed;
 
     [System.NonSerialized]
-    public Dictionary<int, ChunkData> Chunks = new Dictionary<int, ChunkData>();
+    public Dictionary<int, chunkData> Chunks = new Dictionary<int, chunkData>();
 
     
 
     [System.NonSerialized]
-    public List<ChunkData> modifiedChunks = new List<ChunkData>();
+    public List<chunkData> modifiedChunks = new List<chunkData>();
 
     public WorldData(string _worldName, int _seed)
     {
@@ -36,11 +36,11 @@ public class WorldData
 
     }
 
-    public ChunkData RequestChunk(Vector2Int coord, bool create)
+    public chunkData RequestChunk(Vector2Int coord, bool create)
     {
         int coordID =Chunk.GetChunkIntID(coord);
         //Debug.Log("RequestChunk"+coord);
-        ChunkData c;
+        chunkData c;
 
         lock (World.Instance.ChunkListThreadLock)
         {
@@ -64,7 +64,7 @@ public class WorldData
                 LoadChunk(coordID);
                 c = Chunks[coordID];
 
-                Debug.Log(Chunks[coordID].ChunkID);
+                Debug.Log(Chunks[coordID].Id);
             }
 
         }
@@ -80,7 +80,7 @@ public class WorldData
             return;
 
         // If not, we check if it is saved and if yes, get the data from there.
-        ChunkData chunk = SaveSystem.LoadChunk(worldName, coord);
+        chunkData chunk = SaveSystem.LoadChunk(worldName, coord);
         if (chunk != null)
         {
             Chunks.Add(coord, chunk);
@@ -88,7 +88,7 @@ public class WorldData
         }
 
         // If not, add it to the list and populate it's voxels.
-        Chunks.Add(coord, new ChunkData(coord));
+        Chunks.Add(coord, new chunkData(coord));
         Chunks[coord].Populate();
     }
 
@@ -100,7 +100,7 @@ public class WorldData
             return false;
     }
 
-    public void AddToModifiedChunkList(ChunkData chunk)
+    public void AddToModifiedChunkList(chunkData chunk)
     {
 
         // Only add to list if ChunkData is not already in the list.
@@ -119,11 +119,11 @@ public class WorldData
             return;
 
         // Check if the chunk exists. If not, create it.
-        ChunkData chunk = RequestChunk(chunkindex, true);
+        chunkData chunk = RequestChunk(chunkindex, true);
 
         int ID = Chunk.GetBlockIntID(index);
 
-        chunk.BlockList[ID].SetBlockType(value);
+        chunk.Blocks[ID].SetBlockType(value);
 
         AddToModifiedChunkList(chunk);
 
@@ -138,17 +138,17 @@ public class WorldData
             return;
 
         // Check if the chunk exists. If not, create it.
-        ChunkData chunk = RequestChunk(chunkindex, true);
+        chunkData chunk = RequestChunk(chunkindex, true);
 
         int ID = Chunk.GetBlockIntID(index);
 
-        chunk.BlockList[ID].SetBlockType(value);
+        chunk.Blocks[ID].SetBlockType(value);
 
         AddToModifiedChunkList(chunk);
 
     }
 
-    public Block GetVoxel(Vector3Int worldindex)
+    public blockData GetVoxel(Vector3Int worldindex)
     {
         Vector2Int chunkindex = World.GetChunkIndexFromWorldIndex(worldindex);
         Vector3Int index = new Vector3Int(worldindex.x - (chunkindex.x * VoxelData.ChunkWidth), worldindex.y, worldindex.z - (chunkindex.y * VoxelData.ChunkWidth));
@@ -157,7 +157,7 @@ public class WorldData
             return null;
 
         // Check if the chunk exists. If not, create it.
-        ChunkData chunk = RequestChunk(chunkindex, true);
+        chunkData chunk = RequestChunk(chunkindex, true);
 
         int ID = Chunk.GetBlockIntID(index);
 

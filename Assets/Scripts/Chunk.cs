@@ -24,7 +24,7 @@ public class Chunk
 
     public Queue<VoxelMod> modifications = new Queue<VoxelMod>();
 
-    public ChunkData chunkData;
+    public chunkData chunkData;
 
 
     public Chunk(int x,int z)
@@ -40,7 +40,7 @@ public class Chunk
         chunkObject.name = "Chunk " + X + ", " + Z;
         position = chunkObject.transform.position;
 
-        chunkData = World.Instance.worldData.RequestChunk(new Vector2Int(X, Z), true);
+        chunkData = World.Instance.senceData.RequestChunk(new Vector2Int(X, Z), true);
 
         World.Instance.AddChunkToUpdate(this);
 
@@ -96,7 +96,7 @@ public class Chunk
                 {
                     Vector3Int index = new Vector3Int(x, y, z);
                     int blockID = GetBlockIntID(index);
-                    if (World.Instance.blocktype.BlockTypes[chunkData.BlockList[blockID].GetBlockType()].isSolid)
+                    if (World.Instance.blocktype.BlockTypes[chunkData.Blocks[blockID].GetBlockType()].isSolid)
 
                         UpdateBlockFace(index,blockID);
 
@@ -116,9 +116,9 @@ public class Chunk
         Debug.Log("hi" + index);
         int ID =GetBlockIntID(index);
         Debug.Log("hi"+ID);
-        chunkData.BlockList[ID].SetBlockType(newType);
+        chunkData.Blocks[ID].SetBlockType(newType);
 
-        World.Instance.worldData.AddToModifiedChunkList(chunkData);
+        World.Instance.senceData.AddToModifiedChunkList(chunkData);
 
         lock (World.Instance.ChunkUpdateThreadLock)
         {
@@ -141,7 +141,7 @@ public class Chunk
         Debug.Log("hi" + ID);
         chunkData.GetVoxel(ID).SetBlockType(newType);
 
-        World.Instance.worldData.AddToModifiedChunkList(chunkData);
+        World.Instance.senceData.AddToModifiedChunkList(chunkData);
 
         lock (World.Instance.ChunkUpdateThreadLock)
         {
@@ -166,38 +166,38 @@ public class Chunk
                 {
                     case 2:
                         {
-                            if (!((chunkData.Z - 1) < 0))
+                            if (!((chunkData.index_z - 1) < 0))
                             {
 
                                 Debug.Log(X + " " + Z);
-                                World.Instance.AddChunkToUpdate(World.Instance.Chunks[chunkData.X, chunkData.Z - 1], true);
+                                World.Instance.AddChunkToUpdate(World.Instance.Chunks[chunkData.index_x, chunkData.index_z - 1], true);
                             }
                             break;
                         }
                     case 3:
                         {
-                            if (!((chunkData.Z + 1) >= VoxelData.WorldChunksSize))
+                            if (!((chunkData.index_z + 1) >= VoxelData.WorldChunksSize))
                             {
                                 Debug.Log(X + " " + Z);
-                                World.Instance.AddChunkToUpdate(World.Instance.Chunks[chunkData.X, chunkData.Z + 1], true);
+                                World.Instance.AddChunkToUpdate(World.Instance.Chunks[chunkData.index_x, chunkData.index_z + 1], true);
                             }
                             break;
                         }
                     case 4:
                         {
-                            if (!((chunkData.X - 1) < 0))
+                            if (!((chunkData.index_x - 1) < 0))
                             {
                                 Debug.Log(X + " " + Z);
-                                World.Instance.AddChunkToUpdate( World.Instance.Chunks[chunkData.X - 1, chunkData.Z],true);
+                                World.Instance.AddChunkToUpdate( World.Instance.Chunks[chunkData.index_x - 1, chunkData.index_z],true);
                             }
                             break;
                         }
                     case 5:
                         {
-                            if (!((chunkData.X + 1) >= VoxelData.WorldChunksSize))
+                            if (!((chunkData.index_x + 1) >= VoxelData.WorldChunksSize))
                             {
                                 Debug.Log(X + " " + Z);
-                                World.Instance.AddChunkToUpdate(World.Instance.Chunks[chunkData.X + 1, chunkData.Z],true);
+                                World.Instance.AddChunkToUpdate(World.Instance.Chunks[chunkData.index_x + 1, chunkData.index_z],true);
                             }
                             break;
                         }
@@ -216,7 +216,7 @@ public class Chunk
     public void UpdateBlockFace(Vector3Int Chunkindex, int blockID)
     {
         Vector3 Pos = new Vector3(Chunkindex.x, Chunkindex.y, Chunkindex.z)*VoxelData.BlockSize;
-        Block block = chunkData.BlockList[blockID];
+        blockData block = chunkData.Blocks[blockID];
 
 
         for (int p = 0; p < 6; p++)
@@ -392,16 +392,16 @@ public class Chunk
                     }
                 case 2:
                     {
-                        if ((chunkData.Z - 1) < 0)
+                        if ((chunkData.index_z - 1) < 0)
                         {
                             return true;
                         }
-                        return World.Instance.blocktype.BlockTypes[World.Instance.Chunks[chunkData.X, chunkData.Z - 1].chunkData.GetVoxel(ID + (VoxelData.ChunkWidth * VoxelData.ChunkWidth * VoxelData.ChunkHeight)).GetBlockType()].isTransparent;
+                        return World.Instance.blocktype.BlockTypes[World.Instance.Chunks[chunkData.index_x, chunkData.index_z - 1].chunkData.GetVoxel(ID + (VoxelData.ChunkWidth * VoxelData.ChunkWidth * VoxelData.ChunkHeight)).GetBlockType()].isTransparent;
 
                     }
                 case 3:
                     {
-                        if ((chunkData.Z + 1) >= VoxelData.WorldChunksSize)
+                        if ((chunkData.index_x + 1) >= VoxelData.WorldChunksSize)
                         {
                             return true;
                         }
@@ -409,25 +409,25 @@ public class Chunk
                         {
 
 
-                            return World.Instance.blocktype.BlockTypes[World.Instance.Chunks[chunkData.X, chunkData.Z + 1].chunkData.GetVoxel(ID - (VoxelData.ChunkWidth * VoxelData.ChunkWidth * VoxelData.ChunkHeight)).GetBlockType()].isTransparent;
+                            return World.Instance.blocktype.BlockTypes[World.Instance.Chunks[chunkData.index_x, chunkData.index_z + 1].chunkData.GetVoxel(ID - (VoxelData.ChunkWidth * VoxelData.ChunkWidth * VoxelData.ChunkHeight)).GetBlockType()].isTransparent;
 
                         }
                     }
                 case 4:
                     {
-                        if ((chunkData.X - 1) < 0)
+                        if ((chunkData.index_x - 1) < 0)
                         {
                             return true;
                         }
-                        return World.Instance.blocktype.BlockTypes[World.Instance.Chunks[chunkData.X - 1, chunkData.Z].chunkData.GetVoxel(ID + (VoxelData.ChunkWidth * VoxelData.ChunkHeight)).GetBlockType()].isTransparent;
+                        return World.Instance.blocktype.BlockTypes[World.Instance.Chunks[chunkData.index_x - 1, chunkData.index_z].chunkData.GetVoxel(ID + (VoxelData.ChunkWidth * VoxelData.ChunkHeight)).GetBlockType()].isTransparent;
                     }
                 case 5:
                     {
-                        if ((chunkData.X + 1) >= VoxelData.WorldChunksSize)
+                        if ((chunkData.index_x + 1) >= VoxelData.WorldChunksSize)
                         {
                             return true;
                         }
-                        return World.Instance.blocktype.BlockTypes[World.Instance.Chunks[chunkData.X + 1, chunkData.Z].chunkData.GetVoxel(ID - (VoxelData.ChunkWidth * VoxelData.ChunkHeight)).GetBlockType()].isTransparent;
+                        return World.Instance.blocktype.BlockTypes[World.Instance.Chunks[chunkData.index_x + 1, chunkData.index_z].chunkData.GetVoxel(ID - (VoxelData.ChunkWidth * VoxelData.ChunkHeight)).GetBlockType()].isTransparent;
                     }
                 default:
                     {
@@ -461,38 +461,38 @@ public class Chunk
                     }
                 case 2:
                     {
-                        if ((chunkData.Z - 1) < 0)
+                        if ((chunkData.index_z - 1) < 0)
                         {
                             return false;
                         }
-                        neightype = World.Instance.Chunks[chunkData.X, chunkData.Z - 1].chunkData.GetVoxel(ID + (VoxelData.ChunkWidth * VoxelData.ChunkWidth * VoxelData.ChunkHeight)).GetBlockType();
+                        neightype = World.Instance.Chunks[chunkData.index_x, chunkData.index_z - 1].chunkData.GetVoxel(ID + (VoxelData.ChunkWidth * VoxelData.ChunkWidth * VoxelData.ChunkHeight)).GetBlockType();
                         break;
                     }
                 case 3:
                     {
-                        if ((chunkData.Z + 1) >= VoxelData.WorldChunksSize)
+                        if ((chunkData.index_z + 1) >= VoxelData.WorldChunksSize)
                         {
                             return false;
                         }
-                        neightype = World.Instance.Chunks[chunkData.X, chunkData.Z + 1].chunkData.GetVoxel(ID - (VoxelData.ChunkWidth * VoxelData.ChunkWidth * VoxelData.ChunkHeight)).GetBlockType();
+                        neightype = World.Instance.Chunks[chunkData.index_x, chunkData.index_z + 1].chunkData.GetVoxel(ID - (VoxelData.ChunkWidth * VoxelData.ChunkWidth * VoxelData.ChunkHeight)).GetBlockType();
                         break;
                     }
                 case 4:
                     {
-                        if ((chunkData.X - 1) < 0)
+                        if ((chunkData.index_x - 1) < 0)
                         {
                             return false;
                         }
-                        neightype = World.Instance.Chunks[chunkData.X - 1, chunkData.Z].chunkData.GetVoxel(ID + (VoxelData.ChunkWidth * VoxelData.ChunkHeight)).GetBlockType();
+                        neightype = World.Instance.Chunks[chunkData.index_x - 1, chunkData.index_z].chunkData.GetVoxel(ID + (VoxelData.ChunkWidth * VoxelData.ChunkHeight)).GetBlockType();
                         break;
                     }
                 case 5:
                     {
-                        if ((chunkData.X + 1) >= VoxelData.WorldChunksSize)
+                        if ((chunkData.index_x + 1) >= VoxelData.WorldChunksSize)
                         {
                             return false;
                         }
-                        neightype = World.Instance.Chunks[chunkData.X + 1, chunkData.Z].chunkData.GetVoxel(ID - (VoxelData.ChunkWidth * VoxelData.ChunkHeight)).GetBlockType();
+                        neightype = World.Instance.Chunks[chunkData.index_x + 1, chunkData.index_z].chunkData.GetVoxel(ID - (VoxelData.ChunkWidth * VoxelData.ChunkHeight)).GetBlockType();
                         break;
                     }
                 default:

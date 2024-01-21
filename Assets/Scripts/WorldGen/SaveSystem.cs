@@ -36,12 +36,12 @@ public static class SaveSystem
 
         // Copy modified chunks into a new list and clear the old one to prevent
         // chunks being added to list while it is saving.
-        List<ChunkData> chunks = new List<ChunkData>(world.modifiedChunks);
+        List<chunkData> chunks = new List<chunkData>(world.modifiedChunks);
         world.modifiedChunks.Clear();
 
         // Loop through each chunk and save it.
         int count = 0;
-        foreach (ChunkData chunk in chunks)
+        foreach (chunkData chunk in chunks)
         {
 
             SaveSystem.SaveChunk(chunk, world.worldName);
@@ -92,9 +92,9 @@ public static class SaveSystem
 
     }
 
-    public static void SaveChunk(ChunkData chunk, string worldName)
+    public static void SaveChunk(chunkData chunk, string worldName)
     {
-        Vector2Int position = Chunk.GetChunkVector2Index(chunk.ChunkID);
+        Vector2Int position = Chunk.GetChunkVector2Index(chunk.Id);
 
         string chunkName = position.x+ "_" + position.y;
 
@@ -113,7 +113,7 @@ public static class SaveSystem
 
     }
 
-    public static ChunkData LoadChunk(string worldName, int ID)
+    public static chunkData LoadChunk(string worldName, int ID)
     {
         Vector2Int position = Chunk.GetChunkVector2Index(ID);
 
@@ -129,7 +129,7 @@ public static class SaveSystem
             BinaryFormatter formatter = new BinaryFormatter();
             FileStream stream = new FileStream(loadPath, FileMode.Open);
 
-            ChunkData chunkData = formatter.Deserialize(stream) as ChunkData;
+            chunkData chunkData = formatter.Deserialize(stream) as chunkData;
             stream.Close();
 
             return chunkData;
