@@ -69,7 +69,6 @@ public class World : MonoBehaviour
         senceData = WorldDataManager.LoadScene("test");
 
         string jsonImport = File.ReadAllText(Application.dataPath + "/settings.cfg");
-        settings = JsonUtility.FromJson<Settings>(jsonImport);
         LoadWorld();
         GenerateWorld();
         spawnPosition = new Vector3(VoxelData.WorldCentre, VoxelData.ChunkHeight - 50f, VoxelData.WorldCentre);

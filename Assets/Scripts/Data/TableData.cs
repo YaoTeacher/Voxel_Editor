@@ -1,10 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-//using SQLite4Unity3d;
 using System;
 using Unity.Mathematics;
-
+[Serializable]
 public class BaseData
 {
     [ModelHelp(true, "Id", "int", true, false)]
@@ -23,7 +22,7 @@ public class sceneData:BaseData
     public bool IsActive { get; set; }
 
     [NonSerialized]
-    public static List<sceneData> BasicScenes =new List<sceneData>()
+    public static sceneData[] BasicScenes =new sceneData[]
     {
        new sceneData(0,"test",0,0,true),
        new sceneData(1,"mainMap",1,0,true)
@@ -37,7 +36,7 @@ public class sceneData:BaseData
     [System.NonSerialized]
     public Dictionary<int, chunkData> Chunks = new Dictionary<int, chunkData>();
 
-    private sceneData(int id,string name,int type,int seed, bool _ac)
+    public sceneData(int id,string name,int type,int seed, bool _ac)
     {
         Id = id;
         Name = name;
@@ -45,9 +44,19 @@ public class sceneData:BaseData
         Seed = seed;
         IsActive = _ac;
     }
+
+    public sceneData()
+    {
+        Id = 9999;
+        Name = "";
+        Type = 1;
+        Seed = 1;
+        IsActive = true;
+    }
+
     public sceneData(string _name,int _type,bool _ac)
     {
-        Id = BasicScenes.Count + GenerateScenes.Count - 1;
+        Id = BasicScenes.Length + GenerateScenes.Count - 1;
         Name = _name;
         IsActive = _ac;
         Type = _type;
@@ -62,7 +71,7 @@ public class sceneData:BaseData
 
     public sceneData(string _name, int _seed, bool _ac, int _type = 2)
     {
-        Id = BasicScenes.Count + GenerateScenes.Count - 1;
+        Id = BasicScenes.Length + GenerateScenes.Count - 1;
         Name = _name;
         Seed = _seed;
         IsActive = _ac;
@@ -71,7 +80,7 @@ public class sceneData:BaseData
 
     public sceneData(sceneData wD)
     {
-        Id = BasicScenes.Count + GenerateScenes.Count - 1;
+        Id = BasicScenes.Length + GenerateScenes.Count - 1;
         Name = wD.Name;
         Seed = wD.Seed;
         Type = wD.Type;
@@ -209,7 +218,7 @@ public class sceneData:BaseData
 
     }
 }
-
+[Serializable]
 public class chunkData : BaseData
 {
     
@@ -222,12 +231,20 @@ public class chunkData : BaseData
     public int index_z { get; set; }
     [ModelHelp(true, "isActive", "bool", false, false)]
     public bool IsActive { get; set; }
-
+    [System.NonSerialized]
     public Dictionary<int, blockData> Blocks = new Dictionary<int, blockData>();
 
     public chunkData(Vector2Int pos) {  Id = Chunk.GetChunkIntID(pos); }
     public chunkData(int x, int z) { Id = Chunk.GetChunkIntID(new Vector2Int(x, z)); }
 
+    public chunkData(int id, string name, int x,int z,bool isac)
+    {
+        Id = id;
+        Name = name;
+        index_x = x;
+        index_z = z;
+        IsActive = isac;
+    }
     public chunkData(int ID)
     {
         Id = ID;
@@ -273,7 +290,7 @@ public class chunkData : BaseData
     }
 
 }
-
+[Serializable]
 public class blockData : BaseData
 {
     [ModelHelp(true, "Type", "byte", false, false)]
@@ -286,7 +303,15 @@ public class blockData : BaseData
     public int index_y { get; set; }
     [ModelHelp(true, "index_z", "int", false, true)]
     public int index_z { get; set; }
-
+    public blockData(int id, byte type,int state, int x,int y, int z)
+    {
+        Id = id;
+        Type = type;
+        State = state;
+        index_x = x;
+        index_y = y;
+        index_z = z;
+    }
     public blockData(byte type,Vector3Int index)
     {
         this.Type = type;

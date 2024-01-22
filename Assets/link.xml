@@ -1,0 +1,12 @@
+<assembly fullname="sceneData, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null" preserve="all">
+    <type fullname="sceneData" preserve="all" />
+    </assembly>
+<assembly fullname="chunkData, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null" preserve="all">
+    <type fullname="chunkData" preserve="all" />
+    </assembly>	
+<assembly fullname="blockData, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null" preserve="all">
+    <type fullname="blockData" preserve="all" />
+    </assembly>	
+    <assembly fullname="Unity.Addressables, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null" preserve="all">
+    <type fullname="UnityEngine.AddressableAssets.Addressables" preserve="all" />
+    </assembly>

@@ -7,7 +7,6 @@ using System;
 public class MainMapEditor : EditorWindow
 {
 
-    public WorldData worldData;
 
     [MenuItem("EditorTool/MapEditor", priority = 0)]
 
@@ -26,7 +25,7 @@ public class MainMapEditor : EditorWindow
 
     void LoadMap()
     {
-        string loadPath = World.Instance.appPath + "/saves/" + worldData.worldName + "/";
+        //string loadPath = World.Instance.appPath + "/saves/" + worldName + "/";
     }
 
 

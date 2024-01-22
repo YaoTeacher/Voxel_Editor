@@ -9,6 +9,7 @@ using System;
 public class SqlDbCommand : SqlDbConnect
 {
     private SqliteCommand _sqlComm;
+    private SqliteDataReader _sqlDR;
 
     public SqlDbCommand(string dbPath) : base(dbPath)
     {
@@ -18,7 +19,8 @@ public class SqlDbCommand : SqlDbConnect
     #region 表管理
     public int CreateTable<T>(string tableName) where T : BaseData
     {
-        if(IsTableCreate<T>(tableName))
+        ReleaseCommand();
+        if (IsTableCreate<T>(tableName))
         {
             return -1;
         }
@@ -54,7 +56,9 @@ public class SqlDbCommand : SqlDbConnect
         }
         stringBuider.Remove(stringBuider.Length - 1, 1);
         stringBuider.Append(")");
+        ReleaseCommand();
         _sqlComm.CommandText = stringBuider.ToString();
+        
         return _sqlComm.ExecuteNonQuery();
     }
 
@@ -68,66 +72,73 @@ public class SqlDbCommand : SqlDbConnect
 
     public bool IsTableCreate<T>(string tableName) where T : BaseData
     {
+        ReleaseCommand();
         string sql = $"SELECT count(*) FROM sqlite_master WHERE type ='table' AND name = '{tableName}'";
+
         _sqlComm.CommandText = sql;
-        var dr = _sqlComm.ExecuteReader();
-        if(dr!=null&& dr.Read()) 
+        _sqlDR = _sqlComm.ExecuteReader();
+        if(_sqlDR != null&& _sqlDR.Read()) 
         {
-            return Convert.ToInt32( dr[dr.GetName(0)])==1;
+            return Convert.ToInt32(_sqlDR[_sqlDR.GetName(0)])==1;
         }
+        ReleaseCommand();
         return false;
     }
 
     #endregion
 
     #region 新增
-    public int Insert<T>(string tableName, T t) where T : class
+    public int Insert<T>(string tableName, T t) where T : BaseData
     {
         if (t == default(T))
         {
             Debug.LogError("参数错误！");
             return -1;
         }
-
-        var type = typeof(T);
-        StringBuilder stringbuilder = new StringBuilder();
-        stringbuilder.Append($"INSERT INTO {tableName} (");
-        var properties = type.GetProperties();
-        foreach (var p in properties)
+        if (SelectById<T>(tableName, t.Id) == null)
         {
-            if (p.GetCustomAttribute<ModelHelp>().IsCreated)
+            var type = typeof(T);
+            StringBuilder stringbuilder = new StringBuilder();
+            stringbuilder.Append($"INSERT INTO {tableName} (");
+            var properties = type.GetProperties();
+            foreach (var p in properties)
             {
-                stringbuilder.Append(p.GetCustomAttribute<ModelHelp>().FieldName);
-                stringbuilder.Append(',');
+                if (p.GetCustomAttribute<ModelHelp>().IsCreated)
+                {
+                    stringbuilder.Append(p.GetCustomAttribute<ModelHelp>().FieldName);
+                    stringbuilder.Append(',');
+                }
             }
-        }
-        stringbuilder.Remove(stringbuilder.Length - 1, 1);
-        stringbuilder.Append(") VALUES (");
+            stringbuilder.Remove(stringbuilder.Length - 1, 1);
+            stringbuilder.Append(") VALUES (");
 
-        foreach (var p in properties)
-        {
-            if (p.GetCustomAttribute<ModelHelp>().IsCreated)
+            foreach (var p in properties)
             {
-                if (p.GetCustomAttribute<ModelHelp>().Type == "string")
+                if (p.GetCustomAttribute<ModelHelp>().IsCreated)
                 {
-                    stringbuilder.Append($"'{p.GetValue(t)}'");
-                }
-                else
-                {
-                    stringbuilder.Append(p.GetValue(t));
-                }
 
-                stringbuilder.Append(",");
+                    if (p.GetCustomAttribute<ModelHelp>().Type == "string")
+                    {
+                        stringbuilder.Append($"'{p.GetValue(t)}'");
+                    }
+                    else
+                    {
+                        stringbuilder.Append(p.GetValue(t));
+                    }
+
+                    stringbuilder.Append(",");
+                }
             }
+            stringbuilder.Remove(stringbuilder.Length - 1, 1);
+            stringbuilder.Append(")");
+            ReleaseCommand();
+            _sqlComm.CommandText = stringbuilder.ToString();
+            return _sqlComm.ExecuteNonQuery();
         }
-        stringbuilder.Remove(stringbuilder.Length - 1, 1);
-        stringbuilder.Append(")");
-
-        _sqlComm.CommandText = stringbuilder.ToString();
-        return _sqlComm.ExecuteNonQuery();
+        return 0;
     }
 
-    public int Insert<T>(string tableName, List<T> tList) where T : class
+    public int Insert<T>(string tableName, List<T> tList) where T : BaseData
     {
         if (tList == null || tList.Count == 0)
         {
@@ -152,25 +163,29 @@ public class SqlDbCommand : SqlDbConnect
 
         foreach (var t in tList)
         {
-            stringbuilder.Append(" ( ");
-            foreach (var p in properties)
+            if (SelectById<T>(tableName, t.Id) == null)
             {
-                if (p.GetCustomAttribute<ModelHelp>().IsCreated)
+                stringbuilder.Append(" ( ");
+                foreach (var p in properties)
                 {
-                    if (p.GetCustomAttribute<ModelHelp>().Type == "string")
+                    if (p.GetCustomAttribute<ModelHelp>().IsCreated)
                     {
-                        stringbuilder.Append($"'{p.GetValue(t)}'");
-                    }
-                    else
-                    {
-                        stringbuilder.Append(p.GetValue(t));
-                    }
+                        if (p.GetCustomAttribute<ModelHelp>().Type == "string")
+                        {
+                            stringbuilder.Append($"'{p.GetValue(t)}'");
+                        }
+                        else
+                        {
+                            stringbuilder.Append(p.GetValue(t));
+                        }
 
-                    stringbuilder.Append(",");
+                        stringbuilder.Append(",");
+                    }
                 }
+                stringbuilder.Remove(stringbuilder.Length - 1, 1);
+                stringbuilder.Append("),");
             }
-            stringbuilder.Remove(stringbuilder.Length - 1, 1);
-            stringbuilder.Append("),");
+           
         }
 
         stringbuilder.Remove(stringbuilder.Length - 1, 1);
@@ -219,6 +234,7 @@ public class SqlDbCommand : SqlDbConnect
     #region 更新
     public int Update<T>(string tableName, T t) where T : BaseData
     {
+
         if (t == default(T))
         {
             Debug.LogError("参数错误！");
@@ -249,7 +265,7 @@ public class SqlDbCommand : SqlDbConnect
         }
         stringbuilder.Remove(stringbuilder.Length - 1, 1);
         stringbuilder.Append($" where Id  = {t.Id}");
-
+        ReleaseCommand();
         _sqlComm.CommandText = stringbuilder.ToString();
         return _sqlComm.ExecuteNonQuery();
     }
@@ -274,20 +290,22 @@ public class SqlDbCommand : SqlDbConnect
     #region 查询
     public T SelectById<T>(string tableName,int id) where T : BaseData
     {
+        ReleaseCommand();
         var type = typeof(T);
         var sql = $"SELECT * FROM {tableName} where Id = {id}";
         _sqlComm.CommandText = sql;
-        var dr = _sqlComm.ExecuteReader();
-        if (dr.Read()&&dr!=null) 
+        _sqlDR = _sqlComm.ExecuteReader();
+        if (_sqlDR.Read()&& _sqlDR != null) 
         {
-            return DataReaderToData<T>(dr);
+            return DataReaderToData<T>();
         }
+        ReleaseCommand();
         return default(T);
 
     }
     public List<T> SelectBySql<T>(string tableName,string sqlWhere="") where T : BaseData
     {
-        
+        ReleaseCommand();
         string sql;
         var type = typeof(T);
         if (string.IsNullOrEmpty(sqlWhere)) 
@@ -300,22 +318,23 @@ public class SqlDbCommand : SqlDbConnect
         }
         
         _sqlComm.CommandText = sql;
-        var dr = _sqlComm.ExecuteReader();
+        _sqlDR = _sqlComm.ExecuteReader();
         var ret = new List<T>();
-        if (dr != null)
+        if (_sqlDR != null)
         {
-            while (dr.Read())
+            while (_sqlDR.Read())
             {
-                ret.Add(DataReaderToData<T>(dr));
+                ret.Add(DataReaderToData<T>());
             }
 
         }
+        ReleaseCommand();
         return ret;
 
     }
     public T[] SelectBySqlToArray<T>(string tableName, string sqlWhere = "") where T : BaseData
     {
-
+        ReleaseCommand();
         string sql;
         var type = typeof(T);
         if (string.IsNullOrEmpty(sqlWhere))
@@ -328,28 +347,29 @@ public class SqlDbCommand : SqlDbConnect
         }
 
         _sqlComm.CommandText = sql;
-        var dr = _sqlComm.ExecuteReader();
-        var ret = new T[dr.FieldCount];
-        if (dr != null)
+        _sqlDR = _sqlComm.ExecuteReader();
+        var ret = new T[_sqlDR.FieldCount];
+        if (_sqlDR != null)
         {
-            while (dr.Read())
+            while (_sqlDR.Read())
             {
-                T data = DataReaderToData<T>(dr);
+                T data = DataReaderToData<T>();
                 ret[data.Id]=data;
             }
 
         }
+        ReleaseCommand();
         return ret;
 
     }
-    private T DataReaderToData<T>(SqliteDataReader dr) where T : BaseData
+    private T DataReaderToData<T>() where T : BaseData
     {
         try
         {
             List<string> fieldNames =new List<string>();
-            for(int i=0;i<dr.FieldCount;i++)
+            for(int i=0;i< _sqlDR.FieldCount;i++)
             {
-                fieldNames.Add(dr.GetName(i));
+                fieldNames.Add(_sqlDR.GetName(i));
             }
             var type =  typeof(T);
             T data = Activator.CreateInstance<T>();
@@ -362,18 +382,34 @@ public class SqlDbCommand : SqlDbConnect
                 var fieldName = p.GetCustomAttribute<ModelHelp>().FieldName;
                 if (fieldName.Contains(fieldName) && p.GetCustomAttribute<ModelHelp>().IsCreated)
                 {
-                    p.SetValue(data, dr[fieldName]);
+                    p.SetValue(data, _sqlDR[fieldName]);
                 }
 
             }
+            
             return data;
 
         }
         catch(System.Exception e)
         {
-            Debug.LogError($"DataReaderToData转换出错,类型{typeof(T).Name}");
+            Debug.LogError($"{e.Message}");
             return null;
         }
+    }
+
+    private void ReleaseCommand()
+    {
+        if (_sqlDR != null)
+        {
+            _sqlDR.Close();
+        }
+        _sqlDR = null;
+
+        if (_sqlDR != null)
+        {
+            _sqlDR.Dispose();
+        }
+        _sqlDR = null;
     }
     #endregion
 }
