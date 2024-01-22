@@ -5,6 +5,7 @@ using UnityEngine;
 using Mono.Data.Sqlite;
 using System.Text;
 using System;
+using static UnityEngine.Rendering.DebugUI;
 
 public class SqlDbCommand : SqlDbConnect
 {
@@ -362,6 +363,37 @@ public class SqlDbCommand : SqlDbConnect
         return ret;
 
     }
+
+    public Dictionary<int, T> SelectBySqlDic<T>(string tableName, string sqlWhere = "") where T : BaseData
+    {
+        ReleaseCommand();
+        string sql;
+        var type = typeof(T);
+        if (string.IsNullOrEmpty(sqlWhere))
+        {
+            sql = $"SELECT * FROM {tableName}";
+        }
+        else
+        {
+            sql = $"SELECT * FROM {tableName} where {sqlWhere}";
+        }
+
+        _sqlComm.CommandText = sql;
+        _sqlDR = _sqlComm.ExecuteReader();
+        var ret = new Dictionary<int,T>();
+        if (_sqlDR != null)
+        {
+            while (_sqlDR.Read())
+            {
+                T data = DataReaderToData<T>();
+                ret[data.Id] = data;
+            }
+
+        }
+        ReleaseCommand();
+        return ret;
+
+    }
     private T DataReaderToData<T>() where T : BaseData
     {
         try
@@ -380,9 +412,12 @@ public class SqlDbCommand : SqlDbConnect
                 if (!p.CanWrite)
                     continue;
                 var fieldName = p.GetCustomAttribute<ModelHelp>().FieldName;
+                object value = _sqlDR[fieldName];
                 if (fieldName.Contains(fieldName) && p.GetCustomAttribute<ModelHelp>().IsCreated)
                 {
-                    p.SetValue(data, _sqlDR[fieldName]);
+                    if (p.PropertyType.FullName == "System.Byte")//判断类型，如果是则强转
+                        value = Convert.ToByte(value);
+                    p.SetValue(data, value);
                 }
 
             }

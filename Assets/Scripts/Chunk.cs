@@ -41,6 +41,7 @@ public class Chunk
         position = chunkObject.transform.position;
 
         chunkData = World.Instance.senceData.RequestChunk(new Vector2Int(X, Z), true);
+        Debug.Log(chunkData.Name);
 
         World.Instance.AddChunkToUpdate(this);
 

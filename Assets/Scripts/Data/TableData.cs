@@ -50,11 +50,6 @@ public class sceneData:BaseData
 
     public sceneData()
     {
-        Id = 9999;
-        Name = "";
-        Type = 1;
-        Seed = 1;
-        IsActive = true;
     }
 
     public sceneData(string _name,int _type,bool _ac)
@@ -123,7 +118,7 @@ public class sceneData:BaseData
             }
 
         }
-
+        
         return c;
     }
 
@@ -144,8 +139,8 @@ public class sceneData:BaseData
 
         // If not, add it to the list and populate it's voxels.
 
-        Chunks.Add(coord, new chunkData(coord));
-        Chunks[coord].Populate(this);
+        Chunks.Add(coord, new chunkData(coord,"",this.Name));
+        Chunks[coord].Populate();
         WorldDataManager.SaveChunk(Chunks[coord], this.Name);
     }
 
@@ -242,6 +237,9 @@ public class chunkData : BaseData
     public chunkData(Vector2Int pos) {  Id = Chunk.GetChunkIntID(pos); }
     public chunkData(int x, int z) { Id = Chunk.GetChunkIntID(new Vector2Int(x, z)); }
 
+    public chunkData()
+    {
+    }
     public chunkData(int id, string name, int x,int z,bool isac)
     {
         Id = id;
@@ -250,16 +248,25 @@ public class chunkData : BaseData
         index_z = z;
         IsActive = isac;
     }
-    public chunkData(int ID)
+    public chunkData(int ID,string name="",string scenename="")
     {
         Id = ID;
         Vector2Int index = Chunk.GetChunkVector2Index(Id);
         index_x = index.x;
-        index_x = index.y;
+        index_z = index.y;
+        if(name != "")
+        {
+            Name = name;
+        }
+        else
+        {
+            Name = scenename+"_"+index_x+"_"+index_z;
+        }
+
         IsActive = true;
     }
 
-    public void Populate(sceneData scene)
+    public void Populate()
     {
         for (int z = 0; z < VoxelData.ChunkWidth; z++)
         {
@@ -271,7 +278,7 @@ public class chunkData : BaseData
                 {
                     Vector3Int index = new Vector3Int(x + index_x * VoxelData.ChunkWidth, y, z + index_z * VoxelData.ChunkWidth);
                     int ChunkIdx = z * VoxelData.ChunkHeight * VoxelData.ChunkWidth + x * VoxelData.ChunkHeight + y;
-                    blockData block = new blockData(World.GetVoxel(index),index);
+                    blockData block = new blockData(ChunkIdx,World.GetVoxel(index),index);
                     Blocks[ChunkIdx] = block;
                 }
             }
@@ -317,9 +324,16 @@ public class blockData : BaseData
         index_y = y;
         index_z = z;
     }
-    public blockData(byte type,Vector3Int index)
+
+    public blockData()
     {
+
+    }
+    public blockData(int id,byte type,Vector3Int index)
+    {
+        Id = id;
         this.Type = type;
+        State = 4;
         index_x = index.x;
         index_y = index.y;
         index_z = index.z;

@@ -13,7 +13,7 @@ using UnityEditor.SearchService;
 public class WorldDataManager 
 {
     
-    private static string WorldDBPath = Application.persistentDataPath + "/World/World_Data.db";
+    private static string WorldDBPath = Application.streamingAssetsPath + "/World/World_Data.db";
     private static string WorldListName = "worldlist";
 
     private static SqlDbCommand worldDB = new SqlDbCommand(WorldDBPath);
@@ -177,7 +177,7 @@ public class WorldDataManager
         {
             worldDB.Insert<chunkData>(sceneName, chunk);
         }
-        
+        chunk.Populate();
         Debug.Log("Saving " + chunkName);
         if (worldDB.IsTableCreate<blockData>(chunkName))
         {
@@ -206,18 +206,36 @@ public class WorldDataManager
 
         string chunkName = sceneName + "_" + position.x + "_" + position.y;
 
-        if (worldDB.IsTableCreate<chunkData>(sceneName))
+        chunkData chunk = new chunkData();
+
+        if (worldDB.SelectById<chunkData>(sceneName, ID)!=null)
         {
-            return worldDB.SelectById<chunkData>(sceneName, ID);
+            chunk = worldDB.SelectById<chunkData>(sceneName, ID);
+           
         }
         else
         {
-            return null;
+            chunk = new chunkData(ID,chunkName);
+            worldDB.Insert<chunkData>(sceneName, chunk);
         }
+
+        if (!worldDB.IsTableCreate<blockData>(chunkName))
+        {
+            worldDB.CreateTable<blockData>(chunkName);
+            chunk.Populate();
+            worldDB.Insert<blockData>(chunkName, chunk.Blocks.Values.ToList());
+
+        }
+        else
+        {
+            chunk.Blocks = worldDB.SelectBySqlDic<blockData>(chunk.Name);
+        }
+        
+        return chunk;
 
         // If we didn't find the chunk in our folder, return null and our WorldData script
         // will make a new one.
-        
+
 
     }
 
