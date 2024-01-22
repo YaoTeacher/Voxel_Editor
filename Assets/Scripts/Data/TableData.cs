@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using Unity.Mathematics;
+using UnityEngine.Analytics;
+using UnityEngine.UIElements;
+
 [Serializable]
 public class BaseData
 {
@@ -126,7 +129,7 @@ public class sceneData:BaseData
 
     public void LoadChunk(int coord)
     {
-
+        
         // If the chunk is already loaded we don't need to do anything.
         if (Chunks.ContainsKey(coord))
             return;
@@ -140,8 +143,10 @@ public class sceneData:BaseData
         }
 
         // If not, add it to the list and populate it's voxels.
+
         Chunks.Add(coord, new chunkData(coord));
-        Chunks[coord].Populate();
+        Chunks[coord].Populate(this);
+        WorldDataManager.SaveChunk(Chunks[coord], this.Name);
     }
 
     public static bool IsVoxelInScene(Vector3Int worldindex)
@@ -218,7 +223,7 @@ public class sceneData:BaseData
 
     }
 }
-[Serializable]
+
 public class chunkData : BaseData
 {
     
@@ -254,7 +259,7 @@ public class chunkData : BaseData
         IsActive = true;
     }
 
-    public void Populate()
+    public void Populate(sceneData scene)
     {
         for (int z = 0; z < VoxelData.ChunkWidth; z++)
         {
@@ -290,7 +295,7 @@ public class chunkData : BaseData
     }
 
 }
-[Serializable]
+
 public class blockData : BaseData
 {
     [ModelHelp(true, "Type", "byte", false, false)]

@@ -5,8 +5,8 @@ using UnityEngine;
 public static class VoxelData
 {
 
-    public static readonly int ChunkWidth = 16;
-    public static readonly int ChunkHeight = 128;
+    public static readonly int ChunkWidth = 4;
+    public static readonly int ChunkHeight = 4;
     public static readonly int WorldChunksSize = 3;
     public static readonly float BlockSize= 0.5F;
 

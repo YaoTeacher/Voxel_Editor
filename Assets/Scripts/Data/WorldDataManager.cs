@@ -125,7 +125,7 @@ public class WorldDataManager
         else
         {
 
-            Debug.Log("World not found. Creating new world.");
+            Debug.Log("World not found. Creating new scene.");
 
             sceneData scene = new sceneData (ScenceName, 2, true);
             worldDB.Insert<sceneData>(WorldListName,scene);
@@ -172,7 +172,12 @@ public class WorldDataManager
         Vector2Int position = Chunk.GetChunkVector2Index(chunk.Id);
 
         string chunkName = sceneName+"_" + position.x + "_" + position.y;
-        worldDB.Insert<chunkData>(sceneName,chunk);
+        chunk.Name = chunkName;
+        if (worldDB.SelectById<chunkData>(sceneName, chunk.Id)==null)
+        {
+            worldDB.Insert<chunkData>(sceneName, chunk);
+        }
+        
         Debug.Log("Saving " + chunkName);
         if (worldDB.IsTableCreate<blockData>(chunkName))
         {
