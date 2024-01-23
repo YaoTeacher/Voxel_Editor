@@ -12,7 +12,7 @@ public class BaseData
     [ModelHelp(true, "Id", "int", true, false)]
     public int Id { get; set; }
 }
-public class sceneData:BaseData
+public class sceneData : BaseData
 {
 
     [ModelHelp(true, "Name", "string", false, false)]
@@ -25,18 +25,17 @@ public class sceneData:BaseData
     public bool IsActive { get; set; }
 
     [NonSerialized]
-    public static sceneData[] BasicScenes =new sceneData[]
-    {
-       new sceneData(0,"test",0,0,true),
-       new sceneData(1,"mainMap",1,0,true)
-    };
-    [NonSerialized]
-    public static List<sceneData> GenerateScenes = new List<sceneData>();
+    public static Dictionary<int, sceneData> Scenes =new  Dictionary<int, sceneData>
 
-    [System.NonSerialized]
+    {
+       {0,new sceneData(0,"test",0,0,true)},
+        { 1,new sceneData(1,"mainMap",1,0,true) }
+    };
+
+    [NonSerialized]
     public List<chunkData> modifiedChunks = new List<chunkData>();
 
-    [System.NonSerialized]
+    [NonSerialized]
     public Dictionary<int, chunkData> Chunks = new Dictionary<int, chunkData>();
 
     public sceneData(int id,string name,int type,int seed, bool _ac)
@@ -46,6 +45,7 @@ public class sceneData:BaseData
         Type = type;
         Seed = seed;
         IsActive = _ac;
+
     }
 
     public sceneData()
@@ -54,7 +54,7 @@ public class sceneData:BaseData
 
     public sceneData(string _name,int _type,bool _ac)
     {
-        Id = BasicScenes.Length + GenerateScenes.Count - 1;
+        Id = Scenes.Count;
         Name = _name;
         IsActive = _ac;
         Type = _type;
@@ -64,26 +64,32 @@ public class sceneData:BaseData
             Seed = 2;
         }
 
-        GenerateScenes.Add(this);
     }
 
     public sceneData(string _name, int _seed, bool _ac, int _type = 2)
     {
-        Id = BasicScenes.Length + GenerateScenes.Count - 1;
+        Id = Scenes.Count;
         Name = _name;
         Seed = _seed;
         IsActive = _ac;
         Type = _type;
+
     }
 
     public sceneData(sceneData wD)
     {
-        Id = BasicScenes.Length + GenerateScenes.Count - 1;
+        Id = Scenes.Count;
         Name = wD.Name;
         Seed = wD.Seed;
         Type = wD.Type;
         IsActive = wD.IsActive;
 
+
+    }
+
+    public static void UpdateList(sceneData scene)
+    {
+        Scenes[scene.Id] = scene;
     }
 
     public chunkData RequestChunk(Vector2Int coord, bool create)
@@ -200,13 +206,13 @@ public class sceneData:BaseData
 
     }
 
-    public blockData GetVoxel(Vector3Int worldindex)
+    public byte GetVoxelType(Vector3Int worldindex)
     {
         Vector2Int chunkindex = World.GetChunkIndexFromWorldIndex(worldindex);
         Vector3Int index = new Vector3Int(worldindex.x - (chunkindex.x * VoxelData.ChunkWidth), worldindex.y, worldindex.z - (chunkindex.y * VoxelData.ChunkWidth));
         // If the voxel is outside of the world we don't need to do anything with it.
         if (!IsVoxelInScene(worldindex))
-            return null;
+            return 0;
 
         // Check if the chunk exists. If not, create it.
         chunkData chunk = RequestChunk(chunkindex, true);
@@ -214,7 +220,7 @@ public class sceneData:BaseData
         int ID = Chunk.GetBlockIntID(index);
 
         // Then set the voxel in our chunk.
-        return chunk.GetVoxel(ID);
+        return chunk.GetVoxelType(ID);
 
     }
 }
@@ -284,7 +290,7 @@ public class chunkData : BaseData
             }
         }
         
-        World.Instance.senceData.AddToModifiedChunkList(this);
+        World.Instance.scenedata.AddToModifiedChunkList(this);
     }
 
     public blockData GetVoxel(int ID)
@@ -296,6 +302,19 @@ public class chunkData : BaseData
         // Check if the chunk exists. If not, create it.
 
         return Blocks[ID];
+        // Then set the voxel in our chunk.
+
+
+    }
+
+    public byte GetVoxelType(int ID)
+    {
+
+        // If the voxel is outside of the world we don't need to do anything with it.
+        if (ID < 0 || ID > VoxelData.ChunkWidth * VoxelData.ChunkWidth * VoxelData.ChunkHeight - 1)
+            return 0;
+
+        return Blocks[ID].Type;
         // Then set the voxel in our chunk.
 
 

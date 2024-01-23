@@ -7,7 +7,6 @@ using Unity.VisualScripting;
 using UnityEditor.VersionControl;
 using UnityEngine;
 using System.IO;
-using static UnityEngine.Rendering.VolumeComponent;
 
 //[ExecuteInEditMode]
 public class World : MonoBehaviour
@@ -47,7 +46,7 @@ public class World : MonoBehaviour
     private static World _instance;
     public static World Instance { get { return _instance; } }
 
-    public sceneData senceData;
+    public sceneData scenedata;
 
     public string appPath;
     private void Awake()
@@ -66,10 +65,10 @@ public class World : MonoBehaviour
     }
     private void Start()
     {
-        senceData = WorldDataManager.LoadScene("test");
+        scenedata = WorldDataManager.LoadScene("test");
 
         string jsonImport = File.ReadAllText(Application.dataPath + "/settings.cfg");
-        LoadWorld();
+        LoadScene();
         GenerateWorld();
         spawnPosition = new Vector3(VoxelData.WorldCentre, VoxelData.ChunkHeight - 50f, VoxelData.WorldCentre);
         player.transform.position = spawnPosition;
@@ -103,7 +102,7 @@ public class World : MonoBehaviour
         }
 
 
-        if (!settings.enableThreading)
+        if (settings.enableThreading)
         {
 
             if (!applyingModifications)
@@ -121,10 +120,11 @@ public class World : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.F3))
             debugScreen.SetActive(!debugScreen.activeSelf);
 
-        if (Input.GetKeyDown(KeyCode.B))
+        if (Input.GetKeyUp(KeyCode.B))
+        {
+            SaveScene();
             WorldDataManager.SaveWorld();
-
-
+        }
 
     }
 
@@ -141,7 +141,7 @@ public class World : MonoBehaviour
             }
         }
     }
-    void LoadWorld()
+    void LoadScene()
     {
 
         for (int x = 0; x < VoxelData.WorldChunksSize; x++)
@@ -149,11 +149,29 @@ public class World : MonoBehaviour
             for (int z = 0; z < VoxelData.WorldChunksSize; z++)
             {
                 int ChunkID = Chunk.GetChunkIntID(new Vector2Int(x, z));
-                senceData.LoadChunk(ChunkID);
+                scenedata.LoadChunk(ChunkID);
+                Debug.Log(scenedata.Chunks.Keys.Count.ToString());
 
 
             }
         }
+        sceneData.UpdateList(scenedata);
+    }
+
+    void SaveScene()
+    {
+        for (int x = 0; x < VoxelData.WorldChunksSize; x++)
+        {
+            for (int z = 0; z < VoxelData.WorldChunksSize; z++)
+            {
+                int ChunkID = Chunk.GetChunkIntID(new Vector2Int(x, z));
+                scenedata.Chunks[ChunkID] = Chunks[x, z].chunkData;
+                Debug.Log(scenedata.Chunks[ChunkID].Name);
+            }
+        }
+
+        Debug.Log(scenedata.Chunks.Keys.Count);
+
     }
 
     void ApplyModifications()
@@ -171,7 +189,7 @@ public class World : MonoBehaviour
 
                 VoxelMod v = queue.Dequeue();
 
-                senceData.SetVoxel(v.index, v.id);
+                scenedata.SetVoxel(v.index, v.id);
 
             }
         }
@@ -248,12 +266,10 @@ public class World : MonoBehaviour
     public static byte GetVoxel(Vector3Int pos)
     {
 
-        int yPos = Mathf.FloorToInt(pos.y);
-
-        if (yPos == 0)
+        if (pos.y == 0)
         { return 1; }
 
-        else if (yPos <= 70 && yPos > 0)
+        else if (pos.y <= 2 && pos.y > 0)
         { return 6; }
 
         else 
@@ -266,19 +282,19 @@ public class World : MonoBehaviour
     public bool CheckForVoxel(Vector3Int worldindex)
     {
 
-        blockData block = senceData.GetVoxel(worldindex);
+        byte blockType = scenedata.GetVoxelType(worldindex);
 
-        if (block != null)
-        {
-            if (blocktype.BlockTypes[block.GetBlockType()].isSolid)
+        //if (blocktype != null)
+        //{
+            if (blocktype.BlockTypes[blockType].isSolid)
                 return true;
             else
                 return false;
-        }
-        else
-        {
-            return false;
-        }
+        //}
+        //else
+        //{
+        //    return false;
+        //}
 
 
 
@@ -398,7 +414,7 @@ public class World : MonoBehaviour
     bool IsChunkInWorld(int ID)
     {
 
-        return senceData.Chunks.ContainsKey(ID);
+        return scenedata.Chunks.ContainsKey(ID);
 
     }
 

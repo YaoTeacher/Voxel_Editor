@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
-using static UnityEditor.PlayerSettings;
 
 public class BuildView : MonoBehaviour
 {
@@ -71,19 +70,9 @@ public class BuildView : MonoBehaviour
 
             if (World.Instance.CheckForVoxel(PlaceIndex))
             {
-                //print("highlight:" + PlaceIndex.y);
-                //print("highlight:" + PlaceIndex.y * VoxelData.BlockSize);
+
                 highlightBlock.position = new Vector3(PlaceIndex.x * VoxelData.BlockSize, PlaceIndex.y * VoxelData.BlockSize, PlaceIndex.z * VoxelData.BlockSize);
-                //if (PlaceIndex.y > 0 || PlaceIndex.y < 21)
-                //{
-                //    highlightBlock.position = new Vector3(PlaceIndex.x * VoxelData.BlockSize, PlaceIndex.y * VoxelData.BlockSize, PlaceIndex.z * VoxelData.BlockSize) + new Vector3(0.000001f, 0.000001f, 0.000001f);
-                //}
-                //else
-                //{
-                //    highlightBlock.position = new Vector3(PlaceIndex.x * VoxelData.BlockSize, PlaceIndex.y * VoxelData.BlockSize, PlaceIndex.z * VoxelData.BlockSize);
-                //}
                 DestroyIndex = PlaceIndex;
-                //print("highlight:" + highlightBlock.position.y);
                 placeBlock.position = lastPos;
 
                 highlightBlock.gameObject.SetActive(true);
@@ -96,15 +85,6 @@ public class BuildView : MonoBehaviour
 
             lastPos = new Vector3(PlaceIndex.x * VoxelData.BlockSize, PlaceIndex.y * VoxelData.BlockSize, PlaceIndex.z * VoxelData.BlockSize);
             BuildIndex = PlaceIndex;
-            //if (PlaceIndex.y > 0 || PlaceIndex.y < 21)
-            //{
-            //    lastPos = new Vector3(PlaceIndex.x * VoxelData.BlockSize, PlaceIndex.y * VoxelData.BlockSize, PlaceIndex.z * VoxelData.BlockSize) + new Vector3(0.000001f, 0.000001f, 0.000001f);
-            //}
-            //else
-            //{
-            //    lastPos = new Vector3(PlaceIndex.x * VoxelData.BlockSize, PlaceIndex.y * VoxelData.BlockSize, PlaceIndex.z * VoxelData.BlockSize);
-            //}
-
             step += checkIncrement;
 
         }

@@ -29,9 +29,7 @@ public class WorldDataManager
         {
             Debug.Log("Saving " + WorldListName);
 
-            worldDB.Update<sceneData>(WorldListName, sceneData.BasicScenes.ToList());
-
-            foreach (var s in sceneData.BasicScenes)
+            foreach (var s in sceneData.Scenes.Values)
             {
                 if (worldDB.SelectById<sceneData>(WorldListName, s.Id) == null)
                 {
@@ -43,18 +41,6 @@ public class WorldDataManager
                 }
                 SaveScene(s);
 
-            }
-            foreach (var s in sceneData.BasicScenes)
-            {
-                if (worldDB.SelectById<sceneData>(WorldListName, s.Id) == null)
-                {
-                    worldDB.Insert<sceneData>(WorldListName, s);
-                }
-                else
-                {
-                    worldDB.Update<sceneData>(WorldListName, s);
-                }
-                SaveScene(s);
             }
         }
         
@@ -86,41 +72,37 @@ public class WorldDataManager
 
         Debug.Log("Saving " + scene.Name);
 
-        Thread thread = new Thread(() => SaveChunks(scene));
-        thread.Start();
+        SaveChunks(scene);
 
     }
 
     public static void GenerateWorldList()
     {
         worldDB.CreateTable<sceneData>(WorldListName);
-        worldDB.Insert<sceneData>(WorldListName, sceneData.BasicScenes.ToList());
+        worldDB.Insert<sceneData>(WorldListName, sceneData.Scenes.Values.ToList());
     }
-    public static sceneData LoadScene(string ScenceName, int seed = 0)
+    public static sceneData LoadScene(string ScenceName)
     {
         if (!worldDB.IsTableCreate<sceneData>(WorldListName))
         {
             GenerateWorldList();
         }
-        //// Get the path to our world saves.
-        //string loadPath = WorldDBPath;
 
-        // Check if a save exists for the name we were passed.
         if (worldDB.SelectBySql<sceneData>(WorldListName, $"Name='{ScenceName}'")!=null)
         {
 
             Debug.Log("Scene found. Loading from save.");
             Debug.Log(WorldDBPath + ScenceName);
 
-
-            // And then return the world.
-
             sceneData scene = worldDB.SelectBySql<sceneData>(WorldListName, $"Name='{ScenceName}'").First();
+            worldDB.CreateTable<chunkData>(ScenceName);
+
+
+
             SaveChunks(scene);
 
             return scene;
 
-            // Else, if it doesn't exist, we need to create it and save it.
         }
         else
         {
@@ -129,6 +111,7 @@ public class WorldDataManager
 
             sceneData scene = new sceneData (ScenceName, 2, true);
             worldDB.Insert<sceneData>(WorldListName,scene);
+            worldDB.CreateTable<chunkData>(ScenceName);
             SaveChunks(scene);
 
             return scene;
@@ -140,19 +123,16 @@ public class WorldDataManager
 
     public static void SaveChunks(sceneData scene)
     {
-        if (!worldDB.IsTableCreate<chunkData>(scene.Name))
-        {
-            worldDB.CreateTable<chunkData>(scene.Name);
-        }
 
         // Copy modified chunks into a new list and clear the old one to prevent
         // chunks being added to list while it is saving.
-        List<chunkData> chunks = new List<chunkData>(scene.modifiedChunks);
+        Debug.Log(scene.Chunks.Values.Count.ToString());
+
         scene.modifiedChunks.Clear();
 
         // Loop through each chunk and save it.
         int count = 0;
-        foreach (chunkData chunk in chunks)
+        foreach (chunkData chunk in scene.Chunks.Values)
         {
 
             SaveChunk(chunk, scene.Name);
@@ -163,6 +143,10 @@ public class WorldDataManager
         Debug.Log(count + " Chunks saved.");
 
     }
+
+
+
+
     public static void SaveChunk(chunkData chunk,string sceneName)
     {
 
@@ -171,31 +155,32 @@ public class WorldDataManager
 
         Vector2Int position = Chunk.GetChunkVector2Index(chunk.Id);
 
-        string chunkName = sceneName+"_" + position.x + "_" + position.y;
-        chunk.Name = chunkName;
+
         if (worldDB.SelectById<chunkData>(sceneName, chunk.Id)==null)
         {
             worldDB.Insert<chunkData>(sceneName, chunk);
+            string chunkName = sceneName + "_" + position.x + "_" + position.y;
+            chunk.Name = chunkName;
         }
-        chunk.Populate();
-        Debug.Log("Saving " + chunkName);
-        if (worldDB.IsTableCreate<blockData>(chunkName))
+
+        if (!worldDB.IsTableCreate<blockData>(chunk.Name))
         {
-            if (worldDB.SelectById<blockData>(chunkName, chunk.Id) == null)
-            {
-                worldDB.Insert<blockData>(chunkName, chunk.Blocks.Values.ToList());
-            }
-            else
-            {
-                worldDB.Update<blockData>(chunkName, chunk.Blocks.Values.ToList());
-            }
+            worldDB.CreateTable<blockData>(chunk.Name);
+            chunk.Populate();
+        }
+
+        Debug.Log("Saving " + chunk.Name);
+
+        if (worldDB.SelectById<blockData>(chunk.Name, chunk.Id) == null)
+        {
+        worldDB.Insert<blockData>(chunk.Name, chunk.Blocks.Values.ToList());
         }
         else
         {
-            worldDB.CreateTable<blockData>(chunkName);
-            worldDB.Insert<blockData>(chunkName, chunk.Blocks.Values.ToList());
-
+        worldDB.Update<blockData>(chunk.Name, chunk.Blocks.Values.ToList());
         }
+
+        
 
 
 
