@@ -38,6 +38,8 @@ public class sceneData : BaseData
     [NonSerialized]
     public Dictionary<int, chunkData> Chunks = new Dictionary<int, chunkData>();
 
+
+
     public sceneData(int id,string name,int type,int seed, bool _ac)
     {
         Id = id;
@@ -243,6 +245,8 @@ public class chunkData : BaseData
     public chunkData(Vector2Int pos) {  Id = Chunk.GetChunkIntID(pos); }
     public chunkData(int x, int z) { Id = Chunk.GetChunkIntID(new Vector2Int(x, z)); }
 
+    [NonSerialized]
+    public Dictionary<int, blockData> BlockstoUpdate = new Dictionary<int, blockData>();
     public chunkData()
     {
     }

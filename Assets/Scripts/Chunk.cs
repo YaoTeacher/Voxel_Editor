@@ -145,6 +145,7 @@ public class Chunk
         Vector3Int index = new Vector3Int(worldindex.x - (X * VoxelData.ChunkWidth), worldindex.y, worldindex.z - (Z * VoxelData.ChunkWidth));
         int ID = GetBlockIntID(index);
         chunkData.GetVoxel(ID).SetBlockType(newType);
+        chunkData.BlockstoUpdate[ID] = chunkData.Blocks[ID];
 
         World.Instance.scenedata.AddToModifiedChunkList(chunkData);
 

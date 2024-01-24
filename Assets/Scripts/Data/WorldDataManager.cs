@@ -171,18 +171,8 @@ public class WorldDataManager
 
         Debug.Log("Saving " + chunk.Name);
 
-        if (worldDB.SelectById<blockData>(chunk.Name, chunk.Id) == null)
-        {
-        worldDB.Insert<blockData>(chunk.Name, chunk.Blocks.Values.ToList());
-        }
-        else
-        {
-        worldDB.Update<blockData>(chunk.Name, chunk.Blocks.Values.ToList());
-        }
-
-        
-
-
+   
+        worldDB.Update<blockData>(chunk.Name, chunk.BlockstoUpdate.Values.ToList());
 
     }
     public static chunkData LoadChunk(string sceneName, int ID)

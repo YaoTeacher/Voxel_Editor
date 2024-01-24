@@ -23,7 +23,7 @@ public class AreaData:BaseData
                 {
                     if (x == 1 && z == 1)
                     {
-                        if (GroundData[path.WorldIndex + new Vector3Int(1, y, 0)] != null && GroundData[path.WorldIndex + new Vector3Int(0, y, 1)] != null)
+                        if (GroundData.ContainsKey(path.WorldIndex + new Vector3Int(1, y, 0))&& GroundData.ContainsKey(path.WorldIndex + new Vector3Int(0, y, 1)))
                         {
                             neibor.Add(path.WorldIndex + new Vector3Int(x, y, z));
                             continue;
@@ -33,7 +33,7 @@ public class AreaData:BaseData
                     }
                     if (x == -1 && z == 1)
                     {
-                        if (GroundData[path.WorldIndex + new Vector3Int(-1, y, 0)] != null && GroundData[path.WorldIndex + new Vector3Int(0, y, 1)] != null)
+                        if (GroundData.ContainsKey(path.WorldIndex + new Vector3Int(-1, y, 0)) && GroundData.ContainsKey(path.WorldIndex + new Vector3Int(0, y, 1)))
                         {
                             neibor.Add(path.WorldIndex + new Vector3Int(x, y, z));
                             continue;
@@ -43,7 +43,7 @@ public class AreaData:BaseData
                     }
                     if (x == 1 && z == -1)
                     {
-                        if (GroundData[path.WorldIndex + new Vector3Int(1, y, 0)] != null && GroundData[path.WorldIndex + new Vector3Int(0, y, -1)] != null)
+                        if (GroundData.ContainsKey(path.WorldIndex + new Vector3Int(1, y, 0)) && GroundData.ContainsKey(path.WorldIndex + new Vector3Int(0, y, -1)))
                         {
                             neibor.Add(path.WorldIndex + new Vector3Int(x, y, z));
                             continue;
@@ -53,7 +53,7 @@ public class AreaData:BaseData
                     }
                     if (x == -1 && z == -1)
                     {
-                        if (GroundData[path.WorldIndex + new Vector3Int(11, y, 0)] != null && GroundData[path.WorldIndex + new Vector3Int(0, y, -1)] != null)
+                        if (GroundData.ContainsKey(path.WorldIndex + new Vector3Int(-1, y, 0)) && GroundData.ContainsKey(path.WorldIndex + new Vector3Int(0, y, -1)))
                         {
                             neibor.Add(path.WorldIndex + new Vector3Int(x, y, z));
                             continue;

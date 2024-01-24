@@ -120,8 +120,9 @@ public class World : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.F3))
             debugScreen.SetActive(!debugScreen.activeSelf);
 
-        if (Input.GetKeyUp(KeyCode.B))
+        if (Input.GetKeyDown(KeyCode.B))
         {
+            if(Input.GetKeyUp(KeyCode.B))
             SaveScene();
             WorldDataManager.SaveWorld();
         }
