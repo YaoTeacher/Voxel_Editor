@@ -8,6 +8,7 @@ public class AreaData:BaseData
     public bool IsIndoor;
     public Vector3Int firstBorderPoint;
     public Vector3Int lastBorderPoint;
+    public Vector3Int Target;
 
     public Dictionary<Vector3Int,PathData> GroundData = new Dictionary<Vector3Int,PathData>();
 
@@ -21,6 +22,10 @@ public class AreaData:BaseData
             {
                 for (int y = -1; y <= 1; y++)
                 {
+                    if (x == 0 && z == 0&& y == 0)
+                    {
+                        continue;
+                    }
                     if (x == 1 && z == 1)
                     {
                         if (GroundData.ContainsKey(path.WorldIndex + new Vector3Int(1, y, 0))&& GroundData.ContainsKey(path.WorldIndex + new Vector3Int(0, y, 1)))
@@ -74,6 +79,13 @@ public class AreaData:BaseData
 
         return neibor;
     }
+
+    public void AddAreaPoint(Vector3Int point)
+    {
+
+    }
+
+
 }
 
 public class PathData: BaseData 
@@ -82,10 +94,13 @@ public class PathData: BaseData
     public bool IsGround;
     public bool IsAccessable;
     public Vector3Int WorldIndex;
+    public Vector3Int direction;
 }
 
-public class FlowMap : BaseData 
+public class EnterPoint : BaseData 
 {
-    
+    public Vector3Int WorldIndex;
+    public byte type;
+    public bool IsAccessable;
 }
 

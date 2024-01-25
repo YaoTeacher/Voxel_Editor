@@ -7,6 +7,7 @@ using Unity.VisualScripting;
 using UnityEditor.VersionControl;
 using UnityEngine;
 using System.IO;
+using UnityEditor.ShaderGraph;
 
 //[ExecuteInEditMode]
 public class World : MonoBehaviour
@@ -285,20 +286,19 @@ public class World : MonoBehaviour
 
         byte blockType = scenedata.GetVoxelType(worldindex);
 
-        //if (blocktype != null)
-        //{
             if (blocktype.BlockTypes[blockType].isSolid)
                 return true;
             else
                 return false;
-        //}
-        //else
-        //{
-        //    return false;
-        //}
 
+    }
 
+    public bool IsOnGround(Vector3Int point)
+    {
+        if (!scenedata.ContainsKey(point + new Vector3Int(0, 1, 0)))
+            return false;
 
+        else return true;
     }
 
     public static Vector3Int GetWorldIndexFromPos(Vector3 pos)
