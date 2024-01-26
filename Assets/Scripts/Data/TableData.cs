@@ -212,16 +212,13 @@ public class sceneData : BaseData
     {
         Vector2Int chunkindex = World.GetChunkIndexFromWorldIndex(worldindex);
         Vector3Int index = new Vector3Int(worldindex.x - (chunkindex.x * VoxelData.ChunkWidth), worldindex.y, worldindex.z - (chunkindex.y * VoxelData.ChunkWidth));
-        // If the voxel is outside of the world we don't need to do anything with it.
         if (!IsVoxelInScene(worldindex))
             return 0;
 
-        // Check if the chunk exists. If not, create it.
         chunkData chunk = RequestChunk(chunkindex, true);
 
         int ID = Chunk.GetBlockIntID(index);
 
-        // Then set the voxel in our chunk.
         return chunk.GetVoxelType(ID);
 
     }
@@ -309,6 +306,12 @@ public class chunkData : BaseData
         // Then set the voxel in our chunk.
 
 
+    }
+
+    public blockData GetBlockDataFromWorldIndex(Vector3Int worldindex)
+    {
+        Vector3Int chunkindex = worldindex - new Vector3Int(index_x * VoxelData.ChunkWidth, 0, index_z * VoxelData.ChunkWidth);
+        return Blocks[Chunk.GetBlockIntID(chunkindex)];
     }
 
     public byte GetVoxelType(int ID)

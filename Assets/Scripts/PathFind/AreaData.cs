@@ -6,13 +6,49 @@ public class AreaData:BaseData
 {
     public int type;
     public bool IsIndoor;
-    public Vector3Int firstBorderPoint;
-    public Vector3Int lastBorderPoint;
+    public Vector3Int LessBorderPoint;
+    public Vector3Int BiggerBorderPoint;
     public Vector3Int Target;
 
-    public Dictionary<Vector3Int,PathData> GroundData = new Dictionary<Vector3Int,PathData>();
+    public Dictionary<Vector3Int,PathBlockData> GroundData = new Dictionary<Vector3Int,PathBlockData>();
 
-    public List<Vector3Int> GetNeibor(PathData path)
+    public AreaData() { }
+
+    public AreaData(Vector3Int firstpoint, Vector3Int lastpoint) 
+    {
+        if (firstpoint.x < lastpoint.x)
+        {
+            LessBorderPoint.x = firstpoint.x;
+            BiggerBorderPoint.x = lastpoint.x;
+        }
+        else
+        {
+            LessBorderPoint.x = lastpoint.x;
+            BiggerBorderPoint.x = firstpoint.x;
+        }
+        if (firstpoint.y < lastpoint.y)
+        {
+            LessBorderPoint.y = firstpoint.y;
+            BiggerBorderPoint.y = lastpoint.y;
+        }
+        else
+        {
+            LessBorderPoint.y = lastpoint.y;
+            BiggerBorderPoint.y = firstpoint.y;
+        }
+        if (firstpoint.z < lastpoint.z)
+        {
+            LessBorderPoint.z = firstpoint.z;
+            BiggerBorderPoint.z = lastpoint.z;
+        }
+        else
+        {
+            LessBorderPoint.z = lastpoint.z;
+            BiggerBorderPoint.z = firstpoint.z;
+        }
+    }
+
+    public List<Vector3Int> GetGroundNeibor(PathBlockData path)
     {
         List<Vector3Int> neibor = new List<Vector3Int>();
 
@@ -82,19 +118,33 @@ public class AreaData:BaseData
 
     public void AddAreaPoint(Vector3Int point)
     {
+        if (GroundData.ContainsKey(point))
+        {
 
+        }
     }
 
+    public Dictionary<Vector3Int, PathBlockData> GenerateFlowField(PathBlockData taget)
+    {
+        Dictionary < Vector3Int, PathBlockData > flowfielddic = new Dictionary<Vector3Int, PathBlockData >();
+        return flowfielddic;
+    }
 
 }
 
-public class PathData: BaseData 
+public class PathBlockData : BaseData
 {
-    public int type;
-    public bool IsGround;
-    public bool IsAccessable;
     public Vector3Int WorldIndex;
-    public Vector3Int direction;
+    public float cost;
+    public float finalcost;
+    public Vector3 direction;
+
+    public PathBlockData(){}
+    public PathBlockData(Vector3Int worldIndex, Vector3 direction)
+    {
+        WorldIndex = worldIndex;
+        this.direction = direction;
+    }
 }
 
 public class EnterPoint : BaseData 

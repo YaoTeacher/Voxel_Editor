@@ -8,6 +8,7 @@ using UnityEditor.VersionControl;
 using UnityEngine;
 using System.IO;
 using UnityEditor.ShaderGraph;
+using System.Drawing;
 
 //[ExecuteInEditMode]
 public class World : MonoBehaviour
@@ -48,6 +49,8 @@ public class World : MonoBehaviour
     public static World Instance { get { return _instance; } }
 
     public sceneData scenedata;
+
+    public Dictionary<int,AreaData> basticareaData;
 
     public string appPath;
     private void Awake()
@@ -140,6 +143,57 @@ public class World : MonoBehaviour
 
                 Chunks[x, z] = new Chunk(x,z);
 
+            }
+        }
+    }
+
+    public AreaData SetNewArea(Vector3Int firstpoint,Vector3Int lastpoint)
+    {
+        AreaData area = new AreaData(firstpoint, lastpoint);
+        return area;
+    }
+    public bool IsGround(Vector3Int point,int height)
+    {
+        for (int x = 0;x<=height; x++)
+        {
+            point = point + new Vector3Int(0, 1, 0);
+            if (CheckForVoxel(point))
+                //if (scenedata.RequestChunk(ChunkIndex, false).GetBlockDataFromWorldIndex(point + new Vector3Int(0, 1, 0)) != null||!CheckForVoxel(point + new Vector3Int(0, 1, 0)))
+                return false;
+        }
+
+
+        return true;
+    }
+
+    public void GenerateGroundInArea(AreaData areaData)
+    {
+        for (int z = areaData.LessBorderPoint.z; z <= areaData.BiggerBorderPoint.z; z++)
+        {
+
+            for (int x = areaData.LessBorderPoint.x; x < areaData.BiggerBorderPoint.x; x++)
+            {
+
+                for (int y = areaData.LessBorderPoint.y; y < areaData.BiggerBorderPoint.y; y++)
+                {
+                    Vector3Int point = new Vector3Int(x, y, z);
+                    Vector3Int uppoint = point;
+
+                    for (int c = 0; c <= 4; c++)
+                    {
+                        uppoint += new Vector3Int(0, 1, 0);
+                        if (!CheckForVoxel(uppoint)&& CheckForVoxel(point))
+                        {
+                            areaData.GroundData[point] = new PathBlockData(point,new Vector3(0,0,0));
+                            if (y + c <= areaData.BiggerBorderPoint.y)
+                            {
+                                y += c-1;
+                            }
+                            else y = areaData.BiggerBorderPoint.y - 1;
+                        }
+
+                    }
+                }
             }
         }
     }
@@ -293,13 +347,7 @@ public class World : MonoBehaviour
 
     }
 
-    public bool IsOnGround(Vector3Int point)
-    {
-        if (!scenedata.ContainsKey(point + new Vector3Int(0, 1, 0)))
-            return false;
 
-        else return true;
-    }
 
     public static Vector3Int GetWorldIndexFromPos(Vector3 pos)
     {
