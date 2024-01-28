@@ -15,6 +15,7 @@ MonoBehaviour:
   BlockTypes:
   - blockName: Air
     isSolid: 0
+    rough: 255
     isTransparent: 1
     icon: {fileID: -944856376, guid: 9e5ba7c1b8712384997d6571acd8df91, type: 3}
     backFaceTexture: 0
@@ -25,6 +26,7 @@ MonoBehaviour:
     rightFaceTexture: 0
   - blockName: BedStone
     isSolid: 1
+    rough: 5
     isTransparent: 0
     icon: {fileID: -1471574654, guid: 8ccace736c8423742aa10041de97657d, type: 3}
     backFaceTexture: 9
@@ -35,6 +37,7 @@ MonoBehaviour:
     rightFaceTexture: 9
   - blockName: GemStone
     isSolid: 1
+    rough: 1
     isTransparent: 0
     icon: {fileID: 1199707237, guid: 8ccace736c8423742aa10041de97657d, type: 3}
     backFaceTexture: 8
@@ -45,6 +48,7 @@ MonoBehaviour:
     rightFaceTexture: 8
   - blockName: Grass
     isSolid: 1
+    rough: 2
     isTransparent: 0
     icon: {fileID: -147661827, guid: 8ccace736c8423742aa10041de97657d, type: 3}
     backFaceTexture: 2
@@ -55,6 +59,7 @@ MonoBehaviour:
     rightFaceTexture: 2
   - blockName: Dirt
     isSolid: 1
+    rough: 2
     isTransparent: 0
     icon: {fileID: -800723002, guid: 8ccace736c8423742aa10041de97657d, type: 3}
     backFaceTexture: 1
@@ -65,6 +70,7 @@ MonoBehaviour:
     rightFaceTexture: 1
   - blockName: Plank
     isSolid: 1
+    rough: 1
     isTransparent: 0
     icon: {fileID: -372702534, guid: 8ccace736c8423742aa10041de97657d, type: 3}
     backFaceTexture: 4
@@ -75,6 +81,7 @@ MonoBehaviour:
     rightFaceTexture: 4
   - blockName: Path
     isSolid: 1
+    rough: 1
     isTransparent: 0
     icon: {fileID: -797474755, guid: 8ccace736c8423742aa10041de97657d, type: 3}
     backFaceTexture: 11
@@ -85,6 +92,7 @@ MonoBehaviour:
     rightFaceTexture: 11
   - blockName: Wood
     isSolid: 1
+    rough: 3
     isTransparent: 0
     icon: {fileID: -68591331, guid: 8ccace736c8423742aa10041de97657d, type: 3}
     backFaceTexture: 5
@@ -95,6 +103,7 @@ MonoBehaviour:
     rightFaceTexture: 5
   - blockName: sand
     isSolid: 1
+    rough: 0
     isTransparent: 0
     icon: {fileID: -41508078, guid: 8ccace736c8423742aa10041de97657d, type: 3}
     backFaceTexture: 10
@@ -105,6 +114,7 @@ MonoBehaviour:
     rightFaceTexture: 10
   - blockName: Glass
     isSolid: 1
+    rough: 1
     isTransparent: 1
     icon: {fileID: -1418828333, guid: 8ccace736c8423742aa10041de97657d, type: 3}
     backFaceTexture: 3
@@ -115,6 +125,7 @@ MonoBehaviour:
     rightFaceTexture: 3
   - blockName: Stone
     isSolid: 1
+    rough: 6
     isTransparent: 0
     icon: {fileID: -631695657, guid: 8ccace736c8423742aa10041de97657d, type: 3}
     backFaceTexture: 0

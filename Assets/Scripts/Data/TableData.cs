@@ -222,6 +222,37 @@ public class sceneData : BaseData
         return chunk.GetVoxelType(ID);
 
     }
+
+    public byte[] IsIndexGround(Vector3Int worldindex,Vector3Int upworldindex)
+    {
+        byte[] t = new byte[2]; 
+        Vector2Int chunkindex = World.GetChunkIndexFromWorldIndex(worldindex);
+        Vector3Int index = new Vector3Int(worldindex.x - (chunkindex.x * VoxelData.ChunkWidth), worldindex.y, worldindex.z - (chunkindex.y * VoxelData.ChunkWidth));
+        Vector3Int upindex = new Vector3Int(upworldindex.x - (chunkindex.x * VoxelData.ChunkWidth), upworldindex.y, upworldindex.z - (chunkindex.y * VoxelData.ChunkWidth));
+        if (!IsVoxelInScene(worldindex))
+        {
+            t[0] = 0;
+            t[1] = 0;
+            return t;
+        }
+
+        chunkData chunk = RequestChunk(chunkindex, true);
+
+        int ID = Chunk.GetBlockIntID(index);
+        t[0]= chunk.GetVoxelType(ID);
+        if (!IsVoxelInScene(upworldindex))
+        {
+            t[1] = 0;
+        }
+        else
+        {
+            int upID = Chunk.GetBlockIntID(upindex);
+            t[1] = chunk.GetVoxelType(upID);
+        }
+
+        return t;
+
+    }
 }
 
 public class chunkData : BaseData

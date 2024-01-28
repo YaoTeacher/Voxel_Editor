@@ -17,9 +17,12 @@ public class BlockType
     [field: SerializeField]
     public bool isSolid;
     [field: SerializeField]
+    public float rough;
+    [field: SerializeField]
     public bool isTransparent;
     [field: SerializeField]
     public Sprite icon;
+
 
     [Header("Texture Values")]
     public int backFaceTexture;

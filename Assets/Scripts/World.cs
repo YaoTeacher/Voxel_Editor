@@ -146,57 +146,6 @@ public class World : MonoBehaviour
             }
         }
     }
-
-    public AreaData SetNewArea(Vector3Int firstpoint,Vector3Int lastpoint)
-    {
-        AreaData area = new AreaData(firstpoint, lastpoint);
-        return area;
-    }
-    public bool IsGround(Vector3Int point,int height)
-    {
-        for (int x = 0;x<=height; x++)
-        {
-            point = point + new Vector3Int(0, 1, 0);
-            if (CheckForVoxel(point))
-                //if (scenedata.RequestChunk(ChunkIndex, false).GetBlockDataFromWorldIndex(point + new Vector3Int(0, 1, 0)) != null||!CheckForVoxel(point + new Vector3Int(0, 1, 0)))
-                return false;
-        }
-
-
-        return true;
-    }
-
-    public void GenerateGroundInArea(AreaData areaData)
-    {
-        for (int z = areaData.LessBorderPoint.z; z <= areaData.BiggerBorderPoint.z; z++)
-        {
-
-            for (int x = areaData.LessBorderPoint.x; x < areaData.BiggerBorderPoint.x; x++)
-            {
-
-                for (int y = areaData.LessBorderPoint.y; y < areaData.BiggerBorderPoint.y; y++)
-                {
-                    Vector3Int point = new Vector3Int(x, y, z);
-                    Vector3Int uppoint = point;
-
-                    for (int c = 0; c <= 4; c++)
-                    {
-                        uppoint += new Vector3Int(0, 1, 0);
-                        if (!CheckForVoxel(uppoint)&& CheckForVoxel(point))
-                        {
-                            areaData.GroundData[point] = new PathBlockData(point,new Vector3(0,0,0));
-                            if (y + c <= areaData.BiggerBorderPoint.y)
-                            {
-                                y += c-1;
-                            }
-                            else y = areaData.BiggerBorderPoint.y - 1;
-                        }
-
-                    }
-                }
-            }
-        }
-    }
     void LoadScene()
     {
 
@@ -322,10 +271,10 @@ public class World : MonoBehaviour
     public static byte GetVoxel(Vector3Int pos)
     {
 
-        if (pos.y == 0)
-        { return 1; }
+        if (pos.y <VoxelData.ChunkHeight/2)
+        { return 0; }
 
-        else if (pos.y <= 2 && pos.y > 0)
+        else if (pos.y < (VoxelData.ChunkHeight / 2)+5 && pos.y >= VoxelData.ChunkHeight / 2)
         { return 6; }
 
         else 
@@ -344,6 +293,18 @@ public class World : MonoBehaviour
                 return true;
             else
                 return false;
+
+    }
+
+    public bool IsGround(Vector3Int worldindex,Vector3Int upworldindex)
+    {
+
+        byte[] blockType = scenedata.IsIndexGround(worldindex,upworldindex);
+
+        if (blocktype.BlockTypes[blockType[0]].isSolid&& !blocktype.BlockTypes[blockType[1]].isSolid)
+            return true;
+        else
+            return false;
 
     }
 

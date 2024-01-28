@@ -4,13 +4,13 @@ using UnityEngine;
 
 public class AreaData:BaseData
 {
+    public string name;
     public int type;
-    public bool IsIndoor;
+    public bool isIndoor;
     public Vector3Int LessBorderPoint;
     public Vector3Int BiggerBorderPoint;
-    public Vector3Int Target;
 
-    public Dictionary<Vector3Int,PathBlockData> GroundData = new Dictionary<Vector3Int,PathBlockData>();
+    
 
     public AreaData() { }
 
@@ -48,102 +48,25 @@ public class AreaData:BaseData
         }
     }
 
-    public List<Vector3Int> GetGroundNeibor(PathBlockData path)
-    {
-        List<Vector3Int> neibor = new List<Vector3Int>();
-
-        for (int z = -1; z <= 1;z++)
-        {
-            for (int x = -1; x <= 1; x++)
-            {
-                for (int y = -1; y <= 1; y++)
-                {
-                    if (x == 0 && z == 0&& y == 0)
-                    {
-                        continue;
-                    }
-                    if (x == 1 && z == 1)
-                    {
-                        if (GroundData.ContainsKey(path.WorldIndex + new Vector3Int(1, y, 0))&& GroundData.ContainsKey(path.WorldIndex + new Vector3Int(0, y, 1)))
-                        {
-                            neibor.Add(path.WorldIndex + new Vector3Int(x, y, z));
-                            continue;
-                        }
-                        else
-                            continue;
-                    }
-                    if (x == -1 && z == 1)
-                    {
-                        if (GroundData.ContainsKey(path.WorldIndex + new Vector3Int(-1, y, 0)) && GroundData.ContainsKey(path.WorldIndex + new Vector3Int(0, y, 1)))
-                        {
-                            neibor.Add(path.WorldIndex + new Vector3Int(x, y, z));
-                            continue;
-                        }
-                        else
-                            continue;
-                    }
-                    if (x == 1 && z == -1)
-                    {
-                        if (GroundData.ContainsKey(path.WorldIndex + new Vector3Int(1, y, 0)) && GroundData.ContainsKey(path.WorldIndex + new Vector3Int(0, y, -1)))
-                        {
-                            neibor.Add(path.WorldIndex + new Vector3Int(x, y, z));
-                            continue;
-                        }
-                        else
-                            continue;
-                    }
-                    if (x == -1 && z == -1)
-                    {
-                        if (GroundData.ContainsKey(path.WorldIndex + new Vector3Int(-1, y, 0)) && GroundData.ContainsKey(path.WorldIndex + new Vector3Int(0, y, -1)))
-                        {
-                            neibor.Add(path.WorldIndex + new Vector3Int(x, y, z));
-                            continue;
-                        }
-                        else
-                            continue;
-                    }
-                    if (GroundData[path.WorldIndex + new Vector3Int(x, y, z)] != null)
-                    {
-
-                        neibor.Add(path.WorldIndex + new Vector3Int(x, y, z));
-                    }
-                    else
-                        continue;
-                }
-            }
-        }
-
-        return neibor;
-    }
-
-    public void AddAreaPoint(Vector3Int point)
-    {
-        if (GroundData.ContainsKey(point))
-        {
-
-        }
-    }
-
-    public Dictionary<Vector3Int, PathBlockData> GenerateFlowField(PathBlockData taget)
-    {
-        Dictionary < Vector3Int, PathBlockData > flowfielddic = new Dictionary<Vector3Int, PathBlockData >();
-        return flowfielddic;
-    }
-
 }
 
-public class PathBlockData : BaseData
+public class FlowFieldCellData : BaseData
 {
     public Vector3Int WorldIndex;
     public float cost;
     public float finalcost;
     public Vector3 direction;
 
-    public PathBlockData(){}
-    public PathBlockData(Vector3Int worldIndex, Vector3 direction)
+    public FlowFieldCellData(){}
+    public FlowFieldCellData(Vector3Int worldIndex, float blockrough)
     {
         WorldIndex = worldIndex;
-        this.direction = direction;
+        cost = blockrough;
+    }
+
+    public void SetDirection()
+    {
+
     }
 }
 
