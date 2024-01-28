@@ -43,24 +43,27 @@ public class FlowField
                     Vector3Int uppoint = point;
 
                     for (int c = 0; c <= creature; c++)
-                    {
+                    { 
                         uppoint += new Vector3Int(0, 1, 0);
                         if (!scene.IsGround(point,uppoint))
                         {
-
-                            if (y + c < VoxelData.ChunkHeight - 1)
-                            {
-                                y += c - 1;
-                            }
-                            else y = VoxelData.ChunkHeight - 1;
+                            y += c;
+                            break;
                         }
-                        else
+                        else 
                         {
-                            GroundData[point] = new FlowFieldCellData(point, World.Instance.blocktype.BlockTypes[1].rough);
+                            
+                            if (c == creature)
+                            {
+                                GroundData[point] = new FlowFieldCellData(point, World.Instance.blocktype.BlockTypes[1].rough);
+                                y += c;
+                                break;
+                            }
 
+                            continue; 
                         }
-
                     }
+                    
                 }
             }
         }

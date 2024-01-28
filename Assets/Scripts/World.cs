@@ -300,11 +300,13 @@ public class World : MonoBehaviour
     {
 
         byte[] blockType = scenedata.IsIndexGround(worldindex,upworldindex);
-
-        if (blocktype.BlockTypes[blockType[0]].isSolid&& !blocktype.BlockTypes[blockType[1]].isSolid)
-            return true;
-        else
+        if (!blocktype.BlockTypes[blockType[0]].isSolid)
             return false;
+        else if (blocktype.BlockTypes[blockType[0]].isSolid&& !blocktype.BlockTypes[blockType[1]].isSolid)
+            return true;
+        else if (blocktype.BlockTypes[blockType[0]].isSolid && blocktype.BlockTypes[blockType[1]].isSolid)
+            return false;
+        else return false;
 
     }
 

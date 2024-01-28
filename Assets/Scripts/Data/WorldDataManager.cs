@@ -171,6 +171,9 @@ public class WorldDataManager
 
         Debug.Log("Saving " + chunk.Name);
 
+        if (chunk.BlockstoUpdate.Values.Count == 0)
+            return;
+
    
         worldDB.Update<blockData>(chunk.Name, chunk.BlockstoUpdate.Values.ToList());
 

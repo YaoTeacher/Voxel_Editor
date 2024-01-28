@@ -158,30 +158,30 @@ public class GridDebug : MonoBehaviour
 
         if (curFlowField == null) { return; }
 
-        GUIStyle style = new GUIStyle(GUI.skin.label);
-        style.alignment = TextAnchor.MiddleCenter;
+        //GUIStyle style = new GUIStyle(GUI.skin.label);
+        //style.alignment = TextAnchor.MiddleCenter;
 
-        switch (curDisplayType)
-        {
-            case FlowFieldDisplayType.CostField:
+        //switch (curDisplayType)
+        //{
+        //    case FlowFieldDisplayType.CostField:
 
-                foreach (FlowFieldCellData curCell in curFlowField.grid.Values)
-                {
-                    Handles.Label(curCell.WorldIndex, curCell.cost.ToString(), style);
-                }
-                break;
+        //        foreach (FlowFieldCellData curCell in curFlowField.grid.Values)
+        //        {
+        //            Handles.Label(curCell.WorldIndex, curCell.cost.ToString(), style);
+        //        }
+        //        break;
 
-            case FlowFieldDisplayType.IntegrationField:
+        //    case FlowFieldDisplayType.IntegrationField:
 
-                foreach (FlowFieldCellData curCell in curFlowField.grid.Values)
-                {
-                    Handles.Label(curCell.WorldIndex, curCell.finalcost.ToString(), style);
-                }
-                break;
+        //        foreach (FlowFieldCellData curCell in curFlowField.grid.Values)
+        //        {
+        //            Handles.Label(curCell.WorldIndex, curCell.finalcost.ToString(), style);
+        //        }
+        //        break;
 
-            default:
-                break;
-        }
+        //    default:
+        //        break;
+        //}
     }
 
     private void DrawGrid(Color drawColor)
