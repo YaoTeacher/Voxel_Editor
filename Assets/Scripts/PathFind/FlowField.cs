@@ -5,13 +5,14 @@ using UnityEngine;
 public class FlowField
 {
 
-    public Dictionary<Vector3Int, FlowFieldCellData> grid { get; private set; }
+    public Dictionary<int, AreaData> Areas { get; private set; }
 
     public Dictionary<Vector3Int, FlowFieldCellData> GroundData = new Dictionary<Vector3Int, FlowFieldCellData>();
 
     public AreaData SetNewArea(Vector3Int firstpoint, Vector3Int lastpoint)
     {
-        AreaData area = new AreaData(firstpoint, lastpoint);
+        AreaData area = new AreaData(firstpoint, lastpoint,Areas.Count);
+        Areas[Areas.Count]= area;
         return area;
     }
 
@@ -69,7 +70,7 @@ public class FlowField
         }
     }
 
-    public void GenerateArea(World scene, AreaData areaData, int creature = 4)
+    public void GenerateArea(AreaData areaData)
     {
         for (int z = areaData.LessBorderPoint.z; z <= areaData.BiggerBorderPoint.z; z++)
         {
@@ -79,94 +80,32 @@ public class FlowField
 
                 for (int y = areaData.LessBorderPoint.y; y < areaData.BiggerBorderPoint.y; y++)
                 {
-                    Vector3Int point = new Vector3Int(x, y, z);
-                    Vector3Int uppoint = point;
-
-                    for (int c = 0; c <= creature; c++)
+                    Vector3Int worldindex = new Vector3Int(x, y, z);
+                   if (GroundData.ContainsKey(worldindex))
                     {
-                        uppoint += new Vector3Int(0, 1, 0);
-                        if (scene.IsGround(point, uppoint))
-                        {
-                            GroundData[point] = new FlowFieldCellData(point, 1f);
-                            if (y + c <= areaData.BiggerBorderPoint.y)
-                            {
-                                y += c - 1;
-                            }
-                            else y = areaData.BiggerBorderPoint.y - 1;
-                        }
-
+                        GroundData[worldindex].areaID = areaData.Id;
+                        areaData.onGroundCell[worldindex]= GroundData[worldindex];
                     }
                 }
             }
         }
     }
 
-    public List<Vector3Int> GetGroundNeibor(FlowFieldCellData path)
+    public void GenerateCostMap(Vector3Int target)
     {
-        List<Vector3Int> neibor = new List<Vector3Int>();
-
-        for (int z = -1; z <= 1; z++)
+        if (GroundData.ContainsKey(target))
         {
-            for (int x = -1; x <= 1; x++)
+            FlowFieldCellData f = GroundData[target];
+            if (GroundData[target].areaID!=-1)
             {
-                if (x == 0 && z == 0)
+                foreach (FlowFieldCellData f2 in Areas[f.areaID].onGroundCell.Values)
                 {
-                    continue;
+                    Areas[f.areaID].GetGroundNeibor(f2);
                 }
-                for (int y = -1; y <= 1; y++)
-                {
-
-                    if (x == 1 && z == 1)
-                    {
-                        if (GroundData.ContainsKey(path.WorldIndex + new Vector3Int(1, y, 0)) && GroundData.ContainsKey(path.WorldIndex + new Vector3Int(0, y, 1)))
-                        {
-                            neibor.Add(path.WorldIndex + new Vector3Int(x, y, z));
-                            continue;
-                        }
-                        else
-                            continue;
-                    }
-                    if (x == -1 && z == 1)
-                    {
-                        if (GroundData.ContainsKey(path.WorldIndex + new Vector3Int(-1, y, 0)) && GroundData.ContainsKey(path.WorldIndex + new Vector3Int(0, y, 1)))
-                        {
-                            neibor.Add(path.WorldIndex + new Vector3Int(x, y, z));
-                            continue;
-                        }
-                        else
-                            continue;
-                    }
-                    if (x == 1 && z == -1)
-                    {
-                        if (GroundData.ContainsKey(path.WorldIndex + new Vector3Int(1, y, 0)) && GroundData.ContainsKey(path.WorldIndex + new Vector3Int(0, y, -1)))
-                        {
-                            neibor.Add(path.WorldIndex + new Vector3Int(x, y, z));
-                            continue;
-                        }
-                        else
-                            continue;
-                    }
-                    if (x == -1 && z == -1)
-                    {
-                        if (GroundData.ContainsKey(path.WorldIndex + new Vector3Int(-1, y, 0)) && GroundData.ContainsKey(path.WorldIndex + new Vector3Int(0, y, -1)))
-                        {
-                            neibor.Add(path.WorldIndex + new Vector3Int(x, y, z));
-                            continue;
-                        }
-                        else
-                            continue;
-                    }
-                    if (GroundData[path.WorldIndex + new Vector3Int(x, y, z)] != null)
-                    {
-
-                        neibor.Add(path.WorldIndex + new Vector3Int(x, y, z));
-                    }
-                    else
-                        continue;
-                }
+                
             }
         }
-
-        return neibor;
     }
+
+    
 }

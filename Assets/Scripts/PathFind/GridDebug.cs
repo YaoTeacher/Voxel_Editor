@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net;
 using UnityEditor;
 using UnityEngine;
+using static UnityEngine.Rendering.DebugUI.MessageBox;
 
 public enum FlowFieldDisplayType { None, AllIcons, DestinationIcon, CostField, IntegrationField };
 
@@ -167,7 +168,7 @@ public class GridDebug : MonoBehaviour
 
         //        foreach (FlowFieldCellData curCell in curFlowField.grid.Values)
         //        {
-        //            Handles.Label(curCell.WorldIndex, curCell.cost.ToString(), style);
+        //            Handles.Label(new Vector3(curCell.WorldIndex.x + 0.5f, curCell.WorldIndex.y + 0.5f, curCell.WorldIndex.z + 0.5f) * VoxelData.BlockSize, curCell.cost.ToString(), style);
         //        }
         //        break;
 
@@ -175,7 +176,7 @@ public class GridDebug : MonoBehaviour
 
         //        foreach (FlowFieldCellData curCell in curFlowField.grid.Values)
         //        {
-        //            Handles.Label(curCell.WorldIndex, curCell.finalcost.ToString(), style);
+        //            Handles.Label(new Vector3(curCell.WorldIndex.x + 0.5f, curCell.WorldIndex.y + 0.5f, curCell.WorldIndex.z + 0.5f) * VoxelData.BlockSize, curCell.finalcost.ToString(), style);
         //        }
         //        break;
 
@@ -186,6 +187,8 @@ public class GridDebug : MonoBehaviour
 
     private void DrawGrid(Color drawColor)
     {
+        GUIStyle style = new GUIStyle(GUI.skin.label);
+        style.alignment = TextAnchor.MiddleCenter;
         Gizmos.color = drawColor;
         if (curFlowField == null) { return; }
         foreach(FlowFieldCellData f in curFlowField.GroundData.Values)
@@ -193,6 +196,7 @@ public class GridDebug : MonoBehaviour
             Vector3 center = new Vector3(f.WorldIndex.x+0.5f, f.WorldIndex.y + 0.5f, f.WorldIndex.z + 0.5f) * VoxelData.BlockSize;
             Vector3 size = Vector3.one * VoxelData.BlockSize;
             Gizmos.DrawWireCube(center, size);
+            Handles.Label(center, f.cost.ToString(), style);
         }
 
     }

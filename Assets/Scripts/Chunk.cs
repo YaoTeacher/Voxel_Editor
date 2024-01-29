@@ -41,7 +41,7 @@ public class Chunk
         position = chunkObject.transform.position;
 
         chunkData = World.Instance.scenedata.RequestChunk(new Vector2Int(X, Z), true);
-        Debug.Log(chunkData.Name);
+        //Debug.Log(chunkData.Name);
 
         World.Instance.AddChunkToUpdate(this);
 
@@ -80,7 +80,7 @@ public class Chunk
         mesh.triangles = triangles.ToArray();
         mesh.uv = uvs.ToArray();
         mesh.RecalculateNormals();
-        Debug.Log(mesh.triangles.Length);
+        //Debug.Log(mesh.triangles.Length);
         meshFilter.mesh = mesh;
     }
     public void UpdateChunk()

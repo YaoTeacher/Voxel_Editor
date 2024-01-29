@@ -30,7 +30,7 @@ public class GridController : MonoBehaviour
 
     private void InitializeFlowField()
     {
-        UnityEngine.Debug.Log($"{world.scenedata.Name}");
+        //UnityEngine.Debug.Log($"{world.scenedata.Name}");
         curFlowField = new FlowField();
         curFlowField.GenerateGround(world,4);
         gridDebug.SetFlowField(curFlowField);

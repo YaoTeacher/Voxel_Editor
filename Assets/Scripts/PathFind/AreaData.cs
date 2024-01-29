@@ -1,21 +1,24 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.ShaderGraph;
 using UnityEngine;
 
 public class AreaData:BaseData
 {
+
     public string name;
     public int type;
     public bool isIndoor;
     public Vector3Int LessBorderPoint;
     public Vector3Int BiggerBorderPoint;
 
-    
+    public Dictionary<Vector3Int, FlowFieldCellData> onGroundCell;
 
     public AreaData() { }
 
-    public AreaData(Vector3Int firstpoint, Vector3Int lastpoint) 
+    public AreaData(Vector3Int firstpoint, Vector3Int lastpoint,int id) 
     {
+        Id = id;
         if (firstpoint.x < lastpoint.x)
         {
             LessBorderPoint.x = firstpoint.x;
@@ -48,10 +51,79 @@ public class AreaData:BaseData
         }
     }
 
+    public List<Vector3Int> GetGroundNeibor(FlowFieldCellData path)
+    {
+        List<Vector3Int> neibor = new List<Vector3Int>();
+
+        for (int z = -1; z <= 1; z++)
+        {
+            for (int x = -1; x <= 1; x++)
+            {
+                if (x == 0 && z == 0)
+                {
+                    continue;
+                }
+                for (int y = -1; y <= 1; y++)
+                {
+
+                    if (x == 1 && z == 1)
+                    {
+                        if (onGroundCell.ContainsKey(path.WorldIndex + new Vector3Int(1, y, 0)) && onGroundCell.ContainsKey(path.WorldIndex + new Vector3Int(0, y, 1)))
+                        {
+                            neibor.Add(path.WorldIndex + new Vector3Int(x, y, z));
+                            continue;
+                        }
+                        else
+                            continue;
+                    }
+                    if (x == -1 && z == 1)
+                    {
+                        if (onGroundCell.ContainsKey(path.WorldIndex + new Vector3Int(-1, y, 0)) && onGroundCell.ContainsKey(path.WorldIndex + new Vector3Int(0, y, 1)))
+                        {
+                            neibor.Add(path.WorldIndex + new Vector3Int(x, y, z));
+                            continue;
+                        }
+                        else
+                            continue;
+                    }
+                    if (x == 1 && z == -1)
+                    {
+                        if (onGroundCell.ContainsKey(path.WorldIndex + new Vector3Int(1, y, 0)) && onGroundCell.ContainsKey(path.WorldIndex + new Vector3Int(0, y, -1)))
+                        {
+                            neibor.Add(path.WorldIndex + new Vector3Int(x, y, z));
+                            continue;
+                        }
+                        else
+                            continue;
+                    }
+                    if (x == -1 && z == -1)
+                    {
+                        if (onGroundCell.ContainsKey(path.WorldIndex + new Vector3Int(-1, y, 0)) && onGroundCell.ContainsKey(path.WorldIndex + new Vector3Int(0, y, -1)))
+                        {
+                            neibor.Add(path.WorldIndex + new Vector3Int(x, y, z));
+                            continue;
+                        }
+                        else
+                            continue;
+                    }
+                    if (onGroundCell[path.WorldIndex + new Vector3Int(x, y, z)] != null)
+                    {
+
+                        neibor.Add(path.WorldIndex + new Vector3Int(x, y, z));
+                    }
+                    else
+                        continue;
+                }
+            }
+        }
+
+        return neibor;
+    }
 }
 
 public class FlowFieldCellData : BaseData
 {
+    public int areaID=-1;
     public Vector3Int WorldIndex;
     public float cost;
     public float finalcost;

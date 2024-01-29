@@ -101,7 +101,7 @@ public class World : MonoBehaviour
 
         if (Instance.chunksToDraw.Count > 0)
         {
-            Debug.Log(chunksToDraw.Count);
+            //Debug.Log(chunksToDraw.Count);
             Instance.chunksToDraw.Dequeue().CreateMesh();
         }
 
@@ -114,7 +114,7 @@ public class World : MonoBehaviour
 
             if (Instance.chunksToUpdate.Count > 0)
             {
-                Debug.Log(chunksToUpdate.Count);
+                //Debug.Log(chunksToUpdate.Count);
                 UpdateChunks();
             }
                 
@@ -155,7 +155,7 @@ public class World : MonoBehaviour
             {
                 int ChunkID = Chunk.GetChunkIntID(new Vector2Int(x, z));
                 scenedata.LoadChunk(ChunkID);
-                Debug.Log(scenedata.Chunks.Keys.Count.ToString());
+                //Debug.Log(scenedata.Chunks.Keys.Count.ToString());
 
 
             }
