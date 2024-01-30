@@ -9,7 +9,6 @@ public enum FlowFieldDisplayType { None, AllIcons, DestinationIcon, CostField, I
 
 public class GridDebug : MonoBehaviour
 {
-    public GridController gridController;
     public bool displayGrid;
 
     public FlowFieldDisplayType curDisplayType;
@@ -153,7 +152,7 @@ public class GridDebug : MonoBehaviour
             }
             else
             {
-                DrawGrid(Color.green);
+                DrawArea(Color.green);
             }
         }
 
@@ -198,6 +197,27 @@ public class GridDebug : MonoBehaviour
             Gizmos.DrawWireCube(center, size);
             Handles.Label(center, f.cost.ToString(), style);
         }
+
+    }
+
+    private void DrawArea(Color drawColor)
+    {
+        if (curFlowField.GroundData.Count<=0) { return; }
+        GUIStyle style = new GUIStyle(GUI.skin.label);
+        style.alignment = TextAnchor.MiddleCenter;
+        Gizmos.color = drawColor;
+        
+        foreach(AreaData a in curFlowField.Areas.Values)
+        {
+            foreach (FlowFieldCellData f in a.onGroundCell.Values)
+            {
+                Vector3 center = new Vector3(f.WorldIndex.x + 0.5f, f.WorldIndex.y + 0.5f, f.WorldIndex.z + 0.5f) * VoxelData.BlockSize;
+                Vector3 size = Vector3.one * VoxelData.BlockSize;
+                Gizmos.DrawWireCube(center, size);
+                Handles.Label(center, f.finalcost.ToString(), style);
+            }
+        }
+
 
     }
 }

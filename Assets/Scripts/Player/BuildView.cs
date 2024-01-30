@@ -23,13 +23,11 @@ public class BuildView : MonoBehaviour
     public float checkIncrement = 0.1f;
     public float reach = 8f;
 
-    public Text selectedBlockText;
     public byte selectedBlockIndex = 1;
 
     Vector3Int DestroyIndex =new Vector3Int();
     Vector3Int BuildIndex=new Vector3Int();
-
-    public FlowField curFlowField;
+    List<Vector3Int> vector3Ints = new List<Vector3Int>();
     public GridDebug gridDebug;
 
     private void Start()
@@ -162,7 +160,7 @@ public class BuildView : MonoBehaviour
         {
             isShiftPressed = false;
         }
-
+        
         if (!isShiftPressed)
         {
             // 判断是否同时满足长按 Ctrl 键和点击鼠标左键的条件
@@ -179,36 +177,44 @@ public class BuildView : MonoBehaviour
         }
         else
         {
-            List<Vector3Int> vector3Ints = new List<Vector3Int> ();
+            
             if (isMouseLeftClicked)
             {
-
+                
                 vector3Ints.Add(DestroyIndex); 
 
-                print("highlight:" + highlightBlock.position.y);
-                
-            }
-            if (vector3Ints.Count >= 2)
-            {
-                curFlowField.SetNewArea(vector3Ints[0], vector3Ints[1]);
-                vector3Ints.Clear();
-            }
+                print($"{vector3Ints.Count}");
 
+                if (vector3Ints.Count >= 2)
+                {
+                    print("generate area!");
+                    print($"{vector3Ints[0]},{vector3Ints[1]}");
+                    AreaData a = world.curFlowField.SetNewArea(vector3Ints[0], vector3Ints[1]);
+                    world.curFlowField.GenerateArea(a);
+                    gridDebug.SetFlowField(world.curFlowField);
+                    vector3Ints.Clear();
+                }
+
+            }
             if (isMouseRightClicked)
             {
-                print("place:" + placeBlock.position);
-                world.GetChunkFromPos(placeBlock.position).EditVoxel(BuildIndex, selectedBlockIndex);
+                print("generate costmap!");
+                world.curFlowField.GenerateCostMap(DestroyIndex);
+                gridDebug.SetFlowField(world.curFlowField);
             }
         }
-       
+
+        
+
+
     }
 
     private void InitializeFlowField()
     {
         //UnityEngine.Debug.Log($"{world.scenedata.Name}");
-        curFlowField = new FlowField();
-        curFlowField.GenerateGround(world, 4);
-        gridDebug.SetFlowField(curFlowField);
+        world.curFlowField = new FlowField();
+        world.curFlowField.GenerateGround(world, 4);
+
     }
 
     public bool isPressV()

@@ -52,6 +52,8 @@ public class World : MonoBehaviour
 
     public Dictionary<int,AreaData> basticareaData;
 
+    public FlowField curFlowField;
+
     public string appPath;
     private void Awake()
     {

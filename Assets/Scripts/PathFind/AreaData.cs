@@ -12,7 +12,7 @@ public class AreaData:BaseData
     public Vector3Int LessBorderPoint;
     public Vector3Int BiggerBorderPoint;
 
-    public Dictionary<Vector3Int, FlowFieldCellData> onGroundCell;
+    public Dictionary<Vector3Int, FlowFieldCellData> onGroundCell=new Dictionary<Vector3Int, FlowFieldCellData>();
 
     public AreaData() { }
 
@@ -51,9 +51,9 @@ public class AreaData:BaseData
         }
     }
 
-    public List<Vector3Int> GetGroundNeibor(FlowFieldCellData path)
+    public List<FlowFieldCellData> GetGroundNeibor(FlowFieldCellData path)
     {
-        List<Vector3Int> neibor = new List<Vector3Int>();
+        List<FlowFieldCellData> neibor = new List<FlowFieldCellData>();
 
         for (int z = -1; z <= 1; z++)
         {
@@ -65,54 +65,54 @@ public class AreaData:BaseData
                 }
                 for (int y = -1; y <= 1; y++)
                 {
+                    if (onGroundCell.ContainsKey(path.WorldIndex + new Vector3Int(x, y, z)))
+                    {
+                        if (x == 1 && z == 1)
+                        {
+                            if (onGroundCell.ContainsKey(path.WorldIndex + new Vector3Int(1, y, 0)) && onGroundCell.ContainsKey(path.WorldIndex + new Vector3Int(0, y, 1)))
+                            {
+                                neibor.Add(onGroundCell[path.WorldIndex + new Vector3Int(x, y, z)]);
+                                continue;
+                            }
+                            else
+                                continue;
+                        }
+                        if (x == -1 && z == 1)
+                        {
+                            if (onGroundCell.ContainsKey(path.WorldIndex + new Vector3Int(-1, y, 0)) && onGroundCell.ContainsKey(path.WorldIndex + new Vector3Int(0, y, 1)))
+                            {
+                                neibor.Add(onGroundCell[path.WorldIndex + new Vector3Int(x, y, z)]);
+                                continue;
+                            }
+                            else
+                                continue;
+                        }
+                        if (x == 1 && z == -1)
+                        {
+                            if (onGroundCell.ContainsKey(path.WorldIndex + new Vector3Int(1, y, 0)) && onGroundCell.ContainsKey(path.WorldIndex + new Vector3Int(0, y, -1)))
+                            {
+                                neibor.Add(onGroundCell[path.WorldIndex + new Vector3Int(x, y, z)]);
+                                continue;
+                            }
+                            else
+                                continue;
+                        }
+                        if (x == -1 && z == -1)
+                        {
+                            if (onGroundCell.ContainsKey(path.WorldIndex + new Vector3Int(-1, y, 0)) && onGroundCell.ContainsKey(path.WorldIndex + new Vector3Int(0, y, -1)))
+                            {
+                                neibor.Add(onGroundCell[path.WorldIndex + new Vector3Int(x, y, z)]);
+                                continue;
+                            }
+                            else
+                                continue;
+                        }
+                        neibor.Add(onGroundCell[path.WorldIndex + new Vector3Int(x, y, z)]);
 
-                    if (x == 1 && z == 1)
-                    {
-                        if (onGroundCell.ContainsKey(path.WorldIndex + new Vector3Int(1, y, 0)) && onGroundCell.ContainsKey(path.WorldIndex + new Vector3Int(0, y, 1)))
-                        {
-                            neibor.Add(path.WorldIndex + new Vector3Int(x, y, z));
-                            continue;
-                        }
-                        else
-                            continue;
                     }
-                    if (x == -1 && z == 1)
-                    {
-                        if (onGroundCell.ContainsKey(path.WorldIndex + new Vector3Int(-1, y, 0)) && onGroundCell.ContainsKey(path.WorldIndex + new Vector3Int(0, y, 1)))
-                        {
-                            neibor.Add(path.WorldIndex + new Vector3Int(x, y, z));
-                            continue;
-                        }
-                        else
-                            continue;
-                    }
-                    if (x == 1 && z == -1)
-                    {
-                        if (onGroundCell.ContainsKey(path.WorldIndex + new Vector3Int(1, y, 0)) && onGroundCell.ContainsKey(path.WorldIndex + new Vector3Int(0, y, -1)))
-                        {
-                            neibor.Add(path.WorldIndex + new Vector3Int(x, y, z));
-                            continue;
-                        }
-                        else
-                            continue;
-                    }
-                    if (x == -1 && z == -1)
-                    {
-                        if (onGroundCell.ContainsKey(path.WorldIndex + new Vector3Int(-1, y, 0)) && onGroundCell.ContainsKey(path.WorldIndex + new Vector3Int(0, y, -1)))
-                        {
-                            neibor.Add(path.WorldIndex + new Vector3Int(x, y, z));
-                            continue;
-                        }
-                        else
-                            continue;
-                    }
-                    if (onGroundCell[path.WorldIndex + new Vector3Int(x, y, z)] != null)
-                    {
+                    else continue;
 
-                        neibor.Add(path.WorldIndex + new Vector3Int(x, y, z));
-                    }
-                    else
-                        continue;
+                    
                 }
             }
         }
@@ -125,9 +125,9 @@ public class FlowFieldCellData : BaseData
 {
     public int areaID=-1;
     public Vector3Int WorldIndex;
-    public float cost;
-    public float finalcost;
-    public Vector3 direction;
+    public float cost=255;
+    public float finalcost=9999;
+    public Vector3 direction=new Vector3Int(0,0,0);
 
     public FlowFieldCellData(){}
     public FlowFieldCellData(Vector3Int worldIndex, float blockrough)

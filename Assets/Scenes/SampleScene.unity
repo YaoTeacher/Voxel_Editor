@@ -1126,7 +1126,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 506942176}
-  - component: {fileID: 506942175}
   - component: {fileID: 506942174}
   m_Layer: 0
   m_Name: GameObject
@@ -1147,23 +1146,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 45696b650ea472e49b7b1c7bd17062c9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gridController: {fileID: 506942175}
   displayGrid: 1
   curDisplayType: 1
---- !u!114 &506942175
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 506942173}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e99fcf622e7f1674eb3e5ebc6ccecf50, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  world: {fileID: 367766255}
-  gridDebug: {fileID: 506942174}
 --- !u!4 &506942176
 Transform:
   m_ObjectHideFlags: 0
@@ -3482,8 +3466,8 @@ MonoBehaviour:
   placeBlock: {fileID: 1006052590}
   checkIncrement: 0.1
   reach: 8
-  selectedBlockText: {fileID: 0}
   selectedBlockIndex: 1
+  gridDebug: {fileID: 506942174}
 --- !u!1 &1460859259
 GameObject:
   m_ObjectHideFlags: 0

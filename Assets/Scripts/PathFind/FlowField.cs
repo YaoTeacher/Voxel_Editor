@@ -1,18 +1,20 @@
 using System.Collections;
 using System.Collections.Generic;
+using TreeEditor;
 using UnityEngine;
 
 public class FlowField
 {
 
-    public Dictionary<int, AreaData> Areas { get; private set; }
+    public Dictionary<int, AreaData> Areas = new Dictionary<int, AreaData>(); 
 
     public Dictionary<Vector3Int, FlowFieldCellData> GroundData = new Dictionary<Vector3Int, FlowFieldCellData>();
 
     public AreaData SetNewArea(Vector3Int firstpoint, Vector3Int lastpoint)
     {
         AreaData area = new AreaData(firstpoint, lastpoint,Areas.Count);
-        Areas[Areas.Count]= area;
+        Areas[area.Id]= area;
+        Debug.Log($"{area.Id},{Areas.Values.Count}");
         return area;
     }
 
@@ -32,6 +34,7 @@ public class FlowField
 
     public void GenerateGround(World scene,int creature = 4)
     {
+        Debug.Log("generateground!");
         for (int z = 0; z <VoxelData.WorldSizeInVoxels; z++)
         {
 
@@ -72,36 +75,58 @@ public class FlowField
 
     public void GenerateArea(AreaData areaData)
     {
+        Debug.Log("generatearea!");
         for (int z = areaData.LessBorderPoint.z; z <= areaData.BiggerBorderPoint.z; z++)
         {
 
-            for (int x = areaData.LessBorderPoint.x; x < areaData.BiggerBorderPoint.x; x++)
+            for (int x = areaData.LessBorderPoint.x; x <= areaData.BiggerBorderPoint.x; x++)
             {
 
-                for (int y = areaData.LessBorderPoint.y; y < areaData.BiggerBorderPoint.y; y++)
+                for (int y = areaData.LessBorderPoint.y; y <= areaData.BiggerBorderPoint.y; y++)
                 {
                     Vector3Int worldindex = new Vector3Int(x, y, z);
                    if (GroundData.ContainsKey(worldindex))
-                    {
+                   {
                         GroundData[worldindex].areaID = areaData.Id;
                         areaData.onGroundCell[worldindex]= GroundData[worldindex];
-                    }
+                   }
                 }
             }
         }
+        Areas[areaData.Id] = areaData;
+        Debug.Log($"{areaData.Id}");
+        Debug.Log($"{areaData.onGroundCell.Values.Count}");
+        Debug.Log($"{Areas.Values.Count}");
+        Debug.Log($"{Areas[areaData.Id].onGroundCell.Values.Count}");
     }
 
     public void GenerateCostMap(Vector3Int target)
     {
         if (GroundData.ContainsKey(target))
         {
-            FlowFieldCellData f = GroundData[target];
+            
             if (GroundData[target].areaID!=-1)
             {
-                foreach (FlowFieldCellData f2 in Areas[f.areaID].onGroundCell.Values)
+                Queue<FlowFieldCellData> cellsToCheck = new Queue<FlowFieldCellData>();
+                FlowFieldCellData f = GroundData[target];
+                f.finalcost = 0;
+                cellsToCheck.Enqueue(f);
+
+                while (cellsToCheck.Count > 0)
                 {
-                    Areas[f.areaID].GetGroundNeibor(f2);
+                    FlowFieldCellData curCell = cellsToCheck.Dequeue();
+                    List<FlowFieldCellData> curNeibors = Areas[f.areaID].GetGroundNeibor(curCell);
+                    foreach (FlowFieldCellData n in curNeibors)
+                    {
+                        if (n.cost == -1) { continue; }
+                        if (n.cost+curCell.finalcost<n.finalcost) 
+                        {
+                            n.finalcost = curCell.finalcost+n.cost;
+                            cellsToCheck.Enqueue(n);
+                        }
+                    }
                 }
+                
                 
             }
         }
