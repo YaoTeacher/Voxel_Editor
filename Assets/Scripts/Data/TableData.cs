@@ -404,5 +404,12 @@ public class blockData : BaseData
     {
         return Type;
     }
+
+    public BlockType properties
+    {
+
+        get { return World.Instance.blocktype.BlockTypes[Type]; }
+
+    }
 }
 

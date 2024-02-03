@@ -19,9 +19,12 @@ public class BlockType
     [field: SerializeField]
     public float rough;
     [field: SerializeField]
-    public bool isTransparent;
+    public bool isRenderNeibor;
     [field: SerializeField]
     public Sprite icon;
+    [field: SerializeField]
+    public VoxelMeshData meshData;
+
 
 
     [Header("Texture Values")]
