@@ -13,6 +13,8 @@ public class GridDebug : MonoBehaviour
 
     public FlowFieldDisplayType curDisplayType;
 
+    public GameObject dir;
+
     private FlowField curFlowField;
 
     private Sprite[] ffIcons;
@@ -214,7 +216,9 @@ public class GridDebug : MonoBehaviour
                 Vector3 center = new Vector3(f.WorldIndex.x + 0.5f, f.WorldIndex.y + 0.5f, f.WorldIndex.z + 0.5f) * VoxelData.BlockSize;
                 Vector3 size = Vector3.one * VoxelData.BlockSize;
                 Gizmos.DrawWireCube(center, size);
-                Handles.Label(center, f.finalcost.ToString(), style);
+                Handles.Label(center, f.direction.ToString(), style);
+                Vector3 Worldposition = new Vector3(f.WorldIndex.x * VoxelData.BlockSize+0.25f, f.WorldIndex.y * VoxelData.BlockSize+ 0.55f, f.WorldIndex.z * VoxelData.BlockSize + 0.25f);
+                Instantiate(dir, Worldposition,Quaternion.LookRotation(f.direction));
             }
         }
 

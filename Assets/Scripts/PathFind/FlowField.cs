@@ -85,7 +85,7 @@ public class FlowField
                 for (int y = areaData.LessBorderPoint.y; y <= areaData.BiggerBorderPoint.y; y++)
                 {
                     Vector3Int worldindex = new Vector3Int(x, y, z);
-                   if (GroundData.ContainsKey(worldindex))
+                   if (GroundData.ContainsKey(worldindex)&& GroundData[worldindex].areaID==-1)
                    {
                         GroundData[worldindex].areaID = areaData.Id;
                         areaData.onGroundCell[worldindex]= GroundData[worldindex];
@@ -109,19 +109,38 @@ public class FlowField
             {
                 Queue<FlowFieldCellData> cellsToCheck = new Queue<FlowFieldCellData>();
                 FlowFieldCellData f = GroundData[target];
+
+
+                foreach (FlowFieldCellData n in Areas[GroundData[target].areaID].onGroundCell.Values)
+                {
+
+                    if (n.finalcost != 9999)
+                    {
+                        n.finalcost = 9999;
+                        Debug.Log($"{n.finalcost}");
+                    }
+
+                }
                 f.finalcost = 0;
                 cellsToCheck.Enqueue(f);
 
                 while (cellsToCheck.Count > 0)
                 {
                     FlowFieldCellData curCell = cellsToCheck.Dequeue();
+                    
                     List<FlowFieldCellData> curNeibors = Areas[f.areaID].GetGroundNeibor(curCell);
+
+
                     foreach (FlowFieldCellData n in curNeibors)
                     {
                         if (n.cost == -1) { continue; }
+
+
                         if (n.cost+curCell.finalcost<n.finalcost) 
                         {
-                            n.finalcost = curCell.finalcost+n.cost;
+                            n.finalcost = curCell.finalcost+n.cost* CalculateCost(curCell,n);
+                            n.direction = curCell.WorldIndex-n.WorldIndex;
+                            n.direction = n.direction.normalized;
                             cellsToCheck.Enqueue(n);
                         }
                     }
@@ -132,5 +151,62 @@ public class FlowField
         }
     }
 
-    
+
+    public void GenerateFlowField(Vector3Int target)
+    {
+        if (GroundData.ContainsKey(target))
+        {
+
+            if (GroundData[target].areaID != -1)
+            {
+                Queue<FlowFieldCellData> cellsToCheck = new Queue<FlowFieldCellData>();
+                FlowFieldCellData f = GroundData[target];
+                f.finalcost = 0;
+                cellsToCheck.Enqueue(f);
+
+                while (cellsToCheck.Count > 0)
+                {
+                    FlowFieldCellData curCell = cellsToCheck.Dequeue();
+                    List<FlowFieldCellData> curNeibors = Areas[f.areaID].GetGroundNeibor(curCell);
+                    foreach (FlowFieldCellData n in curNeibors)
+                    {
+                        if (n.cost == -1) { continue; }
+                        if (n.cost + curCell.finalcost < n.finalcost)
+                        {
+                            n.finalcost = curCell.finalcost + n.cost;
+                            cellsToCheck.Enqueue(n);
+                        }
+                    }
+                }
+
+
+            }
+        }
+    }
+
+    private float CalculateCost(FlowFieldCellData node1, FlowFieldCellData node2)
+    {
+        //È¡¾ø¶ÔÖµ
+        int deltaX = node1.WorldIndex.x - node2.WorldIndex.x;
+        if (deltaX < 0) deltaX = -deltaX;
+        int deltaY = node1.WorldIndex.y - node2.WorldIndex.y;
+        if (deltaY < 0) deltaY = -deltaY;
+        int deltaZ = node1.WorldIndex.z - node2.WorldIndex.z;
+        if (deltaZ < 0) deltaZ = -deltaZ;
+        int delta = deltaX + deltaY +deltaZ;
+
+        if (delta == 1)
+        {
+            return 1;
+        }
+        else if (delta == 2)
+        {
+            return 1.414f;
+        }
+        else
+        {
+            return 1.732f;
+        }
+    }
+
 }

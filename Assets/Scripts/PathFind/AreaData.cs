@@ -8,7 +8,7 @@ public class AreaData:BaseData
 
     public string name;
     public int type;
-    public bool isIndoor;
+    public bool isInDoor;
     public Vector3Int LessBorderPoint;
     public Vector3Int BiggerBorderPoint;
 
@@ -139,6 +139,11 @@ public class FlowFieldCellData : BaseData
     public void SetDirection()
     {
 
+    }
+
+    public void ResetCell()
+    {
+        finalcost = 9999;
     }
 }
 
