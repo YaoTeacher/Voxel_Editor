@@ -9,6 +9,7 @@ using UnityEngine;
 using System.IO;
 using UnityEditor.ShaderGraph;
 using System.Drawing;
+using Unity.Entities;
 
 //[ExecuteInEditMode]
 public class World : MonoBehaviour
@@ -88,7 +89,7 @@ public class World : MonoBehaviour
             ChunkUpdateThread = new Thread(new ThreadStart(ThreadedUpdate));
             ChunkUpdateThread.Start();
         }
-
+        InitializeGround();
     }
 
     private void Update()
@@ -432,9 +433,12 @@ public class World : MonoBehaviour
 
     }
 
-    
-
-
+    private void InitializeGround()
+    {
+        UnityEngine.Debug.Log($"{Instance.scenedata.Name}");
+        curFlowField = new FlowField();
+        curFlowField.GenerateGround(World.Instance, 4);
+    }
 }
 
 public class VoxelMod

@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-
+using UnityEditor.Profiling.Memory.Experimental;
 using UnityEngine;
 using static UnityEditor.PlayerSettings;
 
@@ -234,75 +234,66 @@ public class Chunk
         {
             int neighID = blockID + VoxelData.faceChecks[p];
 
-            if ((!World.Instance.blocktype.BlockTypes[block.GetBlockType()].isRenderNeibor)&& block.GetBlockType()!=0)
+            if ((!World.Instance.blocktype.BlockTypes[block.GetBlockType()].isTransparent)&& block.GetBlockType()!=0)
             {
-                //if (IsCoordTransparent(neighID, p))
-                //{
-
-
-                //vertices.Add(Pos + VoxelData.voxelVerts[VoxelData.voxelTris[p, 0]]);
-                //vertices.Add(Pos + VoxelData.voxelVerts[VoxelData.voxelTris[p, 1]]);
-                //vertices.Add(Pos + VoxelData.voxelVerts[VoxelData.voxelTris[p, 2]]);
-                //vertices.Add(Pos + VoxelData.voxelVerts[VoxelData.voxelTris[p, 3]]);
-
-                //AddTexture(World.Instance.blocktype.BlockTypes[block.GetBlockType()].GetTextureID(p));
-
-                //triangles.Add(vertexIndex);
-                //triangles.Add(vertexIndex + 1);
-                //triangles.Add(vertexIndex + 2);
-                //triangles.Add(vertexIndex + 2);
-                //triangles.Add(vertexIndex + 1);
-                //triangles.Add(vertexIndex + 3);
-                //vertexIndex += 4;
-
-                //}
-
-                if (IsCoordTransparent(neighID, p))
+                if (!IsCoordAllowRender(neighID, p))
                 {
-                    int faceVertCount = 0;
-
-                    for (int i = 0; i < block.properties.meshData.faces[p].vertData.Length; i++)
+                    if (IsCoordTransparent(neighID, p))
                     {
+                        int faceVertCount = 0;
 
-                        vertices.Add(Pos + (block.properties.meshData.faces[p].vertData[i].position *VoxelData.BlockSize));
-                        normals.Add(block.properties.meshData.faces[p].normal);
-                        AddTexture(block.properties.GetTextureID(p), block.properties.meshData.faces[p].vertData[i].uv);
-                        faceVertCount++;
-                        
+                        for (int i = 0; i < block.properties.meshData.faces[p].vertData.Length; i++)
+                        {
+
+                            vertices.Add(Pos + (block.properties.meshData.faces[p].vertData[i].position * VoxelData.BlockSize));
+                            normals.Add(block.properties.meshData.faces[p].normal);
+                            AddTexture(block.properties.GetTextureID(p), block.properties.meshData.faces[p].vertData[i].uv);
+                            faceVertCount++;
+
+
+                        }
+                        for (int i = 0; i < block.properties.meshData.faces[p].triangles.Length; i++)
+                        {
+                            triangles.Add(vertexIndex + block.properties.meshData.faces[p].triangles[i]);
+                        }
+
+                        vertexIndex += faceVertCount;
 
                     }
-                    for (int i = 0; i < block.properties.meshData.faces[p].triangles.Length; i++)
-                    {
-                        triangles.Add(vertexIndex + block.properties.meshData.faces[p].triangles[i]);
-                    }
+                }
+                else
+                {
+                    //if ((!IsCoordSame(blockID, neighID, p)))
+                    //{
+                        int faceVertCount = 0;
 
-                    vertexIndex += faceVertCount;
+                        for (int i = 0; i < block.properties.meshData.faces[p].vertData.Length; i++)
+                        {
+
+                            vertices.Add(Pos + (block.properties.meshData.faces[p].vertData[i].position * VoxelData.BlockSize));
+                            normals.Add(block.properties.meshData.faces[p].normal);
+                            AddTexture(block.properties.GetTextureID(p), block.properties.meshData.faces[p].vertData[i].uv);
+                            faceVertCount++;
+
+
+                        }
+                        for (int i = 0; i < block.properties.meshData.faces[p].triangles.Length; i++)
+                        {
+                            triangles.Add(vertexIndex + block.properties.meshData.faces[p].triangles[i]);
+                        }
+
+                        vertexIndex += faceVertCount;
+
+                    //}
+                    //else { continue; }
 
                 }
+
 
             }
             else 
             {
-                //if ((!IsCoordTransparent(neighID, p))|| (!IsCoordSame(blockID, neighID, p)))
-                //{
 
-
-                //    vertices.Add(Pos + VoxelData.voxelVerts[VoxelData.voxelTris[p, 0]]);
-                //    vertices.Add(Pos + VoxelData.voxelVerts[VoxelData.voxelTris[p, 1]]);
-                //    vertices.Add(Pos + VoxelData.voxelVerts[VoxelData.voxelTris[p, 2]]);
-                //    vertices.Add(Pos + VoxelData.voxelVerts[VoxelData.voxelTris[p, 3]]);
-
-                //    AddTexture(World.Instance.blocktype.BlockTypes[block.GetBlockType()].GetTextureID(p));
-
-                //    triangles.Add(vertexIndex);
-                //    triangles.Add(vertexIndex + 1);
-                //    triangles.Add(vertexIndex + 2);
-                //    triangles.Add(vertexIndex + 2);
-                //    triangles.Add(vertexIndex + 1);
-                //    triangles.Add(vertexIndex + 3);
-                //    vertexIndex += 4;
-
-                //}
 
                 if ((!IsCoordTransparent(neighID, p)) || (!IsCoordSame(blockID, neighID, p)))
                 {
@@ -315,17 +306,18 @@ public class Chunk
                         normals.Add(block.properties.meshData.faces[p].normal);
                         AddTexture(block.properties.GetTextureID(p), block.properties.meshData.faces[p].vertData[i].uv);
                         faceVertCount++;
-                        
+
 
                     }
                     for (int i = 0; i < block.properties.meshData.faces[p].triangles.Length; i++)
                     {
                         triangles.Add(vertexIndex + block.properties.meshData.faces[p].triangles[i]);
                     }
-                        
+
                     vertexIndex += faceVertCount;
 
                 }
+                else { continue; }
             }
 
         }
@@ -454,7 +446,7 @@ public class Chunk
                         {
                             return true;
                         }
-                        return World.Instance.blocktype.BlockTypes[World.Instance.Chunks[chunkData.index_x, chunkData.index_z - 1].chunkData.GetVoxelType(ID + (VoxelData.ChunkWidth * VoxelData.ChunkWidth * VoxelData.ChunkHeight))].isRenderNeibor;
+                        return World.Instance.blocktype.BlockTypes[World.Instance.Chunks[chunkData.index_x, chunkData.index_z - 1].chunkData.GetVoxelType(ID + (VoxelData.ChunkWidth * VoxelData.ChunkWidth * VoxelData.ChunkHeight))].isTransparent;
 
                     }
                 case 3:
@@ -462,6 +454,74 @@ public class Chunk
                         if ((chunkData.index_z + 1) >= VoxelData.WorldChunksSize)
                         {
                             return true;
+                        }
+                        else
+                        {
+
+                            return World.Instance.blocktype.BlockTypes[World.Instance.Chunks[chunkData.index_x, chunkData.index_z + 1].chunkData.GetVoxelType(ID - (VoxelData.ChunkWidth * VoxelData.ChunkWidth * VoxelData.ChunkHeight))].isTransparent;
+
+                        }
+                    }
+                case 4:
+                    {
+                        if ((chunkData.index_x - 1) < 0)
+                        {
+                            return true;
+                        }
+                        return World.Instance.blocktype.BlockTypes[World.Instance.Chunks[chunkData.index_x - 1, chunkData.index_z].chunkData.GetVoxelType(ID + (VoxelData.ChunkWidth * VoxelData.ChunkHeight))].isTransparent;
+                    }
+                case 5:
+                    {
+                        if ((chunkData.index_x + 1) >= VoxelData.WorldChunksSize)
+                        {
+                            return true;
+                        }
+                        return World.Instance.blocktype.BlockTypes[World.Instance.Chunks[chunkData.index_x + 1, chunkData.index_z].chunkData.GetVoxelType(ID - (VoxelData.ChunkWidth * VoxelData.ChunkHeight))].isTransparent;
+                    }
+                default:
+                    {
+                        return false;
+                    }
+
+            };
+
+
+        }
+        else
+        { return World.Instance.blocktype.BlockTypes[chunkData.GetVoxelType(ID)].isTransparent; }
+    }
+
+    public bool IsCoordAllowRender(int ID, int p)
+    {
+        if (!IsNeighborInChunk(ID, p))
+        {
+
+
+
+            switch (p)
+            {
+                case 0:
+                    {
+                        return false;
+                    }
+                case 1:
+                    {
+                        return false;
+                    }
+                case 2:
+                    {
+                        if ((chunkData.index_z - 1) < 0)
+                        {
+                            return false;
+                        }
+                        return World.Instance.blocktype.BlockTypes[World.Instance.Chunks[chunkData.index_x, chunkData.index_z - 1].chunkData.GetVoxelType(ID + (VoxelData.ChunkWidth * VoxelData.ChunkWidth * VoxelData.ChunkHeight))].isRenderNeibor;
+
+                    }
+                case 3:
+                    {
+                        if ((chunkData.index_z + 1) >= VoxelData.WorldChunksSize)
+                        {
+                            return false;
                         }
                         else
                         {
@@ -474,7 +534,7 @@ public class Chunk
                     {
                         if ((chunkData.index_x - 1) < 0)
                         {
-                            return true;
+                            return false;
                         }
                         return World.Instance.blocktype.BlockTypes[World.Instance.Chunks[chunkData.index_x - 1, chunkData.index_z].chunkData.GetVoxelType(ID + (VoxelData.ChunkWidth * VoxelData.ChunkHeight))].isRenderNeibor;
                     }
@@ -482,7 +542,7 @@ public class Chunk
                     {
                         if ((chunkData.index_x + 1) >= VoxelData.WorldChunksSize)
                         {
-                            return true;
+                            return false;
                         }
                         return World.Instance.blocktype.BlockTypes[World.Instance.Chunks[chunkData.index_x + 1, chunkData.index_z].chunkData.GetVoxelType(ID - (VoxelData.ChunkWidth * VoxelData.ChunkHeight))].isRenderNeibor;
                     }

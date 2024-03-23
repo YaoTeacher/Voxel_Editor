@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Net;
+using Unity.Transforms;
 using UnityEditor;
 using UnityEngine;
 using static UnityEngine.Rendering.DebugUI.MessageBox;
@@ -14,8 +15,11 @@ public class GridDebug : MonoBehaviour
     public FlowFieldDisplayType curDisplayType;
 
     public GameObject dir;
+    public GameObject dirP;
 
     private FlowField curFlowField;
+
+    private int enterpointnumber=-1;
 
     private Sprite[] ffIcons;
 
@@ -209,19 +213,35 @@ public class GridDebug : MonoBehaviour
         style.alignment = TextAnchor.MiddleCenter;
         Gizmos.color = drawColor;
         
-        foreach(AreaData a in curFlowField.Areas.Values)
+        if (curFlowField.EnterPointData.Keys.Count != enterpointnumber)
         {
-            foreach (FlowFieldCellData f in a.onGroundCell.Values)
+
+            for (int i = 0; i < dirP.transform.childCount; i++)
             {
-                Vector3 center = new Vector3(f.WorldIndex.x + 0.5f, f.WorldIndex.y + 0.5f, f.WorldIndex.z + 0.5f) * VoxelData.BlockSize;
-                Vector3 size = Vector3.one * VoxelData.BlockSize;
-                Gizmos.DrawWireCube(center, size);
-                Handles.Label(center, f.direction.ToString(), style);
-                Vector3 Worldposition = new Vector3(f.WorldIndex.x * VoxelData.BlockSize+0.25f, f.WorldIndex.y * VoxelData.BlockSize+ 0.55f, f.WorldIndex.z * VoxelData.BlockSize + 0.25f);
-                Instantiate(dir, Worldposition,Quaternion.LookRotation(f.direction));
+                Transform transform;
+                transform = dirP.transform.GetChild(i);
+                GameObject.Destroy(transform.gameObject);
             }
+            foreach (AreaData a in curFlowField.Areas.Values)
+            {
+                foreach (FlowFieldCellData f in a.onGroundCell.Values)
+                {
+                    Vector3 center = new Vector3(f.WorldIndex.x + 0.5f, f.WorldIndex.y + 0.5f, f.WorldIndex.z + 0.5f) * VoxelData.BlockSize;
+                    Vector3 size = Vector3.one * VoxelData.BlockSize;
+                    Gizmos.DrawWireCube(center, size);
+                    Handles.Label(center, f.direction.ToString(), style);
+
+
+                    Vector3 Worldposition = new Vector3(f.WorldIndex.x * VoxelData.BlockSize + 0.25f, f.WorldIndex.y * VoxelData.BlockSize + 0.55f, f.WorldIndex.z * VoxelData.BlockSize + 0.25f);
+                    Instantiate(dir, Worldposition, Quaternion.LookRotation(f.direction), dirP.transform);
+                }
+            }
+            enterpointnumber = curFlowField.EnterPointData.Keys.Count;
         }
 
+
+
+        
 
     }
 }

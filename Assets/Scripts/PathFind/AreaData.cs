@@ -13,7 +13,9 @@ public class AreaData:BaseData
     public Vector3Int BiggerBorderPoint;
 
     public Dictionary<Vector3Int, FlowFieldCellData> onGroundCell=new Dictionary<Vector3Int, FlowFieldCellData>();
+    public Dictionary<Vector3Int, EnterPoint> EnterPoints = new Dictionary<Vector3Int, EnterPoint>();
 
+    public int allowedNumberForEnterPoint = 1;
     public AreaData() { }
 
     public AreaData(Vector3Int firstpoint, Vector3Int lastpoint,int id) 
@@ -149,8 +151,18 @@ public class FlowFieldCellData : BaseData
 
 public class EnterPoint : BaseData 
 {
+    public int areaID ;
     public Vector3Int WorldIndex;
     public byte type;
     public bool IsAccessable;
+
+    public EnterPoint(FlowFieldCellData f) 
+    { 
+        areaID = f.areaID;
+        WorldIndex = f.WorldIndex;
+        type = 1;
+        IsAccessable = true;
+
+    }
 }
 

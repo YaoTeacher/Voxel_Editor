@@ -55,12 +55,6 @@ public class BuildView : MonoBehaviour
             placeBlock.gameObject.SetActive(false);
         }
 
-        if (isPressV())
-        {
-            //Debug.Log("Ctrl + Click");
-            InitializeFlowField();
-        }
-
     }
 
 
@@ -185,22 +179,34 @@ public class BuildView : MonoBehaviour
 
                 print($"{vector3Ints.Count}");
 
-                if (vector3Ints.Count >= 2)
+                if (world.curFlowField.GroundData.ContainsKey(DestroyIndex))
                 {
-                    print("generate area!");
-                    print($"{vector3Ints[0]},{vector3Ints[1]}");
-                    AreaData a = world.curFlowField.SetNewArea(vector3Ints[0], vector3Ints[1]);
-                    world.curFlowField.GenerateArea(a);
-                    gridDebug.SetFlowField(world.curFlowField);
-                    vector3Ints.Clear();
+                    if (vector3Ints.Count >= 2)
+                    {
+                        print("generate area!");
+                        print($"{vector3Ints[0]},{vector3Ints[1]}");
+                        AreaData a = world.curFlowField.SetNewArea(vector3Ints[0], vector3Ints[1]);
+                        world.curFlowField.GenerateArea(a);
+                        gridDebug.SetFlowField(world.curFlowField);
+                        vector3Ints.Clear();
+                    }
                 }
+                else
+                {
+                    print("NULL GROUD!");
+                }
+
 
             }
             if (isMouseRightClicked)
             {
-                print("generate costmap!");
-                world.curFlowField.GenerateCostMap(DestroyIndex);
-                gridDebug.SetFlowField(world.curFlowField);
+                if (world.curFlowField.GroundData[DestroyIndex].areaID != -1)
+                {
+                    print("generate costmap!");
+                    world.curFlowField.GenerateCostMap(DestroyIndex);
+                    gridDebug.SetFlowField(world.curFlowField);
+                }
+
             }
         }
 
@@ -209,7 +215,7 @@ public class BuildView : MonoBehaviour
 
     }
 
-    private void InitializeFlowField()
+    private void InitializeGround()
     {
         //UnityEngine.Debug.Log($"{world.scenedata.Name}");
         world.curFlowField = new FlowField();

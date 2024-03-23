@@ -9,6 +9,7 @@ public class FlowField
     public Dictionary<int, AreaData> Areas = new Dictionary<int, AreaData>(); 
 
     public Dictionary<Vector3Int, FlowFieldCellData> GroundData = new Dictionary<Vector3Int, FlowFieldCellData>();
+    public Dictionary<Vector3Int, EnterPoint> EnterPointData = new Dictionary<Vector3Int, EnterPoint>();
 
     public AreaData SetNewArea(Vector3Int firstpoint, Vector3Int lastpoint)
     {
@@ -117,40 +118,56 @@ public class FlowField
                     if (n.finalcost != 9999)
                     {
                         n.finalcost = 9999;
-                        Debug.Log($"{n.finalcost}");
                     }
 
                 }
+
+                if (Areas[f.areaID].EnterPoints.Keys.Count+1> Areas[f.areaID].allowedNumberForEnterPoint)
+                {
+                    Debug.Log("Out Of Range! Clear!");
+                    Areas[f.areaID].EnterPoints.Clear();
+                }
+
+                EnterPointData[f.WorldIndex] = new EnterPoint(f);
+                Areas[f.areaID].EnterPoints[f.WorldIndex] = new EnterPoint(f);
+
                 f.finalcost = 0;
                 cellsToCheck.Enqueue(f);
 
-                while (cellsToCheck.Count > 0)
-                {
-                    FlowFieldCellData curCell = cellsToCheck.Dequeue();
-                    
-                    List<FlowFieldCellData> curNeibors = Areas[f.areaID].GetGroundNeibor(curCell);
-
-
-                    foreach (FlowFieldCellData n in curNeibors)
+                    while (cellsToCheck.Count > 0)
                     {
-                        if (n.cost == -1) { continue; }
+                        FlowFieldCellData curCell = cellsToCheck.Dequeue();
+
+                        List<FlowFieldCellData> curNeibors = Areas[f.areaID].GetGroundNeibor(curCell);
 
 
-                        if (n.cost+curCell.finalcost<n.finalcost) 
+                        foreach (FlowFieldCellData n in curNeibors)
                         {
-                            n.finalcost = curCell.finalcost+n.cost* CalculateCost(curCell,n);
-                            n.direction = curCell.WorldIndex-n.WorldIndex;
-                            n.direction = n.direction.normalized;
-                            cellsToCheck.Enqueue(n);
+                            if (n.cost == -1|| n.cost == 0) { continue; }
+
+
+                            if (n.cost + curCell.finalcost < n.finalcost)
+                            {
+                                n.finalcost = curCell.finalcost + n.cost * CalculateCost(curCell, n);
+                                n.direction = curCell.WorldIndex - n.WorldIndex;
+                                n.direction = n.direction.normalized;
+
+                                cellsToCheck.Enqueue(n);
+                            }
                         }
                     }
-                }
+   
+               
                 
                 
             }
         }
     }
 
+    public Vector3 CheckVector(Vector3 pos)
+    {
+        return GroundData[World.GetWorldIndexFromPos(pos)].direction;
+    }
 
     public void GenerateFlowField(Vector3Int target)
     {

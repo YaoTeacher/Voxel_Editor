@@ -21,6 +21,8 @@ public class BlockType
     [field: SerializeField]
     public bool isRenderNeibor;
     [field: SerializeField]
+    public bool isTransparent;
+    [field: SerializeField]
     public Sprite icon;
     [field: SerializeField]
     public VoxelMeshData meshData;

@@ -1149,6 +1149,7 @@ MonoBehaviour:
   displayGrid: 1
   curDisplayType: 1
   dir: {fileID: 8368039202530149140, guid: abf06b68e4f767c4b8357fc57b28cbd3, type: 3}
+  dirP: {fileID: 506942173}
 --- !u!4 &506942176
 Transform:
   m_ObjectHideFlags: 0
