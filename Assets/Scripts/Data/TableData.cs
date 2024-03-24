@@ -29,7 +29,7 @@ public class sceneData : BaseData
 
     {
        {0,new sceneData(0,"test",0,0,true)},
-        { 1,new sceneData(1,"mainMap",1,0,true) }
+       { 1,new sceneData(1,"mainMap",1,0,true)}
     };
 
     [NonSerialized]
@@ -404,7 +404,7 @@ public class blockData : BaseData
     {
         return Type;
     }
-
+    [ModelHelp(false, "properties", "string", false, false)]
     public BlockType properties
     {
 

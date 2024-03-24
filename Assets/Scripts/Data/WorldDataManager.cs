@@ -5,10 +5,6 @@ using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading;
 using System.Linq;
-using UnityEngine.Analytics;
-using System.Collections.Concurrent;
-using UnityEngine.SceneManagement;
-using UnityEditor.SearchService;
 
 public class WorldDataManager 
 {

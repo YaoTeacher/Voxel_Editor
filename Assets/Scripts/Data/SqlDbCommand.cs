@@ -35,7 +35,9 @@ public class SqlDbCommand : SqlDbConnect
 
         foreach (var p in properties)
         {
+            Debug.Log($"{p}");
             var attribute = p.GetCustomAttribute<ModelHelp>();
+            Debug.Log($"{attribute.FieldName}");
             if (attribute.IsCreated)
             {
                 stringBuider.Append($"{attribute.FieldName} {attribute.Type} ");

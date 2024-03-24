@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.Eventing.Reader;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -154,22 +155,34 @@ public class BuildView : MonoBehaviour
         {
             isShiftPressed = false;
         }
-        
-        if (!isShiftPressed)
+
+        if (Input.GetKey(KeyCode.LeftAlt)|| Input.GetKey(KeyCode.RightAlt))
         {
-            // 判断是否同时满足长按 Ctrl 键和点击鼠标左键的条件
-            if (isCtrlPressed && isMouseLeftClicked)
-            {
-                print("highlight:" + highlightBlock.position.y);
-                world.GetChunkFromPos(highlightBlock.position).EditVoxel(DestroyIndex, 0);
-            }
-            else if (isMouseLeftClicked)
-            {
-                print("place:" + placeBlock.position);
-                world.GetChunkFromPos(placeBlock.position).EditVoxel(BuildIndex, selectedBlockIndex);
-            }
+            isAltPressed = true;
         }
         else
+        {
+            isAltPressed = false;
+        }
+
+        if (isAltPressed)
+        {
+            if (world.curFlowField.GroundData.ContainsKey(DestroyIndex))
+            {
+
+                if (isMouseLeftClicked)
+                {
+                    print("Add Spawn!");
+                    print($"{DestroyIndex}");
+                    world.curFlowField.SetSpawnPos(DestroyIndex);
+                }
+            }
+            else
+            {
+                print("NULL GROUD!");
+            }
+        }
+        else if(isShiftPressed)
         {
             
             if (isMouseLeftClicked)
@@ -208,6 +221,20 @@ public class BuildView : MonoBehaviour
                 }
 
             }
+        }
+        else
+        {            // 判断是否同时满足长按 Ctrl 键和点击鼠标左键的条件
+            if (isCtrlPressed && isMouseLeftClicked)
+            {
+                print("highlight:" + highlightBlock.position.y);
+                world.GetChunkFromPos(highlightBlock.position).EditVoxel(DestroyIndex, 0);
+            }
+            else if (isMouseLeftClicked)
+            {
+                print("place:" + placeBlock.position);
+                world.GetChunkFromPos(placeBlock.position).EditVoxel(BuildIndex, selectedBlockIndex);
+            }
+
         }
 
         

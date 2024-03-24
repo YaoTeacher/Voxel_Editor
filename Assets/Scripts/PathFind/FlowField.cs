@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using TreeEditor;
 using UnityEngine;
 
 public class FlowField
@@ -10,7 +9,8 @@ public class FlowField
 
     public Dictionary<Vector3Int, FlowFieldCellData> GroundData = new Dictionary<Vector3Int, FlowFieldCellData>();
     public Dictionary<Vector3Int, EnterPoint> EnterPointData = new Dictionary<Vector3Int, EnterPoint>();
-
+    public Dictionary<Vector3Int, FlowFieldCellData> SpawnPointData = new Dictionary<Vector3Int, FlowFieldCellData>();
+    public int changeTime = 0;
     public AreaData SetNewArea(Vector3Int firstpoint, Vector3Int lastpoint)
     {
         AreaData area = new AreaData(firstpoint, lastpoint,Areas.Count);
@@ -125,9 +125,15 @@ public class FlowField
                 if (Areas[f.areaID].EnterPoints.Keys.Count+1> Areas[f.areaID].allowedNumberForEnterPoint)
                 {
                     Debug.Log("Out Of Range! Clear!");
+                    Debug.Log($"{EnterPointData.Count}");
+                    foreach (EnterPoint e in Areas[f.areaID].EnterPoints.Values)
+                    {
+                        EnterPointData.Remove(e.WorldIndex);
+                    };
+                    Debug.Log($"{EnterPointData.Count}");
                     Areas[f.areaID].EnterPoints.Clear();
                 }
-
+                changeTime++;
                 EnterPointData[f.WorldIndex] = new EnterPoint(f);
                 Areas[f.areaID].EnterPoints[f.WorldIndex] = new EnterPoint(f);
 
@@ -164,9 +170,43 @@ public class FlowField
         }
     }
 
+    public void SetSpawnPos(Vector3Int target)
+    {
+        if (GroundData.ContainsKey(target))
+        {
+            if (GroundData[target].areaID != -1)
+            {
+                if (!SpawnPointData.ContainsKey(target))
+                {
+                    SpawnPointData[target] = GroundData[target];
+                }
+                else
+                {
+                    SpawnPointData.Remove(target);
+                }
+            }
+        }
+    }
+
     public Vector3 CheckVector(Vector3 pos)
     {
-        return GroundData[World.GetWorldIndexFromPos(pos)].direction;
+        if (GroundData.ContainsKey(World.GetWorldIndexFromPos(pos)))
+        {
+            return GroundData[World.GetWorldIndexFromPos(pos)].direction;
+        }
+        else if (GroundData.ContainsKey(World.GetWorldIndexFromPos(pos)- new Vector3Int(0, 1, 0)))
+        {
+            return GroundData[World.GetWorldIndexFromPos(pos) - new Vector3Int(0, 1, 0)].direction;
+        }
+        else if (GroundData.ContainsKey(World.GetWorldIndexFromPos(pos) + new Vector3Int(0, 1, 0)))
+        {
+            return GroundData[World.GetWorldIndexFromPos(pos) + new Vector3Int(0, 1, 0)].direction;
+        }
+        else
+        {
+            Debug.Log("Stop");
+            return new Vector3Int(0, 0, 0);
+        }
     }
 
     public void GenerateFlowField(Vector3Int target)

@@ -19,7 +19,7 @@ public class GridDebug : MonoBehaviour
 
     private FlowField curFlowField;
 
-    private int enterpointnumber=-1;
+    private int enterpointchangetime=0;
 
     private Sprite[] ffIcons;
 
@@ -213,7 +213,7 @@ public class GridDebug : MonoBehaviour
         style.alignment = TextAnchor.MiddleCenter;
         Gizmos.color = drawColor;
         
-        if (curFlowField.EnterPointData.Keys.Count != enterpointnumber)
+        if (curFlowField.changeTime!= enterpointchangetime)
         {
 
             for (int i = 0; i < dirP.transform.childCount; i++)
@@ -236,7 +236,7 @@ public class GridDebug : MonoBehaviour
                     Instantiate(dir, Worldposition, Quaternion.LookRotation(f.direction), dirP.transform);
                 }
             }
-            enterpointnumber = curFlowField.EnterPointData.Keys.Count;
+            enterpointchangetime = curFlowField.changeTime;
         }
 
 
