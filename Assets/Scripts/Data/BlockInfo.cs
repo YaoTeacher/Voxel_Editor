@@ -5,6 +5,7 @@ using UnityEngine;
 [CreateAssetMenu]
 public class BlockInfo :ScriptableObject
 {
+    [SerializeField]
     public BlockType[] BlockTypes;
 
 }
@@ -12,6 +13,8 @@ public class BlockInfo :ScriptableObject
 [System.Serializable]
 public class BlockType
 {
+    [field: SerializeField]
+    public int ID;
     [field: SerializeField]
     public string blockName;
     [field: SerializeField]

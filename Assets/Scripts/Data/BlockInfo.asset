@@ -13,7 +13,8 @@ MonoBehaviour:
   m_Name: BlockInfo
   m_EditorClassIdentifier: 
   BlockTypes:
-  - blockName: Air
+  - ID: 0
+    blockName: Air
     isSolid: 0
     rough: 255
     isRenderNeibor: 1
@@ -26,7 +27,8 @@ MonoBehaviour:
     bottomFaceTexture: 0
     leftFaceTexture: 0
     rightFaceTexture: 0
-  - blockName: BedStone
+  - ID: 1
+    blockName: BedStone
     isSolid: 1
     rough: 5
     isRenderNeibor: 0
@@ -39,7 +41,8 @@ MonoBehaviour:
     bottomFaceTexture: 9
     leftFaceTexture: 9
     rightFaceTexture: 9
-  - blockName: GemStone
+  - ID: 2
+    blockName: GemStone
     isSolid: 1
     rough: 1
     isRenderNeibor: 1
@@ -52,7 +55,8 @@ MonoBehaviour:
     bottomFaceTexture: 8
     leftFaceTexture: 8
     rightFaceTexture: 8
-  - blockName: Grass
+  - ID: 3
+    blockName: Grass
     isSolid: 1
     rough: 2
     isRenderNeibor: 0
@@ -65,7 +69,8 @@ MonoBehaviour:
     bottomFaceTexture: 1
     leftFaceTexture: 2
     rightFaceTexture: 2
-  - blockName: Dirt
+  - ID: 4
+    blockName: Dirt
     isSolid: 1
     rough: 2
     isRenderNeibor: 0
@@ -78,7 +83,8 @@ MonoBehaviour:
     bottomFaceTexture: 1
     leftFaceTexture: 1
     rightFaceTexture: 1
-  - blockName: Plank
+  - ID: 5
+    blockName: Plank
     isSolid: 1
     rough: 1
     isRenderNeibor: 0
@@ -91,7 +97,8 @@ MonoBehaviour:
     bottomFaceTexture: 4
     leftFaceTexture: 4
     rightFaceTexture: 4
-  - blockName: Path
+  - ID: 6
+    blockName: Path
     isSolid: 1
     rough: 1
     isRenderNeibor: 0
@@ -104,7 +111,8 @@ MonoBehaviour:
     bottomFaceTexture: 11
     leftFaceTexture: 11
     rightFaceTexture: 11
-  - blockName: Wood
+  - ID: 7
+    blockName: Wood
     isSolid: 1
     rough: 3
     isRenderNeibor: 0
@@ -117,7 +125,8 @@ MonoBehaviour:
     bottomFaceTexture: 6
     leftFaceTexture: 5
     rightFaceTexture: 5
-  - blockName: sand
+  - ID: 8
+    blockName: sand
     isSolid: 1
     rough: 0
     isRenderNeibor: 0
@@ -130,7 +139,8 @@ MonoBehaviour:
     bottomFaceTexture: 10
     leftFaceTexture: 10
     rightFaceTexture: 10
-  - blockName: Glass
+  - ID: 9
+    blockName: Glass
     isSolid: 1
     rough: 1
     isRenderNeibor: 1
@@ -143,7 +153,8 @@ MonoBehaviour:
     bottomFaceTexture: 3
     leftFaceTexture: 3
     rightFaceTexture: 3
-  - blockName: Stone
+  - ID: 10
+    blockName: Stone
     isSolid: 1
     rough: 6
     isRenderNeibor: 0

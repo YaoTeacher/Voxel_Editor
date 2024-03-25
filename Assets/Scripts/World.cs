@@ -6,7 +6,7 @@ using System.Threading;
 using UnityEngine;
 using System.IO;
 
-//[ExecuteInEditMode]
+[ExecuteAlways]
 public class World : MonoBehaviour
 {
     public int seed;
@@ -114,6 +114,7 @@ public class World : MonoBehaviour
             {
                 //Debug.Log(chunksToUpdate.Count);
                 UpdateChunks();
+                InitializeGround();
             }
                 
 

@@ -38,10 +38,12 @@ public class Chunk
         meshRenderer.material = World.Instance.material;
         chunkObject.transform.SetParent(World.Instance.transform);
         chunkObject.transform.position = new Vector3(X * VoxelData.ChunkWidth * VoxelData.BlockSize, 0f, Z * VoxelData.ChunkWidth * VoxelData.BlockSize);
-        chunkObject.name = "Chunk " + X + ", " + Z;
+        
+        //chunkObject.name = "Chunk " + X + ", " + Z;
         position = chunkObject.transform.position;
 
         chunkData = World.Instance.scenedata.RequestChunk(new Vector2Int(X, Z), true);
+        chunkObject.name = chunkData.Name;
         //Debug.Log(chunkData.Name);
 
         World.Instance.AddChunkToUpdate(this);

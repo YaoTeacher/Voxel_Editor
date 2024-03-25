@@ -10,6 +10,7 @@ public class AreaData:BaseData
     public bool isInDoor;
     public Vector3Int LessBorderPoint;
     public Vector3Int BiggerBorderPoint;
+    public bool isAllowCross;
 
     public Dictionary<Vector3Int, FlowFieldCellData> onGroundCell=new Dictionary<Vector3Int, FlowFieldCellData>();
     public Dictionary<Vector3Int, EnterPoint> EnterPoints = new Dictionary<Vector3Int, EnterPoint>();
