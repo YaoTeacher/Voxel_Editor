@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 59eeb05785fa1e340a5f1fb12c877a78, type: 3}
   m_Name: Block
   m_EditorClassIdentifier: 
-  blockName: 
+  blockName: Block
   faces:
   - direction: Bottom
     normal: {x: 0, y: -1, z: 0}

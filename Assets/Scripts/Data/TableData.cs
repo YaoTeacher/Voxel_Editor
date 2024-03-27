@@ -372,7 +372,9 @@ public class blockData : BaseData
     public int index_y { get; set; }
     [ModelHelp(true, "index_z", "int", false, true)]
     public int index_z { get; set; }
-    public blockData(int id, byte type,int state, int x,int y, int z)
+    [ModelHelp(true, "orientation", "int", false, true)]
+    public int orientation{ get; set; }
+    public blockData(int id, byte type,int state, int x, int y, int z, int orientation)
     {
         Id = id;
         Type = type;
@@ -380,13 +382,14 @@ public class blockData : BaseData
         index_x = x;
         index_y = y;
         index_z = z;
+        this.orientation = orientation;
     }
 
     public blockData()
     {
 
     }
-    public blockData(int id,byte type,Vector3Int index)
+    public blockData(int id,byte type,Vector3Int index, int orientation = 3)
     {
         Id = id;
         this.Type = type;
@@ -394,7 +397,14 @@ public class blockData : BaseData
         index_x = index.x;
         index_y = index.y;
         index_z = index.z;
+        this.orientation = orientation;
     }
+    public void SetBlockState(byte type,int ori)
+    {
+        this.Type = type;
+        this.orientation = ori;
+    }
+
     public void SetBlockType(byte type)
     {
         this.Type = type;

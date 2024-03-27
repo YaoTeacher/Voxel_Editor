@@ -57,6 +57,7 @@ public class ThirdView : MonoBehaviour
         }
 
 
+
     }
 
     //private void placeCursorBlocks()

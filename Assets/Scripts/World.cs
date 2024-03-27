@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Threading;
 using UnityEngine;
 using System.IO;
+using static UnityEditor.Experimental.GraphView.GraphView;
 
 [ExecuteAlways]
 public class World : MonoBehaviour
@@ -16,6 +17,7 @@ public class World : MonoBehaviour
     //public Texture2DArray[] block;
 
     public Transform player;
+    public Player _player;
     public Material material;
     public GameObject debugScreen;
     public BlockInfo blocktype;
@@ -63,6 +65,8 @@ public class World : MonoBehaviour
             _instance = this;
 
         appPath = Application.persistentDataPath;
+
+        _player = player.GetComponent<Player>();
 
     }
     private void Start()

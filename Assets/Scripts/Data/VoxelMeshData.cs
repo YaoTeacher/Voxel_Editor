@@ -27,9 +27,20 @@ using UnityEngine.UIElements;
 
         }
 
+    public Vector3 GetRotatedPosition(Vector3 angles)
+    {
+
+        Vector3 centre = new Vector3(VoxelData.BlockSize/2, VoxelData.BlockSize / 2, VoxelData.BlockSize / 2); // The centre of the block that we are pivoting around.
+        Vector3 direction = position* VoxelData.BlockSize - centre; // Get the direction from the centre to the current vertice.
+        direction = Quaternion.Euler(angles) * direction; // Rotate the direction by angles specified in the function parameters.
+        return direction + centre; // Add the modified direction to the center to get our new position and return.
+
     }
 
-    [System.Serializable]
+
+}
+
+[System.Serializable]
     public class FaceMeshData
     {
 
@@ -41,4 +52,11 @@ using UnityEngine.UIElements;
         public VertData[] vertData;
         public int[] triangles;
 
+    public VertData GetVertData(int index)
+    {
+
+        return vertData[index];
+
     }
+
+}

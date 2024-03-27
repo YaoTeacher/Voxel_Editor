@@ -26,6 +26,10 @@ public class BlockType
     [field: SerializeField]
     public bool isTransparent;
     [field: SerializeField]
+    public bool isAllowYorientation;
+    [field: SerializeField]
+    public bool isAllowXZorientation;
+    [field: SerializeField]
     public Sprite icon;
     [field: SerializeField]
     public VoxelMeshData meshData;

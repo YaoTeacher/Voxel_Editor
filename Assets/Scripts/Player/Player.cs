@@ -18,6 +18,7 @@ public class Player : MonoBehaviour
     private Camera cam1;
     private Camera cam2;
 
+    public int orientation;
     public float walkSpeed = 3f;
 
     public float boundsTolerance = 0.1f;
@@ -59,7 +60,19 @@ public class Player : MonoBehaviour
             GetPlayerInputs();
 
         }
-    }
+
+            Vector3 XZDirection = transform.forward;
+            XZDirection.y = 0;
+            if (Vector3.Angle(XZDirection, Vector3.forward) <= 45)
+                orientation = 3; // Player is facing forwards.
+            else if (Vector3.Angle(XZDirection, Vector3.right) <= 45)
+                orientation = 5;
+            else if (Vector3.Angle(XZDirection, Vector3.back) <= 45)
+                orientation = 2;
+            else
+                orientation = 4;
+        
+}
 
     void ChangeGameMode()
     {

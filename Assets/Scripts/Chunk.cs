@@ -31,18 +31,55 @@ public class Chunk
     public Chunk(int x,int z)
     {
         X = x;Z = z;
-        chunkObject = new GameObject();
-        meshFilter = chunkObject.AddComponent<MeshFilter>();
-        meshRenderer = chunkObject.AddComponent<MeshRenderer>();
 
-        meshRenderer.material = World.Instance.material;
-        chunkObject.transform.SetParent(World.Instance.transform);
+        /*World.Instance.transform.Find($"{chunkData.Name}") == null;*/
+        chunkData = World.Instance.scenedata.RequestChunk(new Vector2Int(X, Z), true);
+        if (System.Object.ReferenceEquals(World.Instance.transform.Find(chunkData.Name), null))
+        {
+            chunkObject = new GameObject();
+            chunkObject.transform.SetParent(World.Instance.transform);
+            meshFilter = chunkObject.AddComponent<MeshFilter>();
+            meshRenderer = chunkObject.AddComponent<MeshRenderer>();
+
+            meshRenderer.material = World.Instance.material;
+
+
+        }
+        else
+        {
+            Debug.Log("findob");
+            chunkObject = World.Instance.transform.Find($"{chunkData.Name}").gameObject;
+
+            if (chunkObject.GetComponent<MeshFilter>() != null)
+            {
+                meshFilter = chunkObject.GetComponent<MeshFilter>();
+            }
+            else
+            {
+                meshFilter = chunkObject.AddComponent<MeshFilter>();
+            }
+            if (chunkObject.GetComponent<MeshRenderer>() != null)
+            {
+                meshRenderer = chunkObject.GetComponent<MeshRenderer>();
+
+                meshRenderer.material = World.Instance.material;
+            }
+            else
+            {
+                meshRenderer = chunkObject.AddComponent<MeshRenderer>();
+
+                meshRenderer.material = World.Instance.material;
+            }
+        }
+
+
+
+
         chunkObject.transform.position = new Vector3(X * VoxelData.ChunkWidth * VoxelData.BlockSize, 0f, Z * VoxelData.ChunkWidth * VoxelData.BlockSize);
-        
         //chunkObject.name = "Chunk " + X + ", " + Z;
         position = chunkObject.transform.position;
 
-        chunkData = World.Instance.scenedata.RequestChunk(new Vector2Int(X, Z), true);
+        
         chunkObject.name = chunkData.Name;
         //Debug.Log(chunkData.Name);
 
@@ -51,6 +88,10 @@ public class Chunk
            
     }
 
+    //bool isObjectExist()
+    //{
+
+    //}
     public bool isActive
     {
 
@@ -128,7 +169,14 @@ public class Chunk
         Debug.Log("hi" + index);
         int ID =GetBlockIntID(index);
         Debug.Log("hi"+ID);
-        chunkData.Blocks[ID].SetBlockType(newType);
+        if (!World.Instance.blocktype.BlockTypes[newType].isAllowXZorientation && !World.Instance.blocktype.BlockTypes[newType].isAllowXZorientation)
+        {
+            chunkData.GetVoxel(ID).SetBlockState(newType, 3);
+        }
+        else if (World.Instance.blocktype.BlockTypes[newType].isAllowXZorientation || World.Instance.blocktype.BlockTypes[newType].isAllowXZorientation)
+        {
+            chunkData.GetVoxel(ID).SetBlockState(newType, World.Instance._player.orientation);
+        }
 
         World.Instance.scenedata.AddToModifiedChunkList(chunkData);
 
@@ -148,8 +196,16 @@ public class Chunk
         Debug.Log("hi" + X);
         Vector3Int index = new Vector3Int(worldindex.x - (X * VoxelData.ChunkWidth), worldindex.y, worldindex.z - (Z * VoxelData.ChunkWidth));
         int ID = GetBlockIntID(index);
-        chunkData.GetVoxel(ID).SetBlockType(newType);
+        if (!World.Instance.blocktype.BlockTypes[newType].isAllowXZorientation && !World.Instance.blocktype.BlockTypes[newType].isAllowXZorientation)
+        {
+            chunkData.GetVoxel(ID).SetBlockState(newType, 3);
+        }
+        else if (World.Instance.blocktype.BlockTypes[newType].isAllowXZorientation|| World.Instance.blocktype.BlockTypes[newType].isAllowXZorientation)
+        {
+            chunkData.GetVoxel(ID).SetBlockState(newType, World.Instance._player.orientation);
+        }
         chunkData.BlockstoUpdate[ID] = chunkData.Blocks[ID];
+
 
         World.Instance.scenedata.AddToModifiedChunkList(chunkData);
 
@@ -230,25 +286,72 @@ public class Chunk
         Vector3 Pos = new Vector3(Chunkindex.x, Chunkindex.y, Chunkindex.z)*VoxelData.BlockSize;
         blockData block = chunkData.Blocks[blockID];
 
-
-        for (int p = 0; p < 6; p++)
+        float rot = 0f;
+        switch (block.orientation)
         {
-            int neighID = blockID + VoxelData.faceChecks[p];
+
+            case 3:
+                rot = 180f;
+                break;
+            case 5:
+                rot = 270f;
+                break;
+            case 2:
+                rot = 0f;
+                break;
+            default:
+                rot = 90f;
+                break;
+
+        }
+
+
+            for (int p = 0; p < 6; p++)
+            {
+
+            int translatedP = p;
+
+            if (block.orientation != 2)
+            {
+                if (block.orientation == 3)
+                {
+                    if (p == 3) translatedP = 2;
+                    else if (p == 2) translatedP = 3;
+                    else if (p == 4) translatedP = 5;
+                    else if (p == 5) translatedP = 4;
+                }
+                else if (block.orientation == 5)
+                {
+                    if (p == 3) translatedP = 5;
+                    else if (p == 2) translatedP = 4;
+                    else if (p == 4) translatedP = 3;
+                    else if (p == 5) translatedP = 2;
+                }
+                else if (block.orientation == 4)
+                {
+                    if (p == 3) translatedP = 4;
+                    else if (p == 2) translatedP = 5;
+                    else if (p == 4) translatedP = 2;
+                    else if (p == 5) translatedP = 3;
+                }
+            }
+
+            int neighID = blockID + VoxelData.faceChecks[translatedP];
 
             if ((!World.Instance.blocktype.BlockTypes[block.GetBlockType()].isTransparent)&& block.GetBlockType()!=0)
             {
-                if (!IsCoordAllowRender(neighID, p))
+                if (!IsCoordAllowRender(neighID, translatedP))
                 {
-                    if (IsCoordTransparent(neighID, p))
+                    if (IsCoordTransparent(neighID, translatedP))
                     {
                         int faceVertCount = 0;
 
                         for (int i = 0; i < block.properties.meshData.faces[p].vertData.Length; i++)
                         {
-
-                            vertices.Add(Pos + (block.properties.meshData.faces[p].vertData[i].position * VoxelData.BlockSize));
+                            VertData vertData = block.properties.meshData.faces[p].GetVertData(i);
+                            vertices.Add(Pos + (vertData.GetRotatedPosition(new Vector3(0, rot, 0))));
                             normals.Add(block.properties.meshData.faces[p].normal);
-                            AddTexture(block.properties.GetTextureID(p), block.properties.meshData.faces[p].vertData[i].uv);
+                            AddTexture(block.properties.GetTextureID(p), vertData.uv);
                             faceVertCount++;
 
 
@@ -270,10 +373,10 @@ public class Chunk
 
                         for (int i = 0; i < block.properties.meshData.faces[p].vertData.Length; i++)
                         {
-
-                            vertices.Add(Pos + (block.properties.meshData.faces[p].vertData[i].position * VoxelData.BlockSize));
-                            normals.Add(block.properties.meshData.faces[p].normal);
-                            AddTexture(block.properties.GetTextureID(p), block.properties.meshData.faces[p].vertData[i].uv);
+                        VertData vertData = block.properties.meshData.faces[p].GetVertData(i);
+                        vertices.Add(Pos + (vertData.GetRotatedPosition(new Vector3(0, rot, 0))));
+                        normals.Add(block.properties.meshData.faces[p].normal);
+                            AddTexture(block.properties.GetTextureID(p), vertData.uv);
                             faceVertCount++;
 
 
@@ -303,9 +406,11 @@ public class Chunk
                     for (int i = 0; i < block.properties.meshData.faces[p].vertData.Length; i++)
                     {
 
-                        vertices.Add(Pos + (block.properties.meshData.faces[p].vertData[i].position * VoxelData.BlockSize));
+                        //vertices.Add(Pos + (block.properties.meshData.faces[p].vertData[i].position * VoxelData.BlockSize));
+                        VertData vertData = block.properties.meshData.faces[p].GetVertData(i);
+                        vertices.Add(Pos + (vertData.GetRotatedPosition(new Vector3(0, rot, 0))));
                         normals.Add(block.properties.meshData.faces[p].normal);
-                        AddTexture(block.properties.GetTextureID(p), block.properties.meshData.faces[p].vertData[i].uv);
+                        AddTexture(block.properties.GetTextureID(p), vertData.uv);
                         faceVertCount++;
 
 
