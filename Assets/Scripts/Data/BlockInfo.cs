@@ -52,13 +52,13 @@ public class BlockType
         switch (faceIndex)
         {
 
-            case 0:
-                return backFaceTexture;
-            case 1:
-                return frontFaceTexture;
             case 2:
-                return topFaceTexture;
+                return backFaceTexture;
             case 3:
+                return frontFaceTexture;
+            case 1:
+                return topFaceTexture;
+            case 0:
                 return bottomFaceTexture;
             case 4:
                 return leftFaceTexture;

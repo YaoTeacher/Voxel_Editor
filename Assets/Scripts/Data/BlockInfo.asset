@@ -67,8 +67,8 @@ MonoBehaviour:
     rough: 2
     isRenderNeibor: 0
     isTransparent: 0
-    isAllowYorientation: 0
-    isAllowXZorientation: 0
+    isAllowYorientation: 1
+    isAllowXZorientation: 1
     icon: {fileID: -147661827, guid: 8ccace736c8423742aa10041de97657d, type: 3}
     meshData: {fileID: 11400000, guid: 6ec83e2bd15b1e841be9982af84a756d, type: 2}
     backFaceTexture: 2
@@ -131,8 +131,8 @@ MonoBehaviour:
     rough: 3
     isRenderNeibor: 0
     isTransparent: 0
-    isAllowYorientation: 0
-    isAllowXZorientation: 0
+    isAllowYorientation: 1
+    isAllowXZorientation: 1
     icon: {fileID: -68591331, guid: 8ccace736c8423742aa10041de97657d, type: 3}
     meshData: {fileID: 11400000, guid: 6ec83e2bd15b1e841be9982af84a756d, type: 2}
     backFaceTexture: 5

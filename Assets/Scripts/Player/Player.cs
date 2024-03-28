@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using static UnityEditor.Searcher.SearcherWindow.Alignment;
+using static UnityEngine.LightAnchor;
 
 public class Player : MonoBehaviour
 {
@@ -60,19 +61,37 @@ public class Player : MonoBehaviour
             GetPlayerInputs();
 
         }
-
-            Vector3 XZDirection = transform.forward;
+        Vector3 topDirection = Vector3.up; // 定义顶部方向为(0, 1, 0)
+        Vector3 cameraDirection = Camera.main.transform.forward; // 获取摄像机的视线方向
+        Vector3 XZDirection = transform.forward;
             XZDirection.y = 0;
+        // 判断摄像机视线是否在方块顶部45度视锥内
+        if (Vector3.Angle(cameraDirection, topDirection) > 45f)
+        {
+            // 在45度视锥外,使用12~15特殊角度值
+            if (Vector3.Angle(XZDirection, Vector3.back) <= 45)
+                orientation = 13;
+            else if (Vector3.Angle(XZDirection, Vector3.forward) <= 45)
+                orientation = 12;
+            else if (Vector3.Angle(XZDirection, Vector3.left) <= 45)
+                orientation = 14;
+            else if (Vector3.Angle(XZDirection, Vector3.right) <= 45)
+                orientation = 15;
+        }
+        else
+        {
+            // 在45度视锥内,使用原有的2~5转向判断
             if (Vector3.Angle(XZDirection, Vector3.forward) <= 45)
-                orientation = 3; // Player is facing forwards.
+                orientation = 3;
             else if (Vector3.Angle(XZDirection, Vector3.right) <= 45)
                 orientation = 5;
             else if (Vector3.Angle(XZDirection, Vector3.back) <= 45)
                 orientation = 2;
             else
                 orientation = 4;
-        
-}
+        }
+
+    }
 
     void ChangeGameMode()
     {

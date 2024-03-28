@@ -196,13 +196,47 @@ public class Chunk
         Debug.Log("hi" + X);
         Vector3Int index = new Vector3Int(worldindex.x - (X * VoxelData.ChunkWidth), worldindex.y, worldindex.z - (Z * VoxelData.ChunkWidth));
         int ID = GetBlockIntID(index);
-        if (!World.Instance.blocktype.BlockTypes[newType].isAllowXZorientation && !World.Instance.blocktype.BlockTypes[newType].isAllowXZorientation)
+        if ((!World.Instance.blocktype.BlockTypes[newType].isAllowXZorientation) && (!World.Instance.blocktype.BlockTypes[newType].isAllowYorientation))
         {
-            chunkData.GetVoxel(ID).SetBlockState(newType, 3);
+            chunkData.GetVoxel(ID).SetBlockState(newType, 2);
         }
-        else if (World.Instance.blocktype.BlockTypes[newType].isAllowXZorientation|| World.Instance.blocktype.BlockTypes[newType].isAllowXZorientation)
+        else if (World.Instance.blocktype.BlockTypes[newType].isAllowXZorientation)
         {
-            chunkData.GetVoxel(ID).SetBlockState(newType, World.Instance._player.orientation);
+            if (!World.Instance.blocktype.BlockTypes[newType].isAllowYorientation)
+            {
+                int ori = 0;
+                Debug.Log(chunkData.Blocks[ID].orientation);
+                switch (World.Instance._player.orientation)
+                {
+                    
+                    case 12:
+                        ori = 2;
+                        break;
+                    case 13:
+                        ori = 3;
+                        break;
+                    case 14:
+                        ori = 4;
+                        break;
+                    case 15:
+                        ori = 5;
+                        break;
+   
+                    default:
+                        
+                        break;
+
+
+                }
+                Debug.Log(chunkData.Blocks[ID].orientation);
+                chunkData.GetVoxel(ID).SetBlockState(newType, ori);
+                Debug.Log(chunkData.Blocks[ID].orientation);
+            }
+            else
+            {
+                chunkData.GetVoxel(ID).SetBlockState(newType, World.Instance._player.orientation);
+                Debug.Log(chunkData.Blocks[ID].orientation);
+            }
         }
         chunkData.BlockstoUpdate[ID] = chunkData.Blocks[ID];
 
@@ -286,22 +320,35 @@ public class Chunk
         Vector3 Pos = new Vector3(Chunkindex.x, Chunkindex.y, Chunkindex.z)*VoxelData.BlockSize;
         blockData block = chunkData.Blocks[blockID];
 
-        float rot = 0f;
+        Vector3 rot = new Vector3(0,0,0);
         switch (block.orientation)
         {
 
             case 3:
-                rot = 180f;
+                rot = new Vector3(0,180f,0);
                 break;
             case 5:
-                rot = 270f;
+                rot = new Vector3(0, 270f, 0);
                 break;
             case 2:
-                rot = 0f;
+                rot = new Vector3(0,0, 0);
+                break;
+            case 12:
+                rot = new Vector3(-90f, 0, 0);
+                break;
+            case 13:
+                rot = new Vector3(90f, 0, 0);
+                break;
+            case 14:
+                rot = new Vector3(0, 0, 90f);
+                break;
+            case 15:
+                rot = new Vector3(0, 0, -90f);
                 break;
             default:
-                rot = 90f;
+                rot = new Vector3(0, 90f, 0);
                 break;
+
 
         }
 
@@ -309,32 +356,71 @@ public class Chunk
             for (int p = 0; p < 6; p++)
             {
 
-            int translatedP = p;
+            int translatedP = VoxelData.transP[new Vector2Int(block.orientation,p)];
 
-            if (block.orientation != 2)
-            {
-                if (block.orientation == 3)
-                {
-                    if (p == 3) translatedP = 2;
-                    else if (p == 2) translatedP = 3;
-                    else if (p == 4) translatedP = 5;
-                    else if (p == 5) translatedP = 4;
-                }
-                else if (block.orientation == 5)
-                {
-                    if (p == 3) translatedP = 5;
-                    else if (p == 2) translatedP = 4;
-                    else if (p == 4) translatedP = 3;
-                    else if (p == 5) translatedP = 2;
-                }
-                else if (block.orientation == 4)
-                {
-                    if (p == 3) translatedP = 4;
-                    else if (p == 2) translatedP = 5;
-                    else if (p == 4) translatedP = 2;
-                    else if (p == 5) translatedP = 3;
-                }
-            }
+
+
+            //if (block.orientation != 2)
+            //{
+            //    if (block.orientation == 3)
+            //    {
+            //        if (p == 3) translatedP = 2;
+            //        else if (p == 2) translatedP = 3;
+            //        else if (p == 4) translatedP = 5;
+            //        else if (p == 5) translatedP = 4;
+            //    }
+            //    else if (block.orientation == 5)
+            //    {
+            //        if (p == 3) translatedP = 5;
+            //        else if (p == 2) translatedP = 4;
+            //        else if (p == 4) translatedP = 3;
+            //        else if (p == 5) translatedP = 2;
+            //    }
+            //    else if (block.orientation == 4)
+            //    {
+            //        if (p == 3) translatedP = 4;
+            //        else if (p == 2) translatedP = 5;
+            //        else if (p == 4) translatedP = 2;
+            //        else if (p == 5) translatedP = 3;
+            //    }
+            //    //¶¥Ãæ³¯Ç°
+            //    else if (block.orientation == 13)
+            //    {
+            //        if (p == 0) translatedP = 2; // µ×-ºó
+            //        if (p == 1) translatedP = 3; // ¶¥-Ç°
+            //        if (p == 2) translatedP = 1; // Ç°-µ×
+            //        if (p == 3) translatedP = 0; // ºó-¶¥
+
+            //    }
+
+            //    // ¶¥Ãæ³¯ºó
+            //    else if (block.orientation == 12)
+            //    {
+            //        if (p == 0) translatedP = 3; // µ×-Ç°
+            //        if (p == 1) translatedP = 2; // ¶¥-ºó
+            //        if (p == 2) translatedP = 0; // Ç°-¶¥
+            //        if (p == 3) translatedP = 1; // ºó-µ×
+
+            //    }
+
+            //    // ¶¥Ãæ³¯×ó
+            //    else if (block.orientation == 15)
+            //    {
+            //        if (p == 0) translatedP = 4; // µ×-ÓÒ
+            //        if (p == 1) translatedP = 5; // ¶¥-×ó
+            //        if (p == 4) translatedP = 1; // ×ó-µ×
+            //        if (p == 5) translatedP = 0; // ÓÒ-¶¥
+            //    }
+
+            //    // ¶¥Ãæ³¯ÓÒ
+            //    else if (block.orientation == 14)
+            //    {
+            //        if (p == 0) translatedP = 5; // µ×-×ó
+            //        if (p == 1) translatedP = 4; // ¶¥-ÓÒ
+            //        if (p == 4) translatedP = 0; // ×ó-¶¥
+            //        if (p == 5) translatedP = 1; // ÓÒ-µ×
+            //    }
+            //}
 
             int neighID = blockID + VoxelData.faceChecks[translatedP];
 
@@ -349,7 +435,8 @@ public class Chunk
                         for (int i = 0; i < block.properties.meshData.faces[p].vertData.Length; i++)
                         {
                             VertData vertData = block.properties.meshData.faces[p].GetVertData(i);
-                            vertices.Add(Pos + (vertData.GetRotatedPosition(new Vector3(0, rot, 0))));
+
+                            vertices.Add(Pos + vertData.GetRotatedPosition(rot));
                             normals.Add(block.properties.meshData.faces[p].normal);
                             AddTexture(block.properties.GetTextureID(p), vertData.uv);
                             faceVertCount++;
@@ -358,7 +445,10 @@ public class Chunk
                         }
                         for (int i = 0; i < block.properties.meshData.faces[p].triangles.Length; i++)
                         {
+
                             triangles.Add(vertexIndex + block.properties.meshData.faces[p].triangles[i]);
+
+
                         }
 
                         vertexIndex += faceVertCount;
@@ -374,7 +464,7 @@ public class Chunk
                         for (int i = 0; i < block.properties.meshData.faces[p].vertData.Length; i++)
                         {
                         VertData vertData = block.properties.meshData.faces[p].GetVertData(i);
-                        vertices.Add(Pos + (vertData.GetRotatedPosition(new Vector3(0, rot, 0))));
+                        vertices.Add(Pos + (vertData.GetRotatedPosition(rot)));
                         normals.Add(block.properties.meshData.faces[p].normal);
                             AddTexture(block.properties.GetTextureID(p), vertData.uv);
                             faceVertCount++;
@@ -383,8 +473,8 @@ public class Chunk
                         }
                         for (int i = 0; i < block.properties.meshData.faces[p].triangles.Length; i++)
                         {
-                            triangles.Add(vertexIndex + block.properties.meshData.faces[p].triangles[i]);
-                        }
+                        triangles.Add(vertexIndex + block.properties.meshData.faces[p].triangles[i]);
+                    }
 
                         vertexIndex += faceVertCount;
 
@@ -408,7 +498,7 @@ public class Chunk
 
                         //vertices.Add(Pos + (block.properties.meshData.faces[p].vertData[i].position * VoxelData.BlockSize));
                         VertData vertData = block.properties.meshData.faces[p].GetVertData(i);
-                        vertices.Add(Pos + (vertData.GetRotatedPosition(new Vector3(0, rot, 0))));
+                        vertices.Add(Pos + (vertData.GetRotatedPosition(rot)));
                         normals.Add(block.properties.meshData.faces[p].normal);
                         AddTexture(block.properties.GetTextureID(p), vertData.uv);
                         faceVertCount++;
