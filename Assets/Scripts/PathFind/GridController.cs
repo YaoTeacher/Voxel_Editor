@@ -7,7 +7,7 @@ public class GridController : MonoBehaviour
 {
     public World world;
 
-    public FlowField curFlowField;
+    public scenceGroundData curFlowField;
     public GridDebug gridDebug;
     // Start is called before the first frame update
     void Start()
@@ -31,7 +31,7 @@ public class GridController : MonoBehaviour
     private void InitializeFlowField()
     {
         //UnityEngine.Debug.Log($"{world.scenedata.Name}");
-        curFlowField = new FlowField();
+        curFlowField = new scenceGroundData();
         curFlowField.GenerateGround(world,4);
         gridDebug.SetFlowField(curFlowField);
     }

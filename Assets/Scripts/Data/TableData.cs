@@ -29,7 +29,7 @@ public class sceneData : BaseData
 
     {
        {0,new sceneData(0,"test",0,0,true)},
-       { 1,new sceneData(1,"mainMap",1,0,true)}
+       {1,new sceneData(1,"mainMap",1,0,true)}
     };
 
     [NonSerialized]
@@ -89,6 +89,10 @@ public class sceneData : BaseData
 
     }
 
+    public static void GenerateNewScence(int seed)
+    {
+        Scenes[Scenes.Keys.Count]= new sceneData(Scenes.Keys.Count,$"randomMap+{Scenes.Keys.Count}",1,seed,true);
+    }
     public static void UpdateList(sceneData scene)
     {
         Scenes[scene.Id] = scene;

@@ -17,7 +17,7 @@ public class GridDebug : MonoBehaviour
     public GameObject dir;
     public GameObject dirP;
 
-    private FlowField curFlowField;
+    private scenceGroundData curFlowField;
 
     private int enterpointchangetime=0;
 
@@ -28,7 +28,7 @@ public class GridDebug : MonoBehaviour
         ffIcons = Resources.LoadAll<Sprite>("Sprites/FFicons");
     }
 
-    public void SetFlowField(FlowField newFlowField)
+    public void SetFlowField(scenceGroundData newFlowField)
     {
         curFlowField = newFlowField;
     }

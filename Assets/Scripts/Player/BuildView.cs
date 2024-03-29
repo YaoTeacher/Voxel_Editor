@@ -245,7 +245,7 @@ public class BuildView : MonoBehaviour
     private void InitializeGround()
     {
         //UnityEngine.Debug.Log($"{world.scenedata.Name}");
-        world.curFlowField = new FlowField();
+        world.curFlowField = new scenceGroundData();
         world.curFlowField.GenerateGround(world, 4);
 
     }

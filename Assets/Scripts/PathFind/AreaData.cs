@@ -4,13 +4,23 @@ using UnityEngine;
 
 public class AreaData:BaseData
 {
+    [ModelHelp(true, "parentScenceID", "int", false, false)]
+    public string name{ get; set; }
+    public int type { get; set; }
+    //public bool isInDoor { get; set; }
+    // 0 blank 1 street 2 indoorroom
 
-    public string name;
-    public int type;
-    public bool isInDoor;
-    public Vector3Int LessBorderPoint;
-    public Vector3Int BiggerBorderPoint;
-    public bool isAllowCross;
+    public int LessBorderPointX { get; set; }
+    public int LessBorderPointY { get; set; }
+    public int LessBorderPointZ { get; set; }
+
+    public int BiggerBorderPointX { get; set; }
+    public int BiggerBorderPointY{ get; set; }
+    public int BiggerBorderPointZ { get; set; }
+    public Vector3Int LessBorderPoint { get; set; }
+    public Vector3Int BiggerBorderPoint { get; set; }
+    public int ParentWorldID { get; set; }
+    //public bool isAllowCross { get; set; }
 
     public Dictionary<Vector3Int, FlowFieldCellData> onGroundCell=new Dictionary<Vector3Int, FlowFieldCellData>();
     public Dictionary<Vector3Int, EnterPoint> EnterPoints = new Dictionary<Vector3Int, EnterPoint>();
@@ -21,36 +31,40 @@ public class AreaData:BaseData
     public AreaData(Vector3Int firstpoint, Vector3Int lastpoint,int id) 
     {
         Id = id;
+        Vector3Int less=new Vector3Int(0,0,0);
+        Vector3Int bigger=new Vector3Int(0, 0, 0);
         if (firstpoint.x < lastpoint.x)
         {
-            LessBorderPoint.x = firstpoint.x;
-            BiggerBorderPoint.x = lastpoint.x;
+            less.x = firstpoint.x;
+            bigger.x = lastpoint.x;
         }
         else
         {
-            LessBorderPoint.x = lastpoint.x;
-            BiggerBorderPoint.x = firstpoint.x;
+            less.x = lastpoint.x;
+            bigger.x = firstpoint.x;
         }
         if (firstpoint.y < lastpoint.y)
         {
-            LessBorderPoint.y = firstpoint.y;
-            BiggerBorderPoint.y = lastpoint.y;
+            less.y = firstpoint.y;
+            bigger.y = lastpoint.y;
         }
         else
         {
-            LessBorderPoint.y = lastpoint.y;
-            BiggerBorderPoint.y = firstpoint.y;
+            less.y = lastpoint.y;
+            bigger.y = firstpoint.y;
         }
         if (firstpoint.z < lastpoint.z)
         {
-            LessBorderPoint.z = firstpoint.z;
-            BiggerBorderPoint.z = lastpoint.z;
+            less.z = firstpoint.z;
+            bigger.z = lastpoint.z;
         }
         else
         {
-            LessBorderPoint.z = lastpoint.z;
-            BiggerBorderPoint.z = firstpoint.z;
+            less.z = lastpoint.z;
+            bigger.z = firstpoint.z;
         }
+        LessBorderPoint = less;
+        BiggerBorderPoint   = bigger;
     }
 
     public List<FlowFieldCellData> GetGroundNeibor(FlowFieldCellData path)

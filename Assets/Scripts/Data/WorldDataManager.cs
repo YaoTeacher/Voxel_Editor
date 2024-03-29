@@ -5,12 +5,14 @@ using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading;
 using System.Linq;
+using Unity.Entities;
 
 public class WorldDataManager 
 {
     
     private static string WorldDBPath = Application.streamingAssetsPath + "/World/World_Data.db";
     private static string WorldListName = "worldlist";
+    private static string AreaListName = "Groundlist";
 
     private static SqlDbCommand worldDB = new SqlDbCommand(WorldDBPath);
     public static void SaveWorld()
@@ -116,7 +118,8 @@ public class WorldDataManager
 
 
     }
-
+    //chunkdata
+    #region 
     public static void SaveChunks(sceneData scene)
     {
 
@@ -212,6 +215,57 @@ public class WorldDataManager
 
 
     }
+    #endregion
 
+    //WayPointsdata
+    #region
+    public static void SaveScenceAreas()
+    {
+
+        // If not, create it.
+        if (!worldDB.IsTableCreate<scenceGroundData>($"worldGroundList"))
+        {
+            worldDB.CreateTable<scenceGroundData>($"worldGroundList");
+        }
+        else
+        {
+            Debug.Log("Saving " + "worldGroundList");
+
+            foreach (var s in scenceGroundData.Grounds.Values)
+            {
+                if (worldDB.SelectById<scenceGroundData>("worldGroundList", s.Id) == null)
+                {
+                    worldDB.Insert<scenceGroundData>("worldGroundList", s);
+                }
+                else
+                {
+                    worldDB.Update<scenceGroundData>("worldGroundList", s);
+                }
+                SaveAreas(s);
+
+            }
+        }
+
+    }
+    public static void SaveAreas(scenceGroundData scenceGround)
+    {
+        // Copy modified chunks into a new list and clear the old one to prevent
+        // chunks being added to list while it is saving.
+        Debug.Log(scenceGround.Areas.Values.Count.ToString());
+
+
+        // Loop through each chunk and save it.
+        int count = 0;
+        foreach (AreaData a in scenceGround.Areas.Values)
+        {
+
+            //SaveArea(a, );
+            count++;
+
+        }
+
+        Debug.Log(count + " Area saved.");
+    }
+    #endregion
 }
 

@@ -1,9 +1,22 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
+using UnityEditor.ShaderGraph;
 using UnityEngine;
 
-public class FlowField
+public class scenceGroundData:BaseData
 {
+    [ModelHelp(true, "Name", "string", false, false)]
+    public string Name { get; set; }
+
+    [NonSerialized]
+    public static Dictionary<int, scenceGroundData>Grounds = new Dictionary<int, scenceGroundData>
+
+    {
+       {0,new scenceGroundData(0,"testGround")},
+       {1,new scenceGroundData(1,"mainMapGround")}
+    };
 
     public Dictionary<int, AreaData> Areas = new Dictionary<int, AreaData>(); 
 
@@ -11,6 +24,14 @@ public class FlowField
     public Dictionary<Vector3Int, EnterPoint> EnterPointData = new Dictionary<Vector3Int, EnterPoint>();
     public Dictionary<Vector3Int, FlowFieldCellData> SpawnPointData = new Dictionary<Vector3Int, FlowFieldCellData>();
     public int changeTime = 0;
+
+    public scenceGroundData() { }
+    public scenceGroundData(int Parentid, string name)
+    {
+        Id = Parentid;
+        Name = name;
+    }
+
     public AreaData SetNewArea(Vector3Int firstpoint, Vector3Int lastpoint)
     {
         AreaData area = new AreaData(firstpoint, lastpoint,Areas.Count);
@@ -70,6 +91,43 @@ public class FlowField
                     }
                     
                 }
+            }
+        }
+    }
+
+    public void updateGround(World scene, Vector3Int blockindex, int creature = 4)
+    {
+        for (int y = 0; y < VoxelData.ChunkHeight; y++)
+        {
+            Vector3Int curindex = new Vector3Int(blockindex.x, y, blockindex.z);
+            for (int c = 0; c <= creature; c++)
+            {
+                
+                Vector3Int uppoint = curindex;
+                if (GroundData[uppoint] != null)
+                {
+                    GroundData.Remove(uppoint);
+                }
+                
+                uppoint  += new Vector3Int(0, 1, 0);
+                if (!scene.IsGround(curindex, uppoint))
+                {
+                    y += c;
+                    break;
+                }
+                else
+                {
+
+                    if (c == creature)
+                    {
+                        GroundData[curindex] = new FlowFieldCellData(curindex, World.Instance.blocktype.BlockTypes[1].rough);
+                        y += c;
+                        break;
+                    }
+
+                    continue;
+                }
+
             }
         }
     }

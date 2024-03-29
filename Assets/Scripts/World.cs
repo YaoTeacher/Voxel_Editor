@@ -50,7 +50,7 @@ public class World : MonoBehaviour
 
     public Dictionary<int,AreaData> basticareaData;
 
-    public FlowField curFlowField;
+    public scenceGroundData curFlowField;
 
     public string appPath;
     private void Awake()
@@ -436,7 +436,7 @@ public class World : MonoBehaviour
     private void InitializeGround()
     {
         UnityEngine.Debug.Log($"{Instance.scenedata.Name}");
-        curFlowField = new FlowField();
+        curFlowField = new scenceGroundData();
         curFlowField.GenerateGround(World.Instance, 4);
     }
 }
