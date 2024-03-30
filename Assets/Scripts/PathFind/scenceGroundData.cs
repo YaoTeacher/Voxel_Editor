@@ -8,7 +8,7 @@ using UnityEngine;
 public class scenceGroundData:BaseData
 {
     [ModelHelp(true, "Name", "string", false, false)]
-    public string Name { get; set; }
+    public string name { get; set; }
 
     [NonSerialized]
     public static Dictionary<int, scenceGroundData>Grounds = new Dictionary<int, scenceGroundData>
@@ -20,16 +20,17 @@ public class scenceGroundData:BaseData
 
     public Dictionary<int, AreaData> Areas = new Dictionary<int, AreaData>(); 
 
-    public Dictionary<Vector3Int, FlowFieldCellData> GroundData = new Dictionary<Vector3Int, FlowFieldCellData>();
+    public List<ModifiedCell>modifiedCells = new List<ModifiedCell>();
+    public Dictionary<Vector3Int, GroundCellData> GroundData = new Dictionary<Vector3Int, GroundCellData>();
     public Dictionary<Vector3Int, EnterPoint> EnterPointData = new Dictionary<Vector3Int, EnterPoint>();
-    public Dictionary<Vector3Int, FlowFieldCellData> SpawnPointData = new Dictionary<Vector3Int, FlowFieldCellData>();
+    public Dictionary<Vector3Int, GroundCellData> SpawnPointData = new Dictionary<Vector3Int, GroundCellData>();
     public int changeTime = 0;
 
     public scenceGroundData() { }
     public scenceGroundData(int Parentid, string name)
     {
         Id = Parentid;
-        Name = name;
+        this.name = name;
     }
 
     public AreaData SetNewArea(Vector3Int firstpoint, Vector3Int lastpoint)
@@ -81,7 +82,7 @@ public class scenceGroundData:BaseData
                             
                             if (c == creature)
                             {
-                                GroundData[point] = new FlowFieldCellData(point, World.Instance.blocktype.BlockTypes[1].rough);
+                                GroundData[point] = new GroundCellData(point, World.Instance.blocktype.BlockTypes[1].rough);
                                 y += c;
                                 break;
                             }
@@ -97,7 +98,7 @@ public class scenceGroundData:BaseData
 
     public void updateGround(World scene, Vector3Int blockindex, int creature = 4)
     {
-        for (int y = 0; y < VoxelData.ChunkHeight; y++)
+        for (int y = blockindex.y-creature-1; y < blockindex.y + creature +1; y++)
         {
             Vector3Int curindex = new Vector3Int(blockindex.x, y, blockindex.z);
             for (int c = 0; c <= creature; c++)
@@ -120,7 +121,7 @@ public class scenceGroundData:BaseData
 
                     if (c == creature)
                     {
-                        GroundData[curindex] = new FlowFieldCellData(curindex, World.Instance.blocktype.BlockTypes[1].rough);
+                        GroundData[curindex] = new GroundCellData(curindex, World.Instance.blocktype.BlockTypes[1].rough);
                         y += c;
                         break;
                     }
@@ -166,11 +167,11 @@ public class scenceGroundData:BaseData
             
             if (GroundData[target].areaID!=-1)
             {
-                Queue<FlowFieldCellData> cellsToCheck = new Queue<FlowFieldCellData>();
-                FlowFieldCellData f = GroundData[target];
+                Queue<GroundCellData> cellsToCheck = new Queue<GroundCellData>();
+                GroundCellData f = GroundData[target];
 
 
-                foreach (FlowFieldCellData n in Areas[GroundData[target].areaID].onGroundCell.Values)
+                foreach (GroundCellData n in Areas[GroundData[target].areaID].onGroundCell.Values)
                 {
 
                     if (n.finalcost != 9999)
@@ -200,12 +201,12 @@ public class scenceGroundData:BaseData
 
                     while (cellsToCheck.Count > 0)
                     {
-                        FlowFieldCellData curCell = cellsToCheck.Dequeue();
+                        GroundCellData curCell = cellsToCheck.Dequeue();
 
-                        List<FlowFieldCellData> curNeibors = Areas[f.areaID].GetGroundNeibor(curCell);
+                        List<GroundCellData> curNeibors = Areas[f.areaID].GetGroundNeibor(curCell);
 
 
-                        foreach (FlowFieldCellData n in curNeibors)
+                        foreach (GroundCellData n in curNeibors)
                         {
                             if (n.cost == -1|| n.cost == 0) { continue; }
 
@@ -246,6 +247,45 @@ public class scenceGroundData:BaseData
         }
     }
 
+    public void AddWayPointLink(AreaData a,AreaData b)
+    {
+        if(Areas.ContainsValue(a)&& Areas.ContainsValue(b))
+        {
+            if (!a.neiborAreas.Contains(b.Id))
+            {
+                a.neiborAreas.Add(b.Id);
+            }
+            if (!b.neiborAreas.Contains(a.Id))
+            {
+                b.neiborAreas.Add(a.Id);
+            }
+        }
+        else
+        {
+            Debug.Log("one of this Area is not in this Scence!");
+        }
+    }
+
+    public void RemoveWayPointLink(AreaData a,AreaData b)
+    {
+        if (Areas.ContainsValue(a) && Areas.ContainsValue(b))
+        {
+            if (a.neiborAreas.Contains(b.Id))
+            {
+                a.neiborAreas.Remove(b.Id);
+            }
+            if (b.neiborAreas.Contains(a.Id))
+            {
+                b.neiborAreas.Remove(a.Id);
+            }
+
+        }
+        else
+        {
+            Debug.Log("one of this Area is not in this Scence!");
+        }
+    }
+
     public Vector3 CheckVector(Vector3 pos)
     {
         if (GroundData.ContainsKey(World.GetWorldIndexFromPos(pos)))
@@ -274,16 +314,16 @@ public class scenceGroundData:BaseData
 
             if (GroundData[target].areaID != -1)
             {
-                Queue<FlowFieldCellData> cellsToCheck = new Queue<FlowFieldCellData>();
-                FlowFieldCellData f = GroundData[target];
+                Queue<GroundCellData> cellsToCheck = new Queue<GroundCellData>();
+                GroundCellData f = GroundData[target];
                 f.finalcost = 0;
                 cellsToCheck.Enqueue(f);
 
                 while (cellsToCheck.Count > 0)
                 {
-                    FlowFieldCellData curCell = cellsToCheck.Dequeue();
-                    List<FlowFieldCellData> curNeibors = Areas[f.areaID].GetGroundNeibor(curCell);
-                    foreach (FlowFieldCellData n in curNeibors)
+                    GroundCellData curCell = cellsToCheck.Dequeue();
+                    List<GroundCellData> curNeibors = Areas[f.areaID].GetGroundNeibor(curCell);
+                    foreach (GroundCellData n in curNeibors)
                     {
                         if (n.cost == -1) { continue; }
                         if (n.cost + curCell.finalcost < n.finalcost)
@@ -299,7 +339,7 @@ public class scenceGroundData:BaseData
         }
     }
 
-    private float CalculateCost(FlowFieldCellData node1, FlowFieldCellData node2)
+    private float CalculateCost(GroundCellData node1, GroundCellData node2)
     {
         //È¡¾ø¶ÔÖµ
         int deltaX = node1.WorldIndex.x - node2.WorldIndex.x;
@@ -324,4 +364,10 @@ public class scenceGroundData:BaseData
         }
     }
 
+}
+
+public class ModifiedCell 
+{
+    Vector3Int Vector3 = new Vector3Int();
+    byte ChangeType;
 }

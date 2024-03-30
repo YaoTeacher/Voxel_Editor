@@ -6,10 +6,12 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading;
 using System.Linq;
 using Unity.Entities;
+using UnityEngine.Analytics;
+using UnityEngine.UIElements;
 
-public class WorldDataManager 
+public class WorldDataManager
 {
-    
+
     private static string WorldDBPath = Application.streamingAssetsPath + "/World/World_Data.db";
     private static string WorldListName = "worldlist";
     private static string AreaListName = "Groundlist";
@@ -41,7 +43,7 @@ public class WorldDataManager
 
             }
         }
-        
+
 
 
     }
@@ -86,7 +88,7 @@ public class WorldDataManager
             GenerateWorldList();
         }
 
-        if (worldDB.SelectBySql<sceneData>(WorldListName, $"Name='{ScenceName}'")!=null)
+        if (worldDB.SelectBySql<sceneData>(WorldListName, $"Name='{ScenceName}'") != null)
         {
 
             Debug.Log("Scene found. Loading from save.");
@@ -107,8 +109,8 @@ public class WorldDataManager
 
             Debug.Log("World not found. Creating new scene.");
 
-            sceneData scene = new sceneData (ScenceName, 2, true);
-            worldDB.Insert<sceneData>(WorldListName,scene);
+            sceneData scene = new sceneData(ScenceName, 2, true);
+            worldDB.Insert<sceneData>(WorldListName, scene);
             worldDB.CreateTable<chunkData>(ScenceName);
             SaveChunks(scene);
 
@@ -146,16 +148,13 @@ public class WorldDataManager
 
 
 
-    public static void SaveChunk(chunkData chunk,string sceneName)
+    public static void SaveChunk(chunkData chunk, string sceneName)
     {
-
-        //// Set our save location and make sure we have a saves folder ready to go.
-        //string savePath = WorldDBPath;
 
         Vector2Int position = Chunk.GetChunkVector2Index(chunk.Id);
 
 
-        if (worldDB.SelectById<chunkData>(sceneName, chunk.Id)==null)
+        if (worldDB.SelectById<chunkData>(sceneName, chunk.Id) == null)
         {
             worldDB.Insert<chunkData>(sceneName, chunk);
             string chunkName = sceneName + "_" + position.x + "_" + position.y;
@@ -173,7 +172,7 @@ public class WorldDataManager
         if (chunk.BlockstoUpdate.Values.Count == 0)
             return;
 
-   
+
         worldDB.Update<blockData>(chunk.Name, chunk.BlockstoUpdate.Values.ToList());
 
     }
@@ -185,14 +184,14 @@ public class WorldDataManager
 
         chunkData chunk = new chunkData();
 
-        if (worldDB.SelectById<chunkData>(sceneName, ID)!=null)
+        if (worldDB.SelectById<chunkData>(sceneName, ID) != null)
         {
             chunk = worldDB.SelectById<chunkData>(sceneName, ID);
-           
+
         }
         else
         {
-            chunk = new chunkData(ID,chunkName);
+            chunk = new chunkData(ID, chunkName);
             worldDB.Insert<chunkData>(sceneName, chunk);
         }
 
@@ -207,7 +206,7 @@ public class WorldDataManager
         {
             chunk.Blocks = worldDB.SelectBySqlDic<blockData>(chunk.Name);
         }
-        
+
         return chunk;
 
         // If we didn't find the chunk in our folder, return null and our WorldData script
@@ -219,7 +218,7 @@ public class WorldDataManager
 
     //WayPointsdata
     #region
-    public static void SaveScenceAreas()
+    public static void SaveScenceGrounds(sceneData scene)
     {
 
         // If not, create it.
@@ -241,12 +240,40 @@ public class WorldDataManager
                 {
                     worldDB.Update<scenceGroundData>("worldGroundList", s);
                 }
-                SaveAreas(s);
+                SaveScenceGround(s);
 
             }
         }
 
     }
+
+
+
+    public static void SaveScenceGround(scenceGroundData scenceGround)
+    {
+
+        if (worldDB.IsTableCreate<AreaData>(scenceGround.name))
+        {
+
+            Debug.Log($"{scenceGround.name} found. Loading from save.");
+            Debug.Log(WorldDBPath + scenceGround.name);
+
+        }
+        else
+        {
+            Debug.Log("World not found. Creating new world.");
+            worldDB.CreateTable<AreaData>(scenceGround.name);
+
+        }
+
+
+        Debug.Log("Saving " + scenceGround.name);
+
+        SaveAreas(scenceGround);
+
+    }
+
+
     public static void SaveAreas(scenceGroundData scenceGround)
     {
         // Copy modified chunks into a new list and clear the old one to prevent
@@ -259,13 +286,58 @@ public class WorldDataManager
         foreach (AreaData a in scenceGround.Areas.Values)
         {
 
-            //SaveArea(a, );
+
+            if (worldDB.SelectById<AreaData>(scenceGround.name, a.Id) == null)
+            {
+                worldDB.Insert<AreaData>(scenceGround.name, a);
+            }
+            else
+            {
+                worldDB.Update<AreaData>(scenceGround.name, a);
+            }
             count++;
 
         }
 
         Debug.Log(count + " Area saved.");
     }
-    #endregion
+
+    public static void SaveGround(scenceGroundData groundData)
+    {
+
+        //// Set our save location and make sure we have a saves folder ready to go.
+        //string savePath = WorldDBPath;
+        if (!worldDB.IsTableCreate<GroundCellData>(groundData.name+"_GroundCell"))
+        {
+            worldDB.CreateTable<GroundCellData>(groundData.name + "_GroundCell");
+        }
+
+
+        foreach (var a in groundData.GroundData.Values)
+        {
+
+            if (worldDB.SelectById<GroundCellData>(groundData.name + "_GroundCell", a.Id) == null)
+            {
+                worldDB.Insert<GroundCellData>(groundData.name + "_GroundCell", a);
+            }
+
+
+
+
+            Debug.Log("Saving Ground" + a.Id);
+
+        }
+
+        foreach (var b in groundData.SpawnPointData.Values)
+        {
+
+        }
+
+        foreach (var c in groundData.EnterPointData.Values)
+        {
+
+        }
+        #endregion
+    }
 }
 

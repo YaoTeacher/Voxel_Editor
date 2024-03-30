@@ -196,7 +196,7 @@ public class GridDebug : MonoBehaviour
         style.alignment = TextAnchor.MiddleCenter;
         Gizmos.color = drawColor;
         if (curFlowField == null) { return; }
-        foreach(FlowFieldCellData f in curFlowField.GroundData.Values)
+        foreach(GroundCellData f in curFlowField.GroundData.Values)
         {
             Vector3 center = new Vector3(f.WorldIndex.x+0.5f, f.WorldIndex.y + 0.5f, f.WorldIndex.z + 0.5f) * VoxelData.BlockSize;
             Vector3 size = Vector3.one * VoxelData.BlockSize;
@@ -224,7 +224,7 @@ public class GridDebug : MonoBehaviour
             }
             foreach (AreaData a in curFlowField.Areas.Values)
             {
-                foreach (FlowFieldCellData f in a.onGroundCell.Values)
+                foreach (GroundCellData f in a.onGroundCell.Values)
                 {
                     Vector3 center = new Vector3(f.WorldIndex.x + 0.5f, f.WorldIndex.y + 0.5f, f.WorldIndex.z + 0.5f) * VoxelData.BlockSize;
                     Vector3 size = Vector3.one * VoxelData.BlockSize;

@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class BasicBehavior : MonoBehaviour
+public class UnitGenerate : MonoBehaviour
 {
     
     public World world;
     public GameObject unitPrefab;
     public int numUnitsPerSpawn;
     public float moveSpeed;
+    public Vector3 nowMoveDirection;
 
     private List<GameObject> unitsInGame;
 
@@ -36,8 +37,8 @@ public class BasicBehavior : MonoBehaviour
         if (world.curFlowField == null) { return; }
         foreach (GameObject unit in unitsInGame)
         {
-            Vector3 moveDirection = world.curFlowField.CheckVector(unit.transform.position);
-            unit.transform.position += moveDirection * moveSpeed;
+            nowMoveDirection = world.curFlowField.CheckVector(unit.transform.position);
+            unit.transform.position += nowMoveDirection * moveSpeed;
         }
     }
 
@@ -47,19 +48,20 @@ public class BasicBehavior : MonoBehaviour
         {
             print("Start!");
             int colMask = LayerMask.GetMask("Impassible", "Units");
-            FlowFieldCellData newPos;
+            GroundCellData newPos;
             for (int i = 0; i < numUnitsPerSpawn; i++)
             {
 
                 do
                 {
-                    newPos = world.curFlowField.SpawnPointData.Values.ToList<FlowFieldCellData>()[Random.Range(0, world.curFlowField.SpawnPointData.Values.Count)];
+                    newPos = world.curFlowField.SpawnPointData.Values.ToList<GroundCellData>()[Random.Range(0, world.curFlowField.SpawnPointData.Values.Count)];
 
                     if (newPos.areaID != -1)
                     {
                         Vector3 position = new Vector3(newPos.WorldIndex.x * VoxelData.BlockSize + 0.25f, newPos.WorldIndex.y * VoxelData.BlockSize+0.5f, newPos.WorldIndex.z * VoxelData.BlockSize + 0.25f);
                         GameObject newUnit = Instantiate(unitPrefab, position, Quaternion.LookRotation(newPos.direction));
                         newUnit.transform.parent = transform;
+                        
                         unitsInGame.Add(newUnit);
                         //newUnit.target = world.curFlowField.Areas[newPos.areaID].EnterPoints.Keys.ToList<Vector3Int>()[0];
                         print("Spawn");
@@ -76,10 +78,19 @@ public class BasicBehavior : MonoBehaviour
 
     private void DestroyUnits()
     {
-        foreach (GameObject go in unitsInGame)
+        foreach (GameObject g in unitsInGame)
         {
-            Destroy(go);
+            Destroy(g);
         }
         unitsInGame.Clear();
     }
+}
+
+public class CreatureStateData:BaseData
+{
+    public int scenceId;
+    public int areaId;
+    public Vector3Int targetBlock;
+    public Vector3 position;
+    public Vector3 nowMoveDirection;
 }
