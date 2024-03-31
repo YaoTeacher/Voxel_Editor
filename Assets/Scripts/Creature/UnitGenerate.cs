@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
 
 public class UnitGenerate : MonoBehaviour
 {
@@ -84,6 +85,34 @@ public class UnitGenerate : MonoBehaviour
         }
         unitsInGame.Clear();
     }
+
+    public void GetAreasList(Vector3 target,GameObject newUnit)
+    {
+        Vector3Int targetIndex = World.GetWorldIndexFromPos(target);
+        Vector3Int position = World.GetWorldIndexFromPos(newUnit.transform.position);
+
+        int areaID = world.curFlowField.GroundData[position].areaID;
+        int targetAreaID = world.curFlowField.GroundData[targetIndex].areaID;
+
+        Queue<AreaData> areasToCheck = new Queue<AreaData>();
+        AreaData area = world.curFlowField.Areas[areaID];
+        areasToCheck.Enqueue(area);
+        while (areasToCheck.Count > 0)
+        {
+            AreaData curArea = areasToCheck.Dequeue();
+
+            List<int> curNeibors = curArea.neiborAreas.Keys.ToList();
+
+
+            foreach (int n in curNeibors)
+            {
+                AreaData neibor = world.curFlowField.Areas[n];
+                if (neibor==null) { continue; }
+
+            }
+        }
+
+    }
 }
 
 public class CreatureStateData:BaseData
@@ -93,4 +122,5 @@ public class CreatureStateData:BaseData
     public Vector3Int targetBlock;
     public Vector3 position;
     public Vector3 nowMoveDirection;
+
 }

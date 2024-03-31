@@ -24,8 +24,8 @@ public class AreaData:BaseData
     //public bool isAllowCross { get; set; }
 
     public Dictionary<Vector3Int, GroundCellData> onGroundCell=new Dictionary<Vector3Int, GroundCellData>();
-    public Dictionary<Vector3Int, EnterPoint> EnterPoints = new Dictionary<Vector3Int, EnterPoint>();
-    public List<int>neiborAreas = new List<int>();
+    public Dictionary<Vector3Int, EnterPoint> innerEnterPoints = new Dictionary<Vector3Int, EnterPoint>();
+    public Dictionary<int,AreaLink>neiborAreas =new Dictionary<int, AreaLink>();
 
     public int allowedNumberForEnterPoint = 1;
     public AreaData() { }
@@ -167,27 +167,20 @@ public class GroundCellData : BaseData
 
 public class AreaLink : BaseData
 {
-    public int StartArea { set; get; }
-    public int EndArea { set; get; }
+    public int startAreaID { set; get; }
+    public int endAreaID { set; get; }
+    public float cost { set; get; }
 
-    public float Direction_X{ get; set; }
-    public float Direction_Y{ get; set; }
-    public float Direction_Z { get; set; }
-
+    public List<EnterPoint>outAreaPoints = new List<EnterPoint>();
     public AreaLink(){}
 
-    public AreaLink(int startArea, int endArea,Vector3 direction)
+    public AreaLink(int startArea, int endArea,float cost)
     {
-        StartArea = startArea;
-        EndArea = endArea;
-        Direction_X =direction.x;
-        Direction_Y =direction.y;
-        Direction_Z =direction.z;
+        startAreaID = startArea;
+        endAreaID = endArea;
+        this.cost = cost;
     }
-    public Vector3 GetLinkDirection()
-    {
-        return new Vector3(Direction_X, Direction_Y, Direction_Z);
-    }
+
 }
 
 public class EnterPoint : BaseData 

@@ -181,20 +181,20 @@ public class scenceGroundData:BaseData
 
                 }
 
-                if (Areas[f.areaID].EnterPoints.Keys.Count+1> Areas[f.areaID].allowedNumberForEnterPoint)
+                if (Areas[f.areaID].innerEnterPoints.Keys.Count+1> Areas[f.areaID].allowedNumberForEnterPoint)
                 {
                     Debug.Log("Out Of Range! Clear!");
                     Debug.Log($"{EnterPointData.Count}");
-                    foreach (EnterPoint e in Areas[f.areaID].EnterPoints.Values)
+                    foreach (EnterPoint e in Areas[f.areaID].innerEnterPoints.Values)
                     {
                         EnterPointData.Remove(e.WorldIndex);
                     };
                     Debug.Log($"{EnterPointData.Count}");
-                    Areas[f.areaID].EnterPoints.Clear();
+                    Areas[f.areaID].innerEnterPoints.Clear();
                 }
                 changeTime++;
                 EnterPointData[f.WorldIndex] = new EnterPoint(f);
-                Areas[f.areaID].EnterPoints[f.WorldIndex] = new EnterPoint(f);
+                Areas[f.areaID].innerEnterPoints[f.WorldIndex] = new EnterPoint(f);
 
                 f.finalcost = 0;
                 cellsToCheck.Enqueue(f);
@@ -229,6 +229,9 @@ public class scenceGroundData:BaseData
         }
     }
 
+
+
+
     public void SetSpawnPos(Vector3Int target)
     {
         if (GroundData.ContainsKey(target))
@@ -247,17 +250,17 @@ public class scenceGroundData:BaseData
         }
     }
 
-    public void AddWayPointLink(AreaData a,AreaData b)
+    public void AddWayPointLink(AreaData a, AreaData b)
     {
-        if(Areas.ContainsValue(a)&& Areas.ContainsValue(b))
+        if(Areas.ContainsValue(a) && Areas.ContainsValue(b))
         {
-            if (!a.neiborAreas.Contains(b.Id))
+            if (!Areas[a.Id].neiborAreas.ContainsKey(b.Id))
             {
-                a.neiborAreas.Add(b.Id);
+                Areas[a.Id].neiborAreas[b.Id] = new AreaLink(a.Id, b.Id, GenerateNeiborAreaCost(a,b));
             }
-            if (!b.neiborAreas.Contains(a.Id))
+            if (!Areas[b.Id].neiborAreas.ContainsKey(b.Id))
             {
-                b.neiborAreas.Add(a.Id);
+                Areas[b.Id].neiborAreas[a.Id] = new AreaLink(b.Id, a.Id, GenerateNeiborAreaCost(a, b));
             }
         }
         else
@@ -270,13 +273,13 @@ public class scenceGroundData:BaseData
     {
         if (Areas.ContainsValue(a) && Areas.ContainsValue(b))
         {
-            if (a.neiborAreas.Contains(b.Id))
+            if (Areas[a.Id].neiborAreas.ContainsKey(b.Id))
             {
-                a.neiborAreas.Remove(b.Id);
+                Areas[a.Id].neiborAreas.Remove(b.Id);
             }
-            if (b.neiborAreas.Contains(a.Id))
+            if (Areas[b.Id].neiborAreas.ContainsKey(b.Id))
             {
-                b.neiborAreas.Remove(a.Id);
+                Areas[b.Id].neiborAreas.Remove(a.Id);
             }
 
         }
@@ -284,6 +287,14 @@ public class scenceGroundData:BaseData
         {
             Debug.Log("one of this Area is not in this Scence!");
         }
+    }
+
+    public float GenerateNeiborAreaCost(AreaData a,AreaData b)
+    {
+        Vector3 Border = a.LessBorderPoint - b.BiggerBorderPoint;
+        Vector2 xzDistance = new Vector2(Border.x,Border.z)/2;
+        float cost = (float)Math.Abs(Math.Sqrt(Math.Pow(xzDistance.x, 2.0) + Math.Pow(xzDistance.y, 2.0)));
+        return cost;
     }
 
     public Vector3 CheckVector(Vector3 pos)

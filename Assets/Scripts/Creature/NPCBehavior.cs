@@ -3,11 +3,14 @@ using System.Collections.Generic;
 using Unity.Entities;
 using UnityEngine;
 
-public class NPCData : MonoBehaviour
+public class NPCBehavior : MonoBehaviour
 {
 
     public Vector3 target;
+    public int nowArea;
     public int ArriveTime = 0;
+
+    public Queue<AreaData> AreatoMove = new Queue<AreaData>();
 
 
     void Update()
@@ -21,4 +24,12 @@ public class NPCData : MonoBehaviour
             Destroy(gameObject);
         }
     }
+
+    public void GetAreasList()
+    {
+        Vector3Int targetIndex = World.GetWorldIndexFromPos(target);
+        Vector3Int position = World.GetWorldIndexFromPos(transform.position);
+
+    }
+
 }
