@@ -22,7 +22,7 @@ public class scenceGroundData:BaseData
 
     public List<ModifiedCell>modifiedCells = new List<ModifiedCell>();
     public Dictionary<Vector3Int, GroundCellData> GroundData = new Dictionary<Vector3Int, GroundCellData>();
-    public Dictionary<Vector3Int, EnterPoint> EnterPointData = new Dictionary<Vector3Int, EnterPoint>();
+    public Dictionary<Vector3Int, TargetPoint> EnterPointData = new Dictionary<Vector3Int, TargetPoint>();
     public Dictionary<Vector3Int, GroundCellData> SpawnPointData = new Dictionary<Vector3Int, GroundCellData>();
     public int changeTime = 0;
 
@@ -185,7 +185,7 @@ public class scenceGroundData:BaseData
                 {
                     Debug.Log("Out Of Range! Clear!");
                     Debug.Log($"{EnterPointData.Count}");
-                    foreach (EnterPoint e in Areas[f.areaID].innerEnterPoints.Values)
+                    foreach (TargetPoint e in Areas[f.areaID].innerEnterPoints.Values)
                     {
                         EnterPointData.Remove(e.WorldIndex);
                     };
@@ -193,8 +193,8 @@ public class scenceGroundData:BaseData
                     Areas[f.areaID].innerEnterPoints.Clear();
                 }
                 changeTime++;
-                EnterPointData[f.WorldIndex] = new EnterPoint(f);
-                Areas[f.areaID].innerEnterPoints[f.WorldIndex] = new EnterPoint(f);
+                EnterPointData[f.WorldIndex] = new TargetPoint(f);
+                Areas[f.areaID].innerEnterPoints[f.WorldIndex] = new TargetPoint(f);
 
                 f.finalcost = 0;
                 cellsToCheck.Enqueue(f);

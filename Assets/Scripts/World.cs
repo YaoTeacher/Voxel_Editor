@@ -50,7 +50,7 @@ public class World : MonoBehaviour
 
     public Dictionary<int,AreaData> basticareaData;
 
-    public scenceGroundData curFlowField;
+    //public scenceGroundData curFlowField;
 
     public string appPath;
     private void Awake()
@@ -88,7 +88,7 @@ public class World : MonoBehaviour
             ChunkUpdateThread = new Thread(new ThreadStart(ThreadedUpdate));
             ChunkUpdateThread.Start();
         }
-        InitializeGround();
+        //InitializeGround();
     }
 
     private void Update()

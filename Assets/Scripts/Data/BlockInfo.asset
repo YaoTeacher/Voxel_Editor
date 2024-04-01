@@ -86,7 +86,7 @@ MonoBehaviour:
     isAllowYorientation: 0
     isAllowXZorientation: 0
     icon: {fileID: -800723002, guid: 8ccace736c8423742aa10041de97657d, type: 3}
-    meshData: {fileID: 11400000, guid: 6ec83e2bd15b1e841be9982af84a756d, type: 2}
+    meshData: {fileID: 11400000, guid: 70f1f6c4b43a0804f9a3993d000ea675, type: 2}
     backFaceTexture: 1
     frontFaceTexture: 1
     topFaceTexture: 1
