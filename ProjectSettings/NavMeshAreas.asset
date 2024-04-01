@@ -11,13 +11,13 @@ NavMeshProjectSettings:
     cost: 1
   - name: Jump
     cost: 2
-  - name: 
+  - name: Sidewalk
     cost: 1
-  - name: 
+  - name: Street
     cost: 1
-  - name: 
+  - name: Crosswlk
     cost: 1
-  - name: 
+  - name: Indoor
     cost: 1
   - name: 
     cost: 1

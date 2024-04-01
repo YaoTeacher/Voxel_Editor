@@ -118,7 +118,7 @@ public class World : MonoBehaviour
             {
                 //Debug.Log(chunksToUpdate.Count);
                 UpdateChunks();
-                InitializeGround();
+                //InitializeGround();
             }
                 
 
@@ -433,12 +433,12 @@ public class World : MonoBehaviour
 
     }
 
-    private void InitializeGround()
-    {
-        UnityEngine.Debug.Log($"{Instance.scenedata.Name}");
-        curFlowField = new scenceGroundData();
-        curFlowField.GenerateGround(World.Instance, 4);
-    }
+    //private void InitializeGround()
+    //{
+    //    UnityEngine.Debug.Log($"{Instance.scenedata.Name}");
+    //    curFlowField = new scenceGroundData();
+    //    curFlowField.GenerateGround(World.Instance, 4);
+    //}
 }
 
 public class VoxelMod

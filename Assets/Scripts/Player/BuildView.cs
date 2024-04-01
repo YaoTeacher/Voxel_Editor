@@ -167,60 +167,60 @@ public class BuildView : MonoBehaviour
 
         if (isAltPressed)
         {
-            if (world.curFlowField.GroundData.ContainsKey(DestroyIndex))
-            {
+        //    if (world.curFlowField.GroundData.ContainsKey(DestroyIndex))
+        //    {
 
-                if (isMouseLeftClicked)
-                {
-                    print("Add Spawn!");
-                    print($"{DestroyIndex}");
-                    world.curFlowField.SetSpawnPos(DestroyIndex);
-                }
-            }
-            else
-            {
-                print("NULL GROUD!");
-            }
-        }
-        else if(isShiftPressed)
-        {
+        //        if (isMouseLeftClicked)
+        //        {
+        //            print("Add Spawn!");
+        //            print($"{DestroyIndex}");
+        //            world.curFlowField.SetSpawnPos(DestroyIndex);
+        //        }
+        //    }
+        //    else
+        //    {
+        //        print("NULL GROUD!");
+        //    }
+        //}
+        //else if(isShiftPressed)
+        //{
             
-            if (isMouseLeftClicked)
-            {
+        //    if (isMouseLeftClicked)
+        //    {
                 
-                vector3Ints.Add(DestroyIndex); 
+        //        vector3Ints.Add(DestroyIndex); 
 
-                print($"{vector3Ints.Count}");
+        //        print($"{vector3Ints.Count}");
 
-                if (world.curFlowField.GroundData.ContainsKey(DestroyIndex))
-                {
-                    if (vector3Ints.Count >= 2)
-                    {
-                        print("generate area!");
-                        print($"{vector3Ints[0]},{vector3Ints[1]}");
-                        AreaData a = world.curFlowField.SetNewArea(vector3Ints[0], vector3Ints[1]);
-                        world.curFlowField.GenerateArea(a);
-                        gridDebug.SetFlowField(world.curFlowField);
-                        vector3Ints.Clear();
-                    }
-                }
-                else
-                {
-                    print("NULL GROUD!");
-                }
+        //        if (world.curFlowField.GroundData.ContainsKey(DestroyIndex))
+        //        {
+        //            if (vector3Ints.Count >= 2)
+        //            {
+        //                print("generate area!");
+        //                print($"{vector3Ints[0]},{vector3Ints[1]}");
+        //                AreaData a = world.curFlowField.SetNewArea(vector3Ints[0], vector3Ints[1]);
+        //                world.curFlowField.GenerateArea(a);
+        //                gridDebug.SetFlowField(world.curFlowField);
+        //                vector3Ints.Clear();
+        //            }
+        //        }
+        //        else
+        //        {
+        //            print("NULL GROUD!");
+        //        }
 
 
-            }
-            if (isMouseRightClicked)
-            {
-                if (world.curFlowField.GroundData[DestroyIndex].areaID != -1)
-                {
-                    print("generate costmap!");
-                    world.curFlowField.GenerateCostMap(DestroyIndex);
-                    gridDebug.SetFlowField(world.curFlowField);
-                }
+        //    }
+        //    if (isMouseRightClicked)
+        //    {
+        //        if (world.curFlowField.GroundData[DestroyIndex].areaID != -1)
+        //        {
+        //            print("generate costmap!");
+        //            world.curFlowField.GenerateCostMap(DestroyIndex);
+        //            gridDebug.SetFlowField(world.curFlowField);
+        //        }
 
-            }
+        //    }
         }
         else
         {            // 判断是否同时满足长按 Ctrl 键和点击鼠标左键的条件
@@ -244,9 +244,9 @@ public class BuildView : MonoBehaviour
 
     private void InitializeGround()
     {
-        //UnityEngine.Debug.Log($"{world.scenedata.Name}");
-        world.curFlowField = new scenceGroundData();
-        world.curFlowField.GenerateGround(world, 4);
+        ////UnityEngine.Debug.Log($"{world.scenedata.Name}");
+        //world.curFlowField = new scenceGroundData();
+        //world.curFlowField.GenerateGround(world, 4);
 
     }
 
