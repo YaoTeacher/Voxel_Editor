@@ -10,9 +10,9 @@ public class NPCBehavior : MonoBehaviour
     public GameObject spawn;
     public GameObject canteen;
     public GameObject target;
-    public bool isNeedToEat=true;
+    public bool isEating=true;
     public float satiety = 100f;
-    public NavMeshAgent NavMeshAgent;
+    NavMeshAgent NavMeshAgent;
 
     private void Awake()
     {
@@ -26,27 +26,27 @@ public class NPCBehavior : MonoBehaviour
             target = canteen;
             NavMeshAgent.destination = target.transform.position;
         }
-        if (satiety >=100&&isNeedToEat==true)
+        if (satiety >=100&&isEating==true)
         {
-            isNeedToEat = false;
+            isEating = false;
             target = spawn;
             NavMeshAgent.destination = target.transform.position;
         }
-        if (!NavMeshAgent.pathPending && NavMeshAgent.remainingDistance < 0.5f&& isNeedToEat == false&& satiety >= 100)
+        if (NavMeshAgent.pathPending && (target == canteen) && NavMeshAgent.remainingDistance < 0.5f&& isEating == false&& satiety <100)
         {
-            isNeedToEat = true;
+            isEating = true;
         }
     }
     private void FixedUpdate()
     {
 
-        if (isNeedToEat == true&&satiety >=10&&(target==spawn||target==null))
+        if (isEating == false&&satiety >=10&&(target==spawn)&& NavMeshAgent.remainingDistance < 1f)
         {
             satiety -= 10f;
             Debug.Log(satiety);
         }
 
-       if (isNeedToEat == true && satiety <= 90&& !NavMeshAgent.pathPending&& target == canteen && NavMeshAgent.remainingDistance < 0.5f)
+       if (isEating == true && satiety <= 90&& (target == canteen) && NavMeshAgent.remainingDistance < 1f)
         {
             satiety += 10f;
             Debug.Log(satiety);

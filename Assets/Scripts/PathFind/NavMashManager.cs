@@ -9,7 +9,7 @@ public class NavMashManager : MonoBehaviour
 {
     public World World;
     public Dictionary<int, RegionData> Regions = new Dictionary<int, RegionData>()
-    { {0,new RegionData(new Vector3Int(0,0,0),new Vector3Int(VoxelData.ChunkWidth*VoxelData.WorldChunksSize-1,0,VoxelData.ChunkWidth*VoxelData.WorldChunksSize/2-1),0) },{1,new RegionData(new Vector3Int(0,0,VoxelData.ChunkWidth*VoxelData.WorldChunksSize/2-1),new Vector3Int(VoxelData.ChunkWidth*VoxelData.WorldChunksSize-1,0,VoxelData.ChunkWidth*VoxelData.WorldChunksSize-1),1) }
+    { {0,new RegionData(new Vector3Int(0,0,0),new Vector3Int(VoxelData.ChunkWidth*VoxelData.WorldChunksSize-1,0,VoxelData.ChunkWidth*VoxelData.WorldChunksSize/2-1),0) },{1,new RegionData(new Vector3Int(0,0,VoxelData.ChunkWidth*VoxelData.WorldChunksSize/2),new Vector3Int(VoxelData.ChunkWidth*VoxelData.WorldChunksSize-1,0,VoxelData.ChunkWidth*VoxelData.WorldChunksSize-1),1) }
     };
     public Dictionary<int,AreaData>Areas = new Dictionary<int,AreaData>();
     public Dictionary<int,GameObject>RegionsManager = new Dictionary<int,GameObject>();
@@ -21,6 +21,7 @@ public class NavMashManager : MonoBehaviour
     {
         GenerateWorldAreas();
         GenerateWorldRegions();
+        updateNavmeshModifier();
 
     }
 
@@ -36,19 +37,31 @@ public class NavMashManager : MonoBehaviour
             World.Instance.isGenerateFinished = false;
         }
     }
-
+    
+    void updateNavmeshModifier()
+    {
+        if(gameObject.GetComponent<NavMeshModifier>() == null)
+        {
+            gameObject.AddComponent<NavMeshModifier>();
+        }
+        gameObject.GetComponent<NavMeshModifier>().applyToChildren = true;
+        gameObject.GetComponent<NavMeshModifier>().overrideGenerateLinks=true;
+        gameObject.GetComponent<NavMeshModifier>().generateLinks=true;
+    }
     void GenerateWorldRegions()
     {
         foreach (RegionData r in Regions.Values)
         {
-            GameObject g = new GameObject();
-            if (gameObject.transform.Find("Regions/" + $"{r.Id}"))
+            GameObject g;
+            
+            if (!System.Object.ReferenceEquals(gameObject.transform.Find("Regions/" + $"region_{r.Id}"), null))
             {
-                g = gameObject.transform.Find("Regions/" + $"{r.Id}").gameObject;
+                g = gameObject.transform.Find("Regions/" + $"region_{r.Id}").gameObject;
 
             }
             else
             {
+                g = new GameObject();
                 g.name = $"region_{r.Id}";
                 g.transform.SetParent(gameObject.transform.GetChild(0));
 
@@ -57,7 +70,6 @@ public class NavMashManager : MonoBehaviour
             g.GetComponent<NavMeshSurface>().buildHeightMesh = true;
             g.GetComponent<NavMeshSurface>().overrideTileSize = true;
             g.GetComponent<NavMeshSurface>().overrideVoxelSize = true;
-            
             g.GetComponent<NavMeshSurface>().defaultArea = 0;
             g.GetComponent<NavMeshSurface>().collectObjects = CollectObjects.Volume;
             g.GetComponent<NavMeshSurface>().center = new Vector3(r.centerIndexPointX, VoxelData.ChunkHeight * VoxelData.BlockSize / 2, r.centerIndexPointZ);
@@ -81,11 +93,11 @@ public class NavMashManager : MonoBehaviour
         {
             GameObject g = new GameObject();
             if (gameObject.transform.Find("Areas/"+
-                $"{a.Id}"))
+                $"Area_{a.Id}"))
                 
             {
                 g = gameObject.transform.Find("Areas/" +
-                $"{a.Id}").gameObject;
+                $"Area_{a.Id}").gameObject;
 
             }
             else
