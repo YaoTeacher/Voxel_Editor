@@ -14,7 +14,7 @@ NavMeshProjectSettings:
   - name: Sidewalk
     cost: 1
   - name: Street
-    cost: 1
+    cost: 9
   - name: Crosswlk
     cost: 1
   - name: Indoor
@@ -73,10 +73,10 @@ NavMeshProjectSettings:
   m_Settings:
   - serializedVersion: 3
     agentTypeID: 0
-    agentRadius: 0.05
+    agentRadius: 0.1
     agentHeight: 2
-    agentSlope: 30
-    agentClimb: 0.3
+    agentSlope: 45
+    agentClimb: 0.51
     ledgeDropHeight: 1
     maxJumpAcrossDistance: 2
     minRegionArea: 2

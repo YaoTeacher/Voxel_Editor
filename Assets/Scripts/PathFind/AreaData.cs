@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Purchasing;
+using UnityEngine.UIElements;
 
 public class AreaData:BaseData
 {
@@ -63,9 +64,9 @@ public class AreaData:BaseData
             less.z = lastpoint.z;
             bigger.z = firstpoint.z;
         }
-        centerIndexPointX= (bigger.x+less.x+1)*VoxelData.BlockSize;
-        centerIndexPointY = (bigger.y + less.y + 1) * VoxelData.BlockSize;
-        centerIndexPointZ = (bigger.z + less.z + 1) * VoxelData.BlockSize;
+        centerIndexPointX= (bigger.x+less.x+1)/2*VoxelData.BlockSize;
+        centerIndexPointY = (bigger.y + less.y + 1)/2 * VoxelData.BlockSize;
+        centerIndexPointZ = (bigger.z + less.z + 1)/2 * VoxelData.BlockSize;
 
         VoxelLengthX = (bigger.x - less.x + 1) * VoxelData.BlockSize;
         VoxelLengthY = (bigger.y - less.y + 1) * VoxelData.BlockSize;
@@ -218,14 +219,24 @@ public class RegionData :BaseData
             less.z = lastpoint.z;
             bigger.z = firstpoint.z;
         }
-        centerIndexPointX = (bigger.x + less.x + 1) * VoxelData.BlockSize;
-        centerIndexPointZ = (bigger.z + less.z + 1) * VoxelData.BlockSize;
+        centerIndexPointX = (bigger.x + less.x +1)/2 * VoxelData.BlockSize;
+        centerIndexPointZ = (bigger.z + less.z +1) /2* VoxelData.BlockSize;
 
-        VoxelLengthX = (bigger.x - less.x + 1) * VoxelData.BlockSize;
-        VoxelLengthZ = (bigger.z - less.z + 1) * VoxelData.BlockSize;
+        VoxelLengthX = (bigger.x - less.x +1) * VoxelData.BlockSize;
+        VoxelLengthZ = (bigger.z - less.z +1) * VoxelData.BlockSize;
 
     }
+
+    public bool isInRegion(Vector3 position)
+    {
+        if (position.x >= centerIndexPointX - VoxelLengthX && position.x <= centerIndexPointX + VoxelLengthX &&position.z>=centerIndexPointZ-VoxelLengthZ&& position.z <= centerIndexPointZ + VoxelLengthZ)
+        {
+            return true;
+        }
+        else { return false; }
+    }
 }
+
 
 
 //public class GroundCellData : BaseData

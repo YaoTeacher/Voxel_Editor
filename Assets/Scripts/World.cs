@@ -33,6 +33,7 @@ public class World : MonoBehaviour
 
     public Queue<Chunk> chunksToDraw = new Queue<Chunk>();
     public List<Chunk> chunksToUpdate = new List<Chunk>();
+    public bool isGenerateFinished = false;
 
     Queue<Queue<VoxelMod>> modifications = new Queue<Queue<VoxelMod>>();
 
@@ -105,6 +106,7 @@ public class World : MonoBehaviour
         {
             //Debug.Log(chunksToDraw.Count);
             Instance.chunksToDraw.Dequeue().CreateMesh();
+            isGenerateFinished = true;
         }
 
 

@@ -150,19 +150,19 @@ public class GridDebug : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        if (displayGrid)
-        {
-            if (curFlowField == null)
-            {
-                DrawGrid(Color.yellow);
-            }
-            else
-            {
-                DrawArea(Color.green);
-            }
-        }
+        //if (displayGrid)
+        //{
+        //    if (curFlowField == null)
+        //    {
+        //        DrawGrid(Color.yellow);
+        //    }
+        //    else
+        //    {
+        //        DrawArea(Color.green);
+        //    }
+        //}
 
-        if (curFlowField == null) { return; }
+        //if (curFlowField == null) { return; }
 
         //GUIStyle style = new GUIStyle(GUI.skin.label);
         //style.alignment = TextAnchor.MiddleCenter;
@@ -190,58 +190,58 @@ public class GridDebug : MonoBehaviour
         //}
     }
 
-    private void DrawGrid(Color drawColor)
-    {
-        GUIStyle style = new GUIStyle(GUI.skin.label);
-        style.alignment = TextAnchor.MiddleCenter;
-        Gizmos.color = drawColor;
-        if (curFlowField == null) { return; }
-        foreach(GroundCellData f in curFlowField.GroundData.Values)
-        {
-            Vector3 center = new Vector3(f.WorldIndex.x+0.5f, f.WorldIndex.y + 0.5f, f.WorldIndex.z + 0.5f) * VoxelData.BlockSize;
-            Vector3 size = Vector3.one * VoxelData.BlockSize;
-            Gizmos.DrawWireCube(center, size);
-            Handles.Label(center, f.cost.ToString(), style);
-        }
+    //private void DrawGrid(Color drawColor)
+    //{
+    //    GUIStyle style = new GUIStyle(GUI.skin.label);
+    //    style.alignment = TextAnchor.MiddleCenter;
+    //    Gizmos.color = drawColor;
+    //    if (curFlowField == null) { return; }
+    //    foreach(GroundCellData f in curFlowField.GroundData.Values)
+    //    {
+    //        Vector3 center = new Vector3(f.WorldIndex.x+0.5f, f.WorldIndex.y + 0.5f, f.WorldIndex.z + 0.5f) * VoxelData.BlockSize;
+    //        Vector3 size = Vector3.one * VoxelData.BlockSize;
+    //        Gizmos.DrawWireCube(center, size);
+    //        Handles.Label(center, f.cost.ToString(), style);
+    //    }
 
-    }
+    //}
 
-    private void DrawArea(Color drawColor)
-    {
-        if (curFlowField.GroundData.Count<=0) { return; }
-        GUIStyle style = new GUIStyle(GUI.skin.label);
-        style.alignment = TextAnchor.MiddleCenter;
-        Gizmos.color = drawColor;
+    //private void DrawArea(Color drawColor)
+    //{
+    //    if (curFlowField.GroundData.Count<=0) { return; }
+    //    GUIStyle style = new GUIStyle(GUI.skin.label);
+    //    style.alignment = TextAnchor.MiddleCenter;
+    //    Gizmos.color = drawColor;
         
-        if (curFlowField.changeTime!= enterpointchangetime)
-        {
+    //    if (curFlowField.changeTime!= enterpointchangetime)
+    //    {
 
-            for (int i = 0; i < dirP.transform.childCount; i++)
-            {
-                Transform transform;
-                transform = dirP.transform.GetChild(i);
-                GameObject.Destroy(transform.gameObject);
-            }
-            foreach (AreaData a in curFlowField.Areas.Values)
-            {
-                foreach (GroundCellData f in a.onGroundCell.Values)
-                {
-                    Vector3 center = new Vector3(f.WorldIndex.x + 0.5f, f.WorldIndex.y + 0.5f, f.WorldIndex.z + 0.5f) * VoxelData.BlockSize;
-                    Vector3 size = Vector3.one * VoxelData.BlockSize;
-                    Gizmos.DrawWireCube(center, size);
-                    Handles.Label(center, f.direction.ToString(), style);
+    //        for (int i = 0; i < dirP.transform.childCount; i++)
+    //        {
+    //            Transform transform;
+    //            transform = dirP.transform.GetChild(i);
+    //            GameObject.Destroy(transform.gameObject);
+    //        }
+    //        foreach (AreaData a in curFlowField.Areas.Values)
+    //        {
+    //            foreach (GroundCellData f in a.onGroundCell.Values)
+    //            {
+    //                Vector3 center = new Vector3(f.WorldIndex.x + 0.5f, f.WorldIndex.y + 0.5f, f.WorldIndex.z + 0.5f) * VoxelData.BlockSize;
+    //                Vector3 size = Vector3.one * VoxelData.BlockSize;
+    //                Gizmos.DrawWireCube(center, size);
+    //                Handles.Label(center, f.direction.ToString(), style);
 
 
-                    Vector3 Worldposition = new Vector3(f.WorldIndex.x * VoxelData.BlockSize + 0.25f, f.WorldIndex.y * VoxelData.BlockSize + 0.55f, f.WorldIndex.z * VoxelData.BlockSize + 0.25f);
-                    Instantiate(dir, Worldposition, Quaternion.LookRotation(f.direction), dirP.transform);
-                }
-            }
-            enterpointchangetime = curFlowField.changeTime;
-        }
+    //                Vector3 Worldposition = new Vector3(f.WorldIndex.x * VoxelData.BlockSize + 0.25f, f.WorldIndex.y * VoxelData.BlockSize + 0.55f, f.WorldIndex.z * VoxelData.BlockSize + 0.25f);
+    //                Instantiate(dir, Worldposition, Quaternion.LookRotation(f.direction), dirP.transform);
+    //            }
+    //        }
+    //        enterpointchangetime = curFlowField.changeTime;
+    //    }
 
 
 
         
 
-    }
+    //}
 }

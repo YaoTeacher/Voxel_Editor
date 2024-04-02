@@ -218,126 +218,126 @@ public class WorldDataManager
 
     //WayPointsdata
     #region
-    public static void SaveScenceGrounds(sceneData scene)
-    {
+    //public static void SaveScenceGrounds(sceneData scene)
+    //{
 
-        // If not, create it.
-        if (!worldDB.IsTableCreate<scenceGroundData>($"worldGroundList"))
-        {
-            worldDB.CreateTable<scenceGroundData>($"worldGroundList");
-        }
-        else
-        {
-            Debug.Log("Saving " + "worldGroundList");
+    //    // If not, create it.
+    //    if (!worldDB.IsTableCreate<scenceGroundData>($"worldGroundList"))
+    //    {
+    //        worldDB.CreateTable<scenceGroundData>($"worldGroundList");
+    //    }
+    //    else
+    //    {
+    //        Debug.Log("Saving " + "worldGroundList");
 
-            foreach (var s in scenceGroundData.Grounds.Values)
-            {
-                if (worldDB.SelectById<scenceGroundData>("worldGroundList", s.Id) == null)
-                {
-                    worldDB.Insert<scenceGroundData>("worldGroundList", s);
-                }
-                else
-                {
-                    worldDB.Update<scenceGroundData>("worldGroundList", s);
-                }
-                SaveScenceGround(s);
+    //        foreach (var s in scenceGroundData.Grounds.Values)
+    //        {
+    //            if (worldDB.SelectById<scenceGroundData>("worldGroundList", s.Id) == null)
+    //            {
+    //                worldDB.Insert<scenceGroundData>("worldGroundList", s);
+    //            }
+    //            else
+    //            {
+    //                worldDB.Update<scenceGroundData>("worldGroundList", s);
+    //            }
+    //            SaveScenceGround(s);
 
-            }
-        }
+    //        }
+    //    }
 
-    }
-
-
-
-    public static void SaveScenceGround(scenceGroundData scenceGround)
-    {
-
-        if (worldDB.IsTableCreate<AreaData>(scenceGround.name))
-        {
-
-            Debug.Log($"{scenceGround.name} found. Loading from save.");
-            Debug.Log(WorldDBPath + scenceGround.name);
-
-        }
-        else
-        {
-            Debug.Log("World not found. Creating new world.");
-            worldDB.CreateTable<AreaData>(scenceGround.name);
-
-        }
-
-
-        Debug.Log("Saving " + scenceGround.name);
-
-        SaveAreas(scenceGround);
-
-    }
-
-
-    public static void SaveAreas(scenceGroundData scenceGround)
-    {
-        // Copy modified chunks into a new list and clear the old one to prevent
-        // chunks being added to list while it is saving.
-        Debug.Log(scenceGround.Areas.Values.Count.ToString());
-
-
-        // Loop through each chunk and save it.
-        int count = 0;
-        foreach (AreaData a in scenceGround.Areas.Values)
-        {
-
-
-            if (worldDB.SelectById<AreaData>(scenceGround.name, a.Id) == null)
-            {
-                worldDB.Insert<AreaData>(scenceGround.name, a);
-            }
-            else
-            {
-                worldDB.Update<AreaData>(scenceGround.name, a);
-            }
-            count++;
-
-        }
-
-        Debug.Log(count + " Area saved.");
-    }
-
-    public static void SaveGround(scenceGroundData groundData)
-    {
-
-        //// Set our save location and make sure we have a saves folder ready to go.
-        //string savePath = WorldDBPath;
-        if (!worldDB.IsTableCreate<GroundCellData>(groundData.name+"_GroundCell"))
-        {
-            worldDB.CreateTable<GroundCellData>(groundData.name + "_GroundCell");
-        }
-
-
-        foreach (var a in groundData.GroundData.Values)
-        {
-
-            if (worldDB.SelectById<GroundCellData>(groundData.name + "_GroundCell", a.Id) == null)
-            {
-                worldDB.Insert<GroundCellData>(groundData.name + "_GroundCell", a);
-            }
+    //}
 
 
 
+    //public static void SaveScenceGround(scenceGroundData scenceGround)
+    //{
 
-            Debug.Log("Saving Ground" + a.Id);
+    //    if (worldDB.IsTableCreate<AreaData>(scenceGround.name))
+    //    {
 
-        }
+    //        Debug.Log($"{scenceGround.name} found. Loading from save.");
+    //        Debug.Log(WorldDBPath + scenceGround.name);
 
-        foreach (var b in groundData.SpawnPointData.Values)
-        {
+    //    }
+    //    else
+    //    {
+    //        Debug.Log("World not found. Creating new world.");
+    //        worldDB.CreateTable<AreaData>(scenceGround.name);
 
-        }
+    //    }
 
-        foreach (var c in groundData.EnterPointData.Values)
-        {
 
-        }
+    //    Debug.Log("Saving " + scenceGround.name);
+
+    //    SaveAreas(scenceGround);
+
+    //}
+
+
+    //public static void SaveAreas(scenceGroundData scenceGround)
+    //{
+    //    // Copy modified chunks into a new list and clear the old one to prevent
+    //    // chunks being added to list while it is saving.
+    //    Debug.Log(scenceGround.Areas.Values.Count.ToString());
+
+
+    //    // Loop through each chunk and save it.
+    //    int count = 0;
+    //    foreach (AreaData a in scenceGround.Areas.Values)
+    //    {
+
+
+    //        if (worldDB.SelectById<AreaData>(scenceGround.name, a.Id) == null)
+    //        {
+    //            worldDB.Insert<AreaData>(scenceGround.name, a);
+    //        }
+    //        else
+    //        {
+    //            worldDB.Update<AreaData>(scenceGround.name, a);
+    //        }
+    //        count++;
+
+    //    }
+
+    //    Debug.Log(count + " Area saved.");
+    //}
+
+    //public static void SaveGround(scenceGroundData groundData)
+    //{
+
+    //    //// Set our save location and make sure we have a saves folder ready to go.
+    //    //string savePath = WorldDBPath;
+    //    if (!worldDB.IsTableCreate<GroundCellData>(groundData.name+"_GroundCell"))
+    //    {
+    //        worldDB.CreateTable<GroundCellData>(groundData.name + "_GroundCell");
+    //    }
+
+
+    //    foreach (var a in groundData.GroundData.Values)
+    //    {
+
+    //        if (worldDB.SelectById<GroundCellData>(groundData.name + "_GroundCell", a.Id) == null)
+    //        {
+    //            worldDB.Insert<GroundCellData>(groundData.name + "_GroundCell", a);
+    //        }
+
+
+
+
+    //        Debug.Log("Saving Ground" + a.Id);
+
+    //    }
+
+    //    foreach (var b in groundData.SpawnPointData.Values)
+    //    {
+
+    //    }
+
+    //    foreach (var c in groundData.EnterPointData.Values)
+    //    {
+
+    //    }
         #endregion
-    }
+    //}
 }
 

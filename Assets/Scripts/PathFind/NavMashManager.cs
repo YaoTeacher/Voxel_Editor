@@ -1,16 +1,20 @@
 using System.Collections;
 using System.Collections.Generic;
 using Unity.AI.Navigation;
+using Unity.Entities.UniversalDelegates;
 using Unity.VisualScripting;
 using UnityEngine;
-
+[ExecuteAlways]
 public class NavMashManager : MonoBehaviour
 {
-    public Dictionary<int,RegionData>Reigions = new Dictionary<int,RegionData>();
+    public World World;
+    public Dictionary<int, RegionData> Regions = new Dictionary<int, RegionData>()
+    { {0,new RegionData(new Vector3Int(0,0,0),new Vector3Int(VoxelData.ChunkWidth*VoxelData.WorldChunksSize-1,0,VoxelData.ChunkWidth*VoxelData.WorldChunksSize/2-1),0) },{1,new RegionData(new Vector3Int(0,0,VoxelData.ChunkWidth*VoxelData.WorldChunksSize/2-1),new Vector3Int(VoxelData.ChunkWidth*VoxelData.WorldChunksSize-1,0,VoxelData.ChunkWidth*VoxelData.WorldChunksSize-1),1) }
+    };
     public Dictionary<int,AreaData>Areas = new Dictionary<int,AreaData>();
-    public Dictionary<int,GameObject>RegionsManage = new Dictionary<int,GameObject>();
-    public Dictionary<int, GameObject> AreasManage = new Dictionary<int, GameObject>();
-
+    public Dictionary<int,GameObject>RegionsManager = new Dictionary<int,GameObject>();
+    public Dictionary<int, GameObject> AreasManager = new Dictionary<int, GameObject>();
+    List<GameObject> regionsToUpdate = new List<GameObject>();
 
     // Start is called before the first frame update
     void Start()
@@ -23,33 +27,47 @@ public class NavMashManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if (regionsToUpdate.Count > 0&&World.Instance.isGenerateFinished==true)
+        {
+            foreach(GameObject g in regionsToUpdate)
+            {
+                g.GetComponent<NavMeshSurface>().UpdateNavMesh(g.GetComponent<NavMeshSurface>().navMeshData);
+            }
+            World.Instance.isGenerateFinished = false;
+        }
     }
 
     void GenerateWorldRegions()
     {
-        foreach (RegionData r in Reigions.Values)
+        foreach (RegionData r in Regions.Values)
         {
             GameObject g = new GameObject();
-            if (gameObject.transform.Find("/Regions/" + $"{r.Id}"))
+            if (gameObject.transform.Find("Regions/" + $"{r.Id}"))
             {
-                g = gameObject.transform.Find($"{r.Id}").gameObject;
+                g = gameObject.transform.Find("Regions/" + $"{r.Id}").gameObject;
 
             }
             else
             {
+                g.name = $"region_{r.Id}";
                 g.transform.SetParent(gameObject.transform.GetChild(0));
 
             }
-            g.GetOrAddComponent<NavMeshSurface>();
+            g.AddComponent<NavMeshSurface>();
             g.GetComponent<NavMeshSurface>().buildHeightMesh = true;
+            g.GetComponent<NavMeshSurface>().overrideTileSize = true;
+            g.GetComponent<NavMeshSurface>().overrideVoxelSize = true;
+            
+            g.GetComponent<NavMeshSurface>().defaultArea = 0;
             g.GetComponent<NavMeshSurface>().collectObjects = CollectObjects.Volume;
             g.GetComponent<NavMeshSurface>().center = new Vector3(r.centerIndexPointX, VoxelData.ChunkHeight * VoxelData.BlockSize / 2, r.centerIndexPointZ);
             g.GetComponent<NavMeshSurface>().size = new Vector3(r.VoxelLengthX, VoxelData.ChunkHeight * VoxelData.BlockSize / 2, r.VoxelLengthZ);
             g.GetComponent<NavMeshSurface>().voxelSize = 0.02f;
             g.GetComponent<NavMeshSurface>().tileSize = 128;
             g.GetComponent<NavMeshSurface>().agentTypeID = 0;
+
             g.GetComponent<NavMeshSurface>().BuildNavMesh();
+            RegionsManager[r.Id] = g;
 
 
         }
@@ -62,16 +80,17 @@ public class NavMashManager : MonoBehaviour
         foreach (AreaData a in Areas.Values)
         {
             GameObject g = new GameObject();
-            if (gameObject.transform.Find("/Areas/"+
+            if (gameObject.transform.Find("Areas/"+
                 $"{a.Id}"))
                 
             {
-                g = gameObject.transform.Find("/Areas/" +
+                g = gameObject.transform.Find("Areas/" +
                 $"{a.Id}").gameObject;
 
             }
             else
             {
+                g.name = $"Area_{a.Id}";
                 g.transform.SetParent(gameObject.transform.GetChild(1));
 
             }
@@ -79,6 +98,8 @@ public class NavMashManager : MonoBehaviour
             g.GetComponent<NavMeshModifierVolume>().center = new Vector3(a.centerIndexPointX, a.centerIndexPointY, a.centerIndexPointZ);
             g.GetComponent<NavMeshModifierVolume>().size = new Vector3(a.VoxelLengthX, a.VoxelLengthY, a.VoxelLengthZ);
             g.GetComponent<NavMeshModifierVolume>().area= 4;
+            g.GetComponent<NavMeshModifierVolume>().enabled = true;
+            AreasManager[a.Id] = g;
 
 
         }

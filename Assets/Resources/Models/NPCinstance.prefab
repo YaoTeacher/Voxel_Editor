@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 6660422177329708634}
   - component: {fileID: 2939459410465932979}
   - component: {fileID: 3623453913141140603}
+  - component: {fileID: 4798281495802931056}
   m_Layer: 0
   m_Name: NPCinstance
   m_TagString: Untagged
@@ -118,5 +119,31 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ebf35e58940efd14cafcac5a5f988e99, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  target: {x: 0, y: 0, z: 0}
-  ArriveTime: 0
+  spawn: {fileID: 0}
+  canteen: {fileID: 0}
+  target: {fileID: 0}
+  isNeedToEat: 1
+  satiety: 100
+  NavMeshAgent: {fileID: 0}
+--- !u!195 &4798281495802931056
+NavMeshAgent:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4868184404965182336}
+  m_Enabled: 1
+  m_AgentTypeID: 0
+  m_Radius: 0.5
+  m_Speed: 400
+  m_Acceleration: 20
+  avoidancePriority: 50
+  m_AngularSpeed: 120
+  m_StoppingDistance: 0
+  m_AutoTraverseOffMeshLink: 1
+  m_AutoBraking: 1
+  m_AutoRepath: 0
+  m_Height: 1
+  m_BaseOffset: 0.5
+  m_WalkableMask: 109
+  m_ObstacleAvoidanceType: 2
