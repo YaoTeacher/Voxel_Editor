@@ -8,9 +8,10 @@ public class AreaData:BaseData
 {
     [ModelHelp(true, "name", "string", false, false)]
     public string name{ get; set; }
+    [ModelHelp(true, "type", "int", false, false)]
     public int type { get; set; }
     //public bool isInDoor { get; set; }
-    // 0 blank 1 street 2 indoorroom
+    // 0 blank 1 street 2 room
 
     public float centerIndexPointX { get; set; }
     public float centerIndexPointY { get; set; }

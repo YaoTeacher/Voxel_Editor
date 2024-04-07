@@ -9,7 +9,7 @@ public class NavMashManager : MonoBehaviour
 {
     public World World;
     public Dictionary<int, RegionData> Regions = new Dictionary<int, RegionData>()
-    { {0,new RegionData(new Vector3Int(0,0,0),new Vector3Int(VoxelData.ChunkWidth*VoxelData.WorldChunksSize-1,0,VoxelData.ChunkWidth*VoxelData.WorldChunksSize/2-1),0) },{1,new RegionData(new Vector3Int(0,0,VoxelData.ChunkWidth*VoxelData.WorldChunksSize/2),new Vector3Int(VoxelData.ChunkWidth*VoxelData.WorldChunksSize-1,0,VoxelData.ChunkWidth*VoxelData.WorldChunksSize-1),1) }
+    { {0,new RegionData(new Vector3Int(0,0,0),new Vector3Int(VoxelData.ChunkWidth*VoxelData.WorldChunksSize-1,0,VoxelData.ChunkWidth*VoxelData.WorldChunksSize-1),0) }
     };
     public Dictionary<int,AreaData>Areas = new Dictionary<int,AreaData>();
     public Dictionary<int,GameObject>RegionsManager = new Dictionary<int,GameObject>();
@@ -106,14 +106,27 @@ public class NavMashManager : MonoBehaviour
                 g.transform.SetParent(gameObject.transform.GetChild(1));
 
             }
-            g.GetOrAddComponent<NavMeshModifierVolume>();
-            g.GetComponent<NavMeshModifierVolume>().center = new Vector3(a.centerIndexPointX, a.centerIndexPointY, a.centerIndexPointZ);
-            g.GetComponent<NavMeshModifierVolume>().size = new Vector3(a.VoxelLengthX, a.VoxelLengthY, a.VoxelLengthZ);
-            g.GetComponent<NavMeshModifierVolume>().area= 4;
-            g.GetComponent<NavMeshModifierVolume>().enabled = true;
-            AreasManager[a.Id] = g;
+
+            if (a.type >= 1)
+            {
+                g.GetOrAddComponent<NavMeshModifierVolume>();
+                g.GetComponent<NavMeshModifierVolume>().center = new Vector3(a.centerIndexPointX, a.centerIndexPointY, a.centerIndexPointZ);
+                g.GetComponent<NavMeshModifierVolume>().size = new Vector3(a.VoxelLengthX, a.VoxelLengthY, a.VoxelLengthZ);
+                g.GetComponent<NavMeshModifierVolume>().area = 4;
+                g.GetComponent<NavMeshModifierVolume>().enabled = true;
+                AreasManager[a.Id] = g;
+            }
+            else
+            {
+                continue;
+            }
 
 
         }
+    }
+
+    void AreaTypeCheck(AreaData area)
+    {
+
     }
 }
