@@ -115,74 +115,74 @@ public class AreaData:BaseData
     //    BiggerBorderPoint   = bigger;
     //}
 
-    //public List<GroundCellData> GetGroundNeibor(GroundCellData path)
-    //{
-    //    List<GroundCellData> neibor = new List<GroundCellData>();
+    public List<Vector3Int> GetTransparentNeibor(Vector3Int path)
+    {
+        List<Vector3Int> neibor = new List<Vector3Int>();
 
-    //    for (int z = -1; z <= 1; z++)
-    //    {
-    //        for (int x = -1; x <= 1; x++)
-    //        {
-    //            if (x == 0 && z == 0)
-    //            {
-    //                continue;
-    //            }
-    //            for (int y = -1; y <= 1; y++)
-    //            {
-    //                if (onGroundCell.ContainsKey(path.WorldIndex + new Vector3Int(x, y, z)))
-    //                {
-    //                    if (x == 1 && z == 1)
-    //                    {
-    //                        if (onGroundCell.ContainsKey(path.WorldIndex + new Vector3Int(1, y, 0)) && onGroundCell.ContainsKey(path.WorldIndex + new Vector3Int(0, y, 1)))
-    //                        {
-    //                            neibor.Add(onGroundCell[path.WorldIndex + new Vector3Int(x, y, z)]);
-    //                            continue;
-    //                        }
-    //                        else
-    //                            continue;
-    //                    }
-    //                    if (x == -1 && z == 1)
-    //                    {
-    //                        if (onGroundCell.ContainsKey(path.WorldIndex + new Vector3Int(-1, y, 0)) && onGroundCell.ContainsKey(path.WorldIndex + new Vector3Int(0, y, 1)))
-    //                        {
-    //                            neibor.Add(onGroundCell[path.WorldIndex + new Vector3Int(x, y, z)]);
-    //                            continue;
-    //                        }
-    //                        else
-    //                            continue;
-    //                    }
-    //                    if (x == 1 && z == -1)
-    //                    {
-    //                        if (onGroundCell.ContainsKey(path.WorldIndex + new Vector3Int(1, y, 0)) && onGroundCell.ContainsKey(path.WorldIndex + new Vector3Int(0, y, -1)))
-    //                        {
-    //                            neibor.Add(onGroundCell[path.WorldIndex + new Vector3Int(x, y, z)]);
-    //                            continue;
-    //                        }
-    //                        else
-    //                            continue;
-    //                    }
-    //                    if (x == -1 && z == -1)
-    //                    {
-    //                        if (onGroundCell.ContainsKey(path.WorldIndex + new Vector3Int(-1, y, 0)) && onGroundCell.ContainsKey(path.WorldIndex + new Vector3Int(0, y, -1)))
-    //                        {
-    //                            neibor.Add(onGroundCell[path.WorldIndex + new Vector3Int(x, y, z)]);
-    //                            continue;
-    //                        }
-    //                        else
-    //                            continue;
-    //                    }
-    //                    neibor.Add(onGroundCell[path.WorldIndex + new Vector3Int(x, y, z)]);
+        for (int z = -1; z <= 1; z++)
+        {
+            for (int x = -1; x <= 1; x++)
+            {
+                if (x == 0 && z == 0)
+                {
+                    continue;
+                }
+                for (int y = -1; y <= 1; y++)
+                {
+                    if (World.Instance.scenedata.GetVoxelType(path + new Vector3Int(x, y, z))==0)
+                    {
+                        if (x == 1 && z == 1)
+                        {
+                            if (World.Instance.scenedata.GetVoxelType(path + new Vector3Int(1, y, 0)) ==0&& World.Instance.scenedata.GetVoxelType(path + new Vector3Int(0, y, 1))==0)
+                            {
+                                neibor.Add(path + new Vector3Int(x, y, z));
+                                continue;
+                            }
+                            else
+                                continue;
+                        }
+                        if (x == -1 && z == 1)
+                        {
+                            if (World.Instance.scenedata.GetVoxelType(path + new Vector3Int(-1, y, 0))==0 && World.Instance.scenedata.GetVoxelType(path + new Vector3Int(0, y, 1))==0)
+                            {
+                                neibor.Add(path + new Vector3Int(x, y, z));
+                                continue;
+                            }
+                            else
+                                continue;
+                        }
+                        if (x == 1 && z == -1)
+                        {
+                            if (World.Instance.scenedata.GetVoxelType(path+ new Vector3Int(1, y, 0))==0 && World.Instance.scenedata.GetVoxelType(path+ new Vector3Int(0, y, -1))==0)
+                            {
+                                neibor.Add(path + new Vector3Int(x, y, z));
+                                continue;
+                            }
+                            else
+                                continue;
+                        }
+                        if (x == -1 && z == -1)
+                        {
+                            if (World.Instance.scenedata.GetVoxelType(path  + new Vector3Int(-1, y, 0))==0 && World.Instance.scenedata.GetVoxelType(path + new Vector3Int(0, y, -1))==0)
+                            {
+                                neibor.Add(path + new Vector3Int(x, y, z));
+                                continue;
+                            }
+                            else
+                                continue;
+                        }
+                        neibor.Add(path + new Vector3Int(x, y, z));
 
-    //                }
-    //                else continue;
+                    }
+                    else continue;
 
 
-    //            }
-    //        }
-    //    }
+                }
+            }
+        }
 
-    //    return neibor;
-    //}
+        return neibor;
+    }
 }
 
 public class RegionData :BaseData
