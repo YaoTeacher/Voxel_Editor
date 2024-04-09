@@ -11,8 +11,11 @@ public class NavMashManager : MonoBehaviour
     public Dictionary<int, RegionData> Regions = new Dictionary<int, RegionData>()
     { {0,new RegionData(new Vector3Int(0,0,0),new Vector3Int(VoxelData.ChunkWidth*VoxelData.WorldChunksSize-1,0,VoxelData.ChunkWidth*VoxelData.WorldChunksSize-1),0) }
     };
-    public Dictionary<int,AreaData>Areas = new Dictionary<int,AreaData>();
-    public Dictionary<int,GameObject>RegionsManager = new Dictionary<int,GameObject>();
+    public Dictionary<int, AreaData> Areas = new Dictionary<int, AreaData>()
+    {{0,new AreaData("EditArea",new Vector3Int(0,0,0),new Vector3Int(VoxelData.ChunkWidth*VoxelData.WorldChunksSize-1,0,VoxelData.ChunkWidth*VoxelData.WorldChunksSize-1),0)
+    } };
+    public List<CellData> TransparentBlock = new List<CellData>();
+    public Dictionary<int, GameObject> RegionsManager = new Dictionary<int, GameObject>();
     public Dictionary<int, GameObject> AreasManager = new Dictionary<int, GameObject>();
     List<GameObject> regionsToUpdate = new List<GameObject>();
 
@@ -28,32 +31,32 @@ public class NavMashManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (regionsToUpdate.Count > 0&&World.Instance.isGenerateFinished==true)
+        if (regionsToUpdate.Count > 0 && World.Instance.isGenerateFinished == true)
         {
-            foreach(GameObject g in regionsToUpdate)
+            foreach (GameObject g in regionsToUpdate)
             {
                 g.GetComponent<NavMeshSurface>().UpdateNavMesh(g.GetComponent<NavMeshSurface>().navMeshData);
             }
             World.Instance.isGenerateFinished = false;
         }
     }
-    
+
     void updateNavmeshModifier()
     {
-        if(gameObject.GetComponent<NavMeshModifier>() == null)
+        if (gameObject.GetComponent<NavMeshModifier>() == null)
         {
             gameObject.AddComponent<NavMeshModifier>();
         }
         gameObject.GetComponent<NavMeshModifier>().applyToChildren = true;
-        gameObject.GetComponent<NavMeshModifier>().overrideGenerateLinks=true;
-        gameObject.GetComponent<NavMeshModifier>().generateLinks=true;
+        gameObject.GetComponent<NavMeshModifier>().overrideGenerateLinks = true;
+        gameObject.GetComponent<NavMeshModifier>().generateLinks = true;
     }
     void GenerateWorldRegions()
     {
         foreach (RegionData r in Regions.Values)
         {
             GameObject g;
-            
+
             if (!System.Object.ReferenceEquals(gameObject.transform.Find("Regions/" + $"region_{r.Id}"), null))
             {
                 g = gameObject.transform.Find("Regions/" + $"region_{r.Id}").gameObject;
@@ -92,9 +95,9 @@ public class NavMashManager : MonoBehaviour
         foreach (AreaData a in Areas.Values)
         {
             GameObject g = new GameObject();
-            if (gameObject.transform.Find("Areas/"+
+            if (gameObject.transform.Find("Areas/" +
                 $"Area_{a.Id}"))
-                
+
             {
                 g = gameObject.transform.Find("Areas/" +
                 $"Area_{a.Id}").gameObject;
@@ -125,8 +128,71 @@ public class NavMashManager : MonoBehaviour
         }
     }
 
-    void AreaTypeCheck(AreaData area)
+    void indoorAreaCheck()
     {
 
+            int areaIndex = 1;
+            Vector3Int lessPoint = new Vector3Int(0, 0, 0);
+            Vector3Int greaterPoint = new Vector3Int(0, 0, 0);
+            AreaData area;  
+            if (Areas[0].name != "EditArea")
+            {
+            Areas[0] = new AreaData("EditArea", new Vector3Int(0, 0, 0), new Vector3Int(VoxelData.ChunkWidth * VoxelData.WorldChunksSize - 1, 0, VoxelData.ChunkWidth * VoxelData.WorldChunksSize - 1), 0);
+            }
+            
+
+            Queue<CellData> cellsToCheck = new Queue<CellData>();
+            CellData f = TransparentBlock[0];
+
+
+            foreach (CellData n in TransparentBlock)
+            {
+
+                    if (n.areaID!= 0)
+                    {
+                        n. areaID= 0;
+                    }
+
+            }
+
+        //if (Areas[f.areaID].innerEnterPoints.Keys.Count + 1 > Areas[f.areaID].allowedNumberForEnterPoint)
+        //{
+        //    Debug.Log("Out Of Range! Clear!");
+        //    Debug.Log($"{EnterPointData.Count}");
+        //    foreach (TargetPoint e in Areas[f.areaID].innerEnterPoints.Values)
+        //    {
+        //        EnterPointData.Remove(e.WorldIndex);
+        //    };
+        //    Debug.Log($"{EnterPointData.Count}");
+        //    Areas[f.areaID].innerEnterPoints.Clear();
+        //}
+        //changeTime++;
+        lessPoint = f.WorldIndex;
+        greaterPoint = f.WorldIndex;
+        cellsToCheck.Enqueue(f);
+
+                while (cellsToCheck.Count > 0)
+                {
+                    CellData curCell = cellsToCheck.Dequeue();
+
+                    List<CellData> curNeibors = Areas[f.areaID].GetTransparentNeibor(curCell.WorldIndex);
+
+
+                    foreach (CellData n in curNeibors)
+                    {
+                        if (n.areaID!=0) { continue; }
+
+                        n.
+                        //if (n.cost + curCell.finalcost < n.finalcost)
+                        //{
+                        //    n.finalcost = curCell.finalcost + n.cost * CalculateCost(curCell, n);
+                        //    n.direction = curCell.WorldIndex - n.WorldIndex;
+                        //    n.direction = n.direction.normalized;
+
+                            cellsToCheck.Enqueue(n);
+                        }
+                    }
+                }
+            
     }
 }

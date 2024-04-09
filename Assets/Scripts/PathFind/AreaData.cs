@@ -21,8 +21,8 @@ public class AreaData:BaseData
     public float VoxelLengthY { get; set; }
     public float VoxelLengthZ { get; set; }
 
-    //public Vector3Int LessBorderPoint { get; set; }
-    //public Vector3Int BiggerBorderPoint { get; set; }
+    public Vector3Int LessBorderPoint { get; set; }
+    public Vector3Int BiggerBorderPoint { get; set; }
     public int ParentWorldID { get; set; }
     //public bool isAllowCross { get; set; }
 
@@ -30,8 +30,9 @@ public class AreaData:BaseData
     //public int allowedNumberForEnterPoint = 1;
     public AreaData() { }
 
-    public AreaData(Vector3Int firstpoint, Vector3Int lastpoint, int id)
+    public AreaData(string name, Vector3Int firstpoint, Vector3Int lastpoint, int id)
     {
+        this.name = name; 
         Id = id;
         Vector3Int less = new Vector3Int(0, 0, 0);
         Vector3Int bigger = new Vector3Int(0, 0, 0);
@@ -65,6 +66,9 @@ public class AreaData:BaseData
             less.z = lastpoint.z;
             bigger.z = firstpoint.z;
         }
+        LessBorderPoint = less;
+        BiggerBorderPoint = bigger;
+
         centerIndexPointX= (bigger.x+less.x+1)/2*VoxelData.BlockSize;
         centerIndexPointY = (bigger.y + less.y + 1)/2 * VoxelData.BlockSize;
         centerIndexPointZ = (bigger.z + less.z + 1)/2 * VoxelData.BlockSize;
@@ -240,16 +244,50 @@ public class RegionData :BaseData
 
 
 
-//public class GroundCellData : BaseData
-//{
-//    public int areaID=-1;
-//    public Vector3Int WorldIndex;
-//    public float cost=255;
-//    public float finalcost=9999;
-//    public Vector3 direction=new Vector3Int(0,0,0);
+public class CellData : BaseData
+{
+    [ModelHelp(true, "areaID", "int", false, true)]
+    public int areaID = 0;
 
-//    public GroundCellData(){}
-//    public GroundCellData(Vector3Int worldIndex, float blockrough)
+    [ModelHelp(true, "index_x", "int", false, true)]
+    public int index_x { get; set; }
+    [ModelHelp(true, "index_y", "int", false, true)]
+    public int index_y { get; set; }
+    [ModelHelp(true, "index_z", "int", false, true)]
+    public int index_z { get; set; }
+
+    public Vector3Int WorldIndex;
+    public CellData() { }
+    public CellData(Vector3Int worldIndex, int Area)
+    {
+        WorldIndex = worldIndex;
+        index_x = worldIndex.x; 
+        index_y = worldIndex.y; 
+        index_z = worldIndex.z;
+        areaID = Area;
+    }
+
+    public void SetArea(int areaID)
+    {
+        this.areaID = areaID;     
+    }
+
+    public void ResetCell()
+    {
+        areaID = 0;
+    }
+}
+
+//public class CellData : BaseData
+//{
+//    public int areaID = -1;
+//    public Vector3Int WorldIndex;
+//    public float cost = 255;
+//    public float finalcost = 9999;
+//    public Vector3 direction = new Vector3Int(0, 0, 0);
+
+//    public CellData() { }
+//    public CellData(Vector3Int worldIndex, float blockrough)
 //    {
 //        WorldIndex = worldIndex;
 //        cost = blockrough;
