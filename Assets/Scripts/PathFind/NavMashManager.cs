@@ -171,28 +171,28 @@ public class NavMashManager : MonoBehaviour
         greaterPoint = f.WorldIndex;
         cellsToCheck.Enqueue(f);
 
-                while (cellsToCheck.Count > 0)
-                {
-                    CellData curCell = cellsToCheck.Dequeue();
+                //while (cellsToCheck.Count > 0)
+                //{
+                //    CellData curCell = cellsToCheck.Dequeue();
 
-                    List<CellData> curNeibors = Areas[f.areaID].GetTransparentNeibor(curCell.WorldIndex);
+                //    List<CellData> curNeibors = Areas[f.areaID].GetTransparentNeibor(curCell.WorldIndex);
 
 
-                    foreach (CellData n in curNeibors)
-                    {
-                        if (n.areaID!=0) { continue; }
+                //    foreach (CellData n in curNeibors)
+                //    {
+                //        if (n.areaID!=0) { continue; }
 
-                        n.
-                        //if (n.cost + curCell.finalcost < n.finalcost)
-                        //{
-                        //    n.finalcost = curCell.finalcost + n.cost * CalculateCost(curCell, n);
-                        //    n.direction = curCell.WorldIndex - n.WorldIndex;
-                        //    n.direction = n.direction.normalized;
+                //        n.
+                //        //if (n.cost + curCell.finalcost < n.finalcost)
+                //        //{
+                //        //    n.finalcost = curCell.finalcost + n.cost * CalculateCost(curCell, n);
+                //        //    n.direction = curCell.WorldIndex - n.WorldIndex;
+                //        //    n.direction = n.direction.normalized;
 
-                            cellsToCheck.Enqueue(n);
-                        }
-                    }
-                }
+                //            cellsToCheck.Enqueue(n);
+                //        }
+                //    }
+                //}
             
     }
 }

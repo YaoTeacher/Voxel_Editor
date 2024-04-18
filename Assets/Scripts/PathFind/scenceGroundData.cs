@@ -35,7 +35,7 @@ public class scenceGroundData:BaseData
 
     public AreaData SetNewArea(Vector3Int firstpoint, Vector3Int lastpoint)
     {
-        AreaData area = new AreaData(firstpoint, lastpoint,Areas.Count);
+        AreaData area = new AreaData("name",firstpoint, lastpoint,Areas.Count);
         Areas[area.Id]= area;
         Debug.Log($"{area.Id},{Areas.Values.Count}");
         return area;
